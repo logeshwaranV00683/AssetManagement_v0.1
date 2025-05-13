@@ -54,7 +54,7 @@ const Login = () => {
       console.log('data', data);
 
       if (data && data.token) {
-        localStorage.setItem('token', data.token);
+        localStorage.setItem('authToken', data.token);
         localStorage.setItem('isLogin', 'yes');
         localStorage.setItem('empId', formData.employeeId); // Store empId and password in localStorage
 
