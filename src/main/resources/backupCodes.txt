@@ -1,0 +1,162 @@
+String content="<!DOCTYPE html>\n" +
+//              "<html lang=\"en\">\n" +
+//              "\n" +
+//              "    <head lang=\"en\">\n" +
+//              "        <meta charset=\"UTF-8\">\n" +
+//              "        <title>Table</title>\n" +
+//              "        <link href=\"https://fonts.googleapis.com/css?family=Alegreya+Sans\" rel=\"stylesheet\">\n" +
+//              "        <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css\" type=\"text/css\">\n" +
+//              "        <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\" integrity=\"sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u\" crossorigin=\"anonymous\">\n" +
+//              "    </head>\n" +
+//              "\n" +
+//              "<body>\n" +
+//              "    \n" +
+//              "    <style>\n" +
+//              "@media screen and (max-width: 600px) {\n" +
+//              "  table {\n" +
+//              "    border: 0;\n" +
+//              "  }\n" +
+//              "\n" +
+//              "  table caption {\n" +
+//              "    font-size: 1.3em;\n" +
+//              "  }\n" +
+//              "\n" +
+//              "  table thead {\n" +
+//              "    border: none;\n" +
+//              "    clip: rect(0 0 0 0);\n" +
+//              "    height: 1px;\n" +
+//              "    margin: -1px;\n" +
+//              "    overflow: hidden;\n" +
+//              "    padding: 0;\n" +
+//              "    position: absolute;\n" +
+//              "    width: 1px;\n" +
+//              "  }\n" +
+//              "\n" +
+//              "  table tr {\n" +
+//              "    border-bottom: 3px solid #ddd;\n" +
+//              "    display: block;\n" +
+//              "    margin-bottom: .625em;\n" +
+//              "  }\n" +
+//              "\n" +
+//              "  table td {\n" +
+//              "    border-bottom: 1px solid #ddd;\n" +
+//              "    display: block;\n" +
+//              "    font-size: .8em;\n" +
+//              "    text-align: right;\n" +
+//              "  }\n" +
+//              "\n" +
+//              "  table td::before {\n" +
+//              "    content: attr(data-label);\n" +
+//              "    float: left;\n" +
+//              "    font-weight: bold;\n" +
+//              "    text-transform: uppercase;\n" +
+//              "  }\n" +
+//              "\n" +
+//              "  table td:last-child {\n" +
+//              "    border-bottom: 0;\n" +
+//              "  }\n" +
+//              "}\n" +
+//              "</style>\n" +
+//              "\n" +
+//              "\n" +
+//              "   \n" +
+//              "    <!-- / Full width  -->\n" +
+//              "    <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" height=\"100%\" width=\"100%\" bgcolor=\"#eeeeee\" style=\"width: 100%; height: 100%; padding: 30px 0 30px 0;\">\n" +
+//              "        <tr>\n" +
+//              "            <td align=\"center\" valign=\"top\">\n" +
+//              "                <!-- / 700px  -->\n" +
+//              "                <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" bgcolor=\"#ffffff\" style=\"width: 50%;\">\n" +
+//              "                   <tbody style=\"border:2px solid #000000 ;\">\n" +
+//              "                    <tr>\n" +
+//              "                        <td align=\"center\" valign=\"top\">\n" +
+//              "                            <!-- / Header -->\n" +
+//              "                            <table class=\" header\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"620\" style=\"width: 620px;background-color: #18BAE2;\">\n" +
+//              "                                <tr>\n" +
+//              "                                    <td></td>\n" +
+//              "                                    <td style=\"padding: 30px 0 30px 0; border-bottom: solid 1px #eeeeee;\" align=\"Center\">\n" +
+//              "                                        <a style=\"font-size: 30px; text-decoration: none; color: #000000;\">Hi ! "+empData.getFirstName()+"\n" +
+//              "                                            </a>\n" +
+//              "                                    </td>\n" +
+//              "                                </tr>\n" +
+//              "                            </table>\n" +
+//              "                          \n" +
+//              "                           \n" +
+//              "\n" +
+//              "\n" +
+//              "\n" +
+//              "                            <table style=\"border: 1px solid #ccc; border-collapse: collapse; margin: 0; padding: 0; width: 75%; table-layout: fixed;\" width=\"100%\">\n" +
+//              "                                <caption style=\"font-size: 1.5em; margin: .5em 0 .75em;text-align: center;\">Asset Details</caption>\n" +
+//              "                                <thead>\n" +
+//              "                                  <tr style=\"background-color: #f8f8f8; border: 1px solid #ddd; padding: .35em;\" bgcolor=\"#18BAE2\">\n" +
+//              "                                    <th scope=\"col\" style=\"padding: .625em; text-align: center; font-size: .85em; letter-spacing: .1em; text-transform: uppercase;\" align=\"center\">#</th>\n" +
+//              "                                    <th scope=\"col\" style=\"padding: .625em; text-align: center; font-size: .85em; letter-spacing: .1em; text-transform: uppercase;\" align=\"center\">Asset Name</th>" +
+//              "                                    <th scope=\"col\" style=\"padding: .625em; text-align: center; font-size: .85em; letter-spacing: .1em; text-transform: uppercase;\" align=\"center\">Serial Number</th>\n" +
+//              "                                    <th scope=\"col\" style=\"padding: .625em; text-align: center; font-size: .85em; letter-spacing: .1em; text-transform: uppercase;\" align=\"center\">Assigned By</th>\n" +
+//              "                                    <th scope=\"col\" style=\"padding: .625em; text-align: center; font-size: .85em; letter-spacing: .1em; text-transform: uppercase;\" align=\"center\">Assigned Date</th>\n" +
+//              "                                  </tr>\n" +
+//              "                                </thead>\n" +
+//              "                                <tbody>\n" +
+//              tableRow+
+//              "                               <tr>\n" +
+//              "                                \n" +
+//              "                               </tr>\n" +
+//              "                                </tbody>\n" +
+//              "                              </table>\n" +
+//              "\n" +
+//              "                              <table class=\" hero-subheader\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"620\" style=\"width: 620px;border-collapse: collapse;\">\n" +
+//              "                             \n" +
+//              "\n" +
+//              "                             \n" +
+//              "                                <tr>\n" +
+//              "                                    <td>\n" +
+//              "                                        <h4 style=\"text-indent: 16px;margin-left: 2px;\">Kindly acknowledge the mail for your receipt of the Assets that mentioned above from the IT department</h4>\n" +
+//              "                                    </td>\n" +
+//              "                                </tr>\n" +
+//              "                            </table>\n" +
+//              "\n" +
+//              "                            <!-- / Divider -->\n" +
+//              "                            <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"75%\" style=\"padding-top: 25px;\" align=\"center\">\n" +
+//              "                                <tr>\n" +
+//              "                                    <td align=\"center\">\n" +
+//              "                                        <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"620\" align=\"center\" style=\"border-bottom: solid 1px #eeeeee; width: 620px;\">\n" +
+//              "                                            <tr>\n" +
+//              "                                                <td align=\"center\">&nbsp;</td>\n" +
+//              "                                            </tr>\n" +
+//              "                                        </table>\n" +
+//              "                                    </td>\n" +
+//              "                                </tr>\n" +
+//              "                            </table>\n" +
+//              "                            <!-- /// Divider -->\n" +
+//              "\n" +
+//              "                \n" +
+//              "                            <table class=\" cta-block\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"75%\" style=\"background-color: #18BAE2;\">\n" +
+//              "                                <tr>\n" +
+//              "                                    <td align=\"center\" valign=\"top\">\n" +
+//              "                                        <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"620\" style=\"width: 620px;\">\n" +
+//              "                                            <tr>\n" +
+//              "                                                <td class=\"cta-block__title\" style=\"padding: 35px 0 0 0; font-size: 16px; text-align: left;text-indent: 10px;\">\n" +
+//              "                                                    Regards</td>\n" +
+//              "                                            </tr>\n" +
+//              "                                            <tr>\n" +
+//              "                                                <td class=\"cta-block__title\" style=\"padding: 5px 0 0 0; font-size: 14px; text-align: left;text-indent: 22px\">\n" +
+//              "                                                    IT TEAM</td>\n" +
+//              "                                            </tr>\n" +
+//              "                                            <tr>\n" +
+//              "                                                <td class=\"cta-block__title\" style=\"padding: 5px 0 0 0; font-size: 14px; text-align: left;text-indent: 22px\">\n" +
+//              "                                                    Verinite</td>\n" +
+//              "                                            </tr>\n" +
+//              "                                      \n" +
+//              "                                        </table>\n" +
+//              "                                    </td>\n" +
+//              "                                </tr>\n" +
+//              "                            </table>\n" +
+//              "                        </td>\n" +
+//              "                    </tr>\n" +
+//              "                   </tbody>\n" +
+//              "                </table>\n" +
+//              "            </td>\n" +
+//              "        </tr>\n" +
+//              "    </table>\n" +
+//              "</body>\n" +
+//              "\n" +
+//              "</html>";
