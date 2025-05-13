@@ -1,0 +1,120 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+  }
+
+  .login-form-container {
+    margin-top: 0%;
+    /* margin-right: 9%; */
+    background: transparent !important;
+    /* box-shadow: none !important; */
+  }
+  
+  .login-form {
+    width: 85%;
+  }
+  
+  .form-container {
+    width: 22%;
+    padding: 50px 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px 0px rgba(44, 39, 39, 0.3); /* Box shadow */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .password-toggle-icon {
+    cursor: pointer;
+    color: #aaa;
+    font-size: 14px;
+    margin-left: -25px;
+  }
+  
+  .login-page {
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 100% 100%;
+  }
+  
+  .form-container h3 {
+    margin-bottom: 1.5rem;
+    text-align: center;
+    color: #41b5f0;
+  }
+  
+  .link-hover:hover {
+    background-color: transparent !important;
+  }
+  
+  .form-container input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    height: 50px;
+    border: 1px solid #ccc;
+    background-color:  #d1ecf9;
+    border-radius: 30px;
+    box-sizing: border-box;
+  }
+  
+  .form-container .text-right {
+    text-align: right;
+    margin-bottom: 10px;
+  }
+  
+  .form-container button {
+    background-color: #199FDD;
+    color: white;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+  }
+  .submit-btn span {
+    font-size: 15px;
+  }
+  .form-container .text-label {
+    text-align: center;
+    font-size: 17px;
+    margin-top: 15px;
+  }
+  .text-label a {
+    color: #000 !important;
+  }
+  
+  .form-container a {
+    color: #199FDD;
+    text-decoration: none;
+  }
+  
+  .form-container a:hover {
+    text-decoration: underline;
+    color: #08618e;
+  }
+  
+  .input-container {
+    position: relative;
+  }
+  
+  .form-container h1 {
+    font-family: 'Arial', sans-serif;
+    text-transform: uppercase;
+    font-weight: bold !important;
+    line-height: 16px;
+  }
+  
+  .icon {
+    position: absolute;
+    top: 40%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #000;
+  }
+  
