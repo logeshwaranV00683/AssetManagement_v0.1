@@ -13,7 +13,7 @@ CREATE TABLE `tbl_employee` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `tbl_admin` (
-  `admin_id` bigint NOT NULL,
+  `admin_id` bigint NOT NULL AUTO_INCREMENT,
   `emp_id` varchar(255) DEFAULT NULL,
   `first_name` varchar(255) DEFAULT NULL,
   `last_name` varchar(255) DEFAULT NULL,
@@ -25,10 +25,10 @@ CREATE TABLE `tbl_admin` (
   PRIMARY KEY (`admin_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-INSERT INTO `tbl_admin` (`admin_id`, `emp_id`, `first_name`, `last_name`, `location`, `mail`, `password`, `role`, `status`) 
+INSERT INTO `tbl_admin` (`emp_id`, `first_name`, `last_name`, `location`, `mail`, `password`, `role`, `status`)
 VALUES 
-(1, 'V00155', 'Gauri', 'Khalate', 'Pune', 'gauri.khalate@verinite.com', '$2a$10$WoCEnk6ZBoSW3FrjBTaKT.LIg/1T57USmRZYQPA.Okfc6Mizpqi1C', 'admin', 'Active'),
-(2, 'V00557', 'Soundararajan', 'S', 'Pune', 'soundararajan.s@verinite.com', '$2a$10$DMdRMpQ4KpF400DSngiHfu/SaOusIS2OyiDMQJfzZgqyHVK4JGmMu', 'admin', 'Active');
+('V00155', 'Gauri', 'Khalate', 'Pune', 'gauri.khalate@verinite.com', '$2a$10$WoCEnk6ZBoSW3FrjBTaKT.LIg/1T57USmRZYQPA.Okfc6Mizpqi1C', 'admin', 'Active'),
+('V00557', 'Soundararajan', 'S', 'Pune', 'soundararajan.s@verinite.com', '$2a$10$DMdRMpQ4KpF400DSngiHfu/SaOusIS2OyiDMQJfzZgqyHVK4JGmMu', 'admin', 'Active');
 
 
 CREATE TABLE `asset_types` (

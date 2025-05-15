@@ -13,7 +13,7 @@ import javax.validation.constraints.Email;
 public class AdminRegistrationEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "adminId", nullable = false, unique = true)
+	@Column(name = "admin_Id", nullable = false, unique = true)
 	private Long adminId;
 
 	@Column(name = "firstName")
