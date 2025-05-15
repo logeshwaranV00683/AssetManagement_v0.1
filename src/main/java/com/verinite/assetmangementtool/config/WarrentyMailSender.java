@@ -28,7 +28,7 @@ public class WarrentyMailSender {
 
     @Scheduled(cron = "0 18 14 * * *")
     public void getWarrentyExpiredAssets() throws MessagingException, UnsupportedEncodingException {
-        List<AssetsEntity> lessThanNintyDays = new ArrayList<>();
+        List<AssetsEntity> lessThanNinetyDays = new ArrayList<>();
         List<AssetsEntity> assetsEntityList = repository.findAll();
         for (AssetsEntity entity : assetsEntityList) {
             SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
@@ -45,29 +45,29 @@ public class WarrentyMailSender {
             long numberOfDays = ChronoUnit.DAYS.between(new Date().toInstant(), date1.toInstant());
             if (numberOfDays == 90 ) {
                 System.out.println("Success");
-                lessThanNintyDays.add(entity);
-               // notificationMail.nofiyMailer("ahalya.chandrasekaran@verinite.com",lessThanNintyDays);
+                lessThanNinetyDays.add(entity);
+               // notificationMail.nofiyMailer("ahalya.chandrasekaran@verinite.com",lessThanNinetyDays);
             }
             if (numberOfDays == 60 ) {
                 System.out.println("Success");
-                lessThanNintyDays.add(entity);
-               // notificationMail.nofiyMailer("ahalya.chandrasekaran@verinite.com",lessThanNintyDays);
+                lessThanNinetyDays.add(entity);
+               // notificationMail.nofiyMailer("ahalya.chandrasekaran@verinite.com",lessThanNinetyDays);
             }
             if (numberOfDays == 30 ) {
                 System.out.println("Success");
-                lessThanNintyDays.add(entity);
-                //notificationMail.nofiyMailer("ahalya.chandrasekaran@verinite.com",lessThanNintyDays);
+                lessThanNinetyDays.add(entity);
+                //notificationMail.nofiyMailer("ahalya.chandrasekaran@verinite.com",lessThanNinetyDays);
             }
             if(numberOfDays <= 15 && numberOfDays >=1){
                 System.out.println("Success");
-                lessThanNintyDays.add(entity);
-                //notificationMail.nofiyMailer("ahalya.chandrasekaran@verinite.com",lessThanNintyDays);
+                lessThanNinetyDays.add(entity);
+                //notificationMail.nofiyMailer("ahalya.chandrasekaran@verinite.com",lessThanNinetyDays);
             }
 
         }
 
-        if(0!=lessThanNintyDays.size() && null!= lessThanNintyDays){
-            notificationMail.nofiyMailer("ahalya.chandrasekaran@verinite.com",lessThanNintyDays);
+        if(0!=lessThanNinetyDays.size() && null!= lessThanNinetyDays){
+            notificationMail.notifyMailer("elangovan.p@verinite.com",lessThanNinetyDays);
 
         }
     }

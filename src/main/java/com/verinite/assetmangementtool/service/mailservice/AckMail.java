@@ -30,7 +30,7 @@ public class AckMail {
       EmployeeEntity empData= empRepo.findByEmpId(empId);
       MimeMessage message = javaMailSender.createMimeMessage();
       MimeMessageHelper helper = new MimeMessageHelper(message);
-      helper.setFrom("bookstore.verinite@gmail.com", "Assets Acknowledgement Notification");
+      helper.setFrom("elangovan.p@verinite.com", "Assets Acknowledgement Notification");
       helper.setTo(empData.getMail());
       String subject = "Assets Acknowledgement";
       helper.setSubject(subject);

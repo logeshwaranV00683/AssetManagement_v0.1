@@ -13,10 +13,10 @@ public class OTPMailer {
 
     @Autowired
     private JavaMailSender mailSender;
-    public String mailAuthendicator(String name,String mail,String random,String empId) throws MessagingException, UnsupportedEncodingException {
+    public String mailAuthenticator(String name, String mail, String random, String empId) throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
-        helper.setFrom("bookstore.verinite@gmail.com", "Asstemanager");
+        helper.setFrom("elangovan.p@verinite.com", "Asset manager");
         helper.setTo(mail);
 
 
@@ -212,10 +212,10 @@ public class OTPMailer {
         return "Mail sent Successfully Please Check Your Inbox and Confirm the mail";
     }
 
-    public void mailResender(String name, String mail, String random, String empId) throws MessagingException, UnsupportedEncodingException {
+    public void mailReSender(String name, String mail, String random, String empId) throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
-        helper.setFrom("bookstore.verinite@gmail.com", "Asstemanager");
+        helper.setFrom("elangovan.p@verinite.com", "Asset manager");
         helper.setTo(mail);
         String subject = "Verify Your Mail with OTP";
         helper.setSubject(subject);

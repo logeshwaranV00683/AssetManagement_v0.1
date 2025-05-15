@@ -16,10 +16,10 @@ import java.util.List;
 public class NotificationMail {
     @Autowired
     private JavaMailSender mailSender;
-    public ResponseEntity nofiyMailer(String mail, List<AssetsEntity> list) throws MessagingException, UnsupportedEncodingException {
+    public ResponseEntity notifyMailer(String mail, List<AssetsEntity> list) throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
-        helper.setFrom("bookstore.verinite@gmail.com", "Asstemanager Notification");
+        helper.setFrom("elangovan.p@verinite.com", "Asstemanager Notification");
         helper.setTo(mail);
 
         String subject = "Warranty Notification";
