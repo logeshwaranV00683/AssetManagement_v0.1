@@ -91,6 +91,7 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
 			dto.setAddedBy(asset.getAddedBy() != null ? asset.getAddedBy() : "");
 			dto.setAssignedDate(asset.getAssignedDate());
 			dto.setAssignedBy(asset.getAssignedBy() != null ? asset.getAssignedBy() : "");
+			dto.setAssertSourcedBy(asset.getAssertSourcedBy() != null ? asset.getAssertSourcedBy() : "");
 
 			// Null check for employee
 			if (employee != null) {
@@ -181,6 +182,7 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
 						asset.setAssignedDate(assignableAssetDto.getAssignedDate());
 						asset.setAssignedBy(assignableAssetDto.getAssignedBy());
 						asset.setEmpId(empId);
+						assignedAssetsEntity.setAssertSourcedBy(asset.getAssertSourcedBy());
 
 						for (CountOfAssets i : countOfAssets) {
 							if (asset.getLocation().equalsIgnoreCase(i.getLocation())) {
@@ -320,6 +322,7 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
 			row.createCell(14).setCellValue(asset.getAddedBy());
 			row.createCell(15).setCellValue(asset.getAssignedDate() != null ? asset.getAssignedDate().toString() : "");
 			row.createCell(16).setCellValue(asset.getAssignedBy());
+
 		}
 
 		// Write to the output stream

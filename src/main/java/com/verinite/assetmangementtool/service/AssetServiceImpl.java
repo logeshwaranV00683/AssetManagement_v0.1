@@ -12,7 +12,6 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.util.PropertySource.Comparator;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -419,6 +418,19 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
 		return countOfAsset.getLaptopCount();
 	}
 
+
+
+
+	/// /////////////////////////////////////////////////
+//	@Override
+//	public int getLaptopCountByAssertSourced(String assertSourcedBy) {
+//		CountOfAssets countOfAsset = assetCountRepository.findByAssertSourcedBy(assertSourcedBy);
+//		return countOfAsset.getLaptopCount();
+//	}
+	/// //////////////////////////////
+	///
+	///
+	///
 	@Override
 	public int totalLaptops() {
 		List<CountOfAssets> countOfAssets = assetCountRepository.findAll();
@@ -525,6 +537,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
 				assetsHistoryEntity.setSerialNumber(asset.getSerialNumber());
 				assetsHistoryEntity.setAssignedBy(asset.getAssignedBy());
 				assetsHistoryEntity.setAssignedDate(asset.getAssignedDate());
+				assetsHistoryEntity.setAssertSourcedBy(asset.getAssertSourcedBy());
 				asset.setEmpId(null);
 				asset.setAssignedBy(null);
 				asset.setAssignedDate(null);

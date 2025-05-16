@@ -13,4 +13,5 @@ public interface AssetCountRepository extends JpaRepository<CountOfAssets, Strin
 
 	CountOfAssets findByLocation(String str);
 
+	//CountOfAssets findByAssertSourcedBy(String name);
 }

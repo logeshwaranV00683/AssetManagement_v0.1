@@ -45,6 +45,9 @@ public class AssignedAssetsEntity {
 	private Date assignedDate;
 	private String assignedBy;
 
+	private String assertSourcedBy;
+
+
 	public int getLocCode() {
 		return locCode;
 	}
@@ -179,6 +182,15 @@ public class AssignedAssetsEntity {
 
 	public void setAssetId(Integer assetId) {
 		this.assetId = assetId;
+	}
+
+
+	public String getAssertSourcedBy() {
+		return assertSourcedBy;
+	}
+
+	public void setAssertSourcedBy(String assertSourcedBy) {
+		this.assertSourcedBy = assertSourcedBy;
 	}
 
 }

@@ -35,6 +35,9 @@ public class AssetsHistoryEntity {
 	private Date assignedDate;
 	private String assignedBy;
 
+	private String assertSourcedBy;
+
+
 	public int getLocCode() {
 		return locCode;
 	}
@@ -161,6 +164,15 @@ public class AssetsHistoryEntity {
 
 	public void setAssignedBy(String assignedBy) {
 		this.assignedBy = assignedBy;
+	}
+
+
+	public String getAssertSourcedBy() {
+		return assertSourcedBy;
+	}
+
+	public void setAssertSourcedBy(String assertSourcedBy) {
+		this.assertSourcedBy = assertSourcedBy;
 	}
 
 }

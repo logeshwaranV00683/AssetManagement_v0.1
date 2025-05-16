@@ -25,7 +25,9 @@ public interface AssetService {
 
 	public int getLaptopCountByLocation(String id);
 
-	public int totalLaptops();
+//    public int getLaptopCountByAssertSourced(String assertSourcedBy);
+
+    public int totalLaptops();
 
 	public int getCountOfUnassignedByLocation(String id);
 

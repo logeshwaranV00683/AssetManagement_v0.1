@@ -11,19 +11,24 @@ import java.util.Date;
 public class AssetsDto {
 
 	private int assetId;
-	private String assetName;
-	private String serialNumber;
+	private String assetName;	//
+	private String serialNumber;	//
 	private String type;
 	private String status;
-	private String purchaseDate;
+	private String purchaseDate;	//
 
-	private String warrantyDate;
+	private String warrantyDate;	//
 
-	private String location;
+	private String location;	//
 
 	private String modelName;
 
 	private String operatingSystem;
+
+	private String assertSourcedBy;
+
+
+
 
 	public int getAssetId() {
 		return assetId;
@@ -32,8 +37,8 @@ public class AssetsDto {
 	public void setAssetId(int assetId) {
 		this.assetId = assetId;
 	}
-
-	private String addedBy;
+//
+	private String addedBy;		//
 
 	public String getAssetName() {
 		return assetName;
@@ -115,5 +120,15 @@ public class AssetsDto {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+
+
+	public String getAssertSourcedBy() {
+		return assertSourcedBy;
+	}
+
+	public void setAssertSourcedBy(String assertSourcedBy) {
+		this.assertSourcedBy = assertSourcedBy;
 	}
 }

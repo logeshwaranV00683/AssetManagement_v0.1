@@ -43,6 +43,10 @@ public class AssetsEntity {
 	private Date assignedDate;
 	private String assignedBy;
 
+
+
+	private String assertSourcedBy;
+
 	public Integer getLocCode() {
 		return locCode;
 	}
@@ -169,6 +173,14 @@ public class AssetsEntity {
 
 	public void setAssignedBy(String assignedBy) {
 		this.assignedBy = assignedBy;
+	}
+
+	public String getAssertSourcedBy() {
+		return assertSourcedBy;
+	}
+
+	public void setAssertSourcedBy(String assertSourcedBy) {
+		this.assertSourcedBy = assertSourcedBy;
 	}
 
 }
