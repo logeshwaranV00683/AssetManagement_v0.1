@@ -46,29 +46,28 @@ public class WarrentyMailSender {
             if (numberOfDays == 90 ) {
                 System.out.println("Success");
                 lessThanNinetyDays.add(entity);
-               // notificationMail.nofiyMailer("ahalya.chandrasekaran@verinite.com",lessThanNinetyDays);
+                //notificationMail.notifyMailer("elangovan.p@verinite.com",lessThanNinetyDays);
             }
             if (numberOfDays == 60 ) {
                 System.out.println("Success");
                 lessThanNinetyDays.add(entity);
-               // notificationMail.nofiyMailer("ahalya.chandrasekaran@verinite.com",lessThanNinetyDays);
+                //notificationMail.notifyMailer("elangovan.p@verinite.com",lessThanNinetyDays);
             }
             if (numberOfDays == 30 ) {
                 System.out.println("Success");
                 lessThanNinetyDays.add(entity);
-                //notificationMail.nofiyMailer("ahalya.chandrasekaran@verinite.com",lessThanNinetyDays);
+                //notificationMail.notifyMailer("elangovan.p@verinite.com",lessThanNinetyDays);
             }
             if(numberOfDays <= 15 && numberOfDays >=1){
                 System.out.println("Success");
                 lessThanNinetyDays.add(entity);
-                //notificationMail.nofiyMailer("ahalya.chandrasekaran@verinite.com",lessThanNinetyDays);
+                //notificationMail.notifyMailer("elangovan.p@verinite.com",lessThanNinetyDays);
             }
 
         }
 
-        if(0!=lessThanNinetyDays.size() && null!= lessThanNinetyDays){
+        if(!lessThanNinetyDays.isEmpty()){
             notificationMail.notifyMailer("elangovan.p@verinite.com",lessThanNinetyDays);
-
         }
     }
 

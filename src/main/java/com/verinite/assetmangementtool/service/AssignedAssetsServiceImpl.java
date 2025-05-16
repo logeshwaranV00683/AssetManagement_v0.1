@@ -150,110 +150,6 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
 		return deletedMessage;
 	}
 
-//	@Override
-//	public ResponseEntity<?> save(AssignableAssetDto assignableAssetDto) {
-//		String id = assignableAssetDto.getEmpId();
-//		EmployeeEntity employeeEntity = (EmployeeEntity) employeeRepository.findByEmpId(id);
-//		if (employeeEntity != null) {
-//			AssetsEntity asset = assetsRepo.findBySerialNumber(assignableAssetDto.getSerialNumber());
-//			AssignedAssetsEntity assignedAssetsEntity = new AssignedAssetsEntity();
-//			try {
-//				List<CountOfAssets> countOfAssets = assetCountRepository.findAll();
-//				if (!asset.getStatus().equalsIgnoreCase("scrap")) {
-//					assignedAssetsEntity.setAssetId(asset.getAssetId());
-//					assignedAssetsEntity.setAssetName(asset.getAssetName());
-//					assignedAssetsEntity.setEmpId(assignableAssetDto.getEmpId());
-//					assignedAssetsEntity.setLocation(asset.getLocation());
-//					assignedAssetsEntity.setModelName(asset.getModelName());
-//					assignedAssetsEntity.setOperatingSystem(asset.getOperatingSystem());
-//					assignedAssetsEntity.setPurchaseDate(asset.getPurchaseDate());
-//					assignedAssetsEntity.setWarrantyDate(asset.getWarrantyDate());
-//					assignedAssetsEntity.setAssignedBy(assignableAssetDto.getAssignedBy());
-//					assignedAssetsEntity.setAssignedDate(assignableAssetDto.getAssignedDate());
-//					assignedAssetsEntity.setStatus("Assigned");
-//					assignedAssetsEntity.setType(asset.getType());
-//					assignedAssetsEntity.setSerialNumber(asset.getSerialNumber());
-//					asset.setStatus("Assigned");
-//					asset.setAssignedDate(assignableAssetDto.getAssignedDate());
-//					asset.setAssignedBy(assignableAssetDto.getAssignedBy());
-//					asset.setEmpId(assignableAssetDto.getEmpId());
-//					for (CountOfAssets i : countOfAssets) {
-//						if (asset.getLocation().equalsIgnoreCase(i.getLocation())) {
-//							if (asset.getAssetName().equalsIgnoreCase("Laptop")) {
-//								i.setUnAssignedLaptopCount(i.getUnAssignedLaptopCount() - 1);
-//								assetCountRepository.save(i);
-//							}
-//							if (asset.getAssetName().equalsIgnoreCase("Mouse")) {
-//								i.setUnAssignedMouseCount(i.getUnAssignedMouseCount() - 1);
-//								assetCountRepository.save(i);
-//							}
-//							if (asset.getAssetName().equalsIgnoreCase("LaptopCharger")) {
-//								i.setUnAssignedLaptopChargerCount(i.getUnAssignedLaptopChargerCount() - 1);
-//								assetCountRepository.save(i);
-//							}
-//							if (asset.getAssetName().equalsIgnoreCase("HaedPhone")) {
-//								i.setUnAssignedHeadphonesCount(i.getUnAssignedHeadphonesCount() - 1);
-//								assetCountRepository.save(i);
-//							}
-//							if (asset.getAssetName().equalsIgnoreCase("Bag")) {
-//								i.setUnAssignedBagCount(i.getUnAssignedBagCount() - 1);
-//								assetCountRepository.save(i);
-//							}
-//
-//							if (asset.getAssetName().equalsIgnoreCase("DataCard")) {
-//								i.setUnAssignedDataCardCount(i.getUnAssignedDataCardCount() - 1);
-//								assetCountRepository.save(i);
-//							}
-//
-//							if (asset.getAssetName().equalsIgnoreCase("Mobile")) {
-//								i.setUnAssignedMobileCount(i.getUnAssignedMobileCount() - 1);
-//								assetCountRepository.save(i);
-//							}
-//							if (asset.getAssetName().equalsIgnoreCase("Camera")) {
-//								i.setUnAssignedCameraCount(i.getUnAssignedCameraCount() - 1);
-//								assetCountRepository.save(i);
-//							}
-//							if (asset.getAssetName().equalsIgnoreCase("Projector")) {
-//								i.setUnAssignedProjectorCount(i.getUnAssignedProjectorCount() - 1);
-//								assetCountRepository.save(i);
-//							}
-//							if (asset.getAssetName().equalsIgnoreCase("FireWall")) {
-//								i.setUnAssignedFireWallCount(i.getUnAssignedFireWallCount() - 1);
-//								assetCountRepository.save(i);
-//							}
-//							if (asset.getAssetName().equalsIgnoreCase("Switch")) {
-//								i.setUnAssignedSwitchCount(i.getUnAssignedSwitchCount() - 1);
-//								assetCountRepository.save(i);
-//							}
-//							if (asset.getAssetName().equalsIgnoreCase("DVR")) {
-//								i.setUnAssignedDvrCount(i.getUnAssignedDvrCount() - 1);
-//								assetCountRepository.save(i);
-//							}
-//							if (asset.getAssetName().equalsIgnoreCase("Speaker")) {
-//								i.setUnAssignedSpeakerCount(i.getUnAssignedSpeakerCount() - 1);
-//								assetCountRepository.save(i);
-//							}
-//
-//							assetCountRepository.save(i);
-//
-//						}
-//					}
-//
-//					assignedAssetsRepository.save(assignedAssetsEntity);
-//					return ResponseEntity.ok(HttpStatus.OK);
-//				}
-//
-//				else
-//					return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Asset was in Scrap");
-//			} catch (Exception e) {
-//				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("asset");
-//			}
-//		} else {
-//			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("emp");
-//		}
-//
-//	}
-
 	public ResponseEntity<?> save(List<AssignableAssetDto> assignableAssetDtos) {
 		String empId = assignableAssetDtos.get(0).getEmpId(); // Assuming all assets belong to the same employee
 		EmployeeEntity employeeEntity = employeeRepository.findByEmpId(empId);
@@ -295,12 +191,12 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
 
 						assignedAssetsRepository.save(assignedAssetsEntity);
 						assetsRepo.save(asset); // Update asset status
-						//emailAssetService.save(assignableAssetDtos);
+						emailAssetService.save(assignableAssetDtos);
 					} else {
 						return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Asset was in Scrap");
 					}
 				}
-				return ResponseEntity.ok(HttpStatus.OK);
+				return ResponseEntity.ok("Asset Assigned To "+employeeEntity.getEmpId());
 			} catch (Exception e) {
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("asset");
 			}
