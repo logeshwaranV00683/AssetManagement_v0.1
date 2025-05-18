@@ -6,6 +6,7 @@ import TextField from '@mui/material/TextField';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import "./Assets.css"
 import AddAssetModal from './AddAssetModal';
+import ExportButton from './ExportButton';
 const useStyles = makeStyles((theme) => ({
     content: {
         flexGrow: 1,
@@ -22,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
 function Assets() {
     const classes = useStyles();
     const [openModal, setOpenModal] = useState(false);
+    const [exportType, setExportType] = useState('all');
 
     const handleOpenModal = () => {
         setOpenModal(true);
@@ -79,6 +81,7 @@ function Assets() {
     const resetFilters = () => {
         setFilterValue('');
         setFilteredRows(rows);
+        setExportType('all');
     };
     const handleClose = () => {
         setOpenModal(false)
@@ -87,11 +90,18 @@ function Assets() {
     const filterAssigned = () => {
         const assignedRows = rows.filter(row => row.assignedTo !== 'Unassigned');
         setFilteredRows(assignedRows);
+        setExportType('assigned');
     };
+
+    const filterScrap = () => {// this is not added in the old one Logeshwaran added for export, still it doesn't fetch data from scrap table and it has to.
+        setFilteredRows(rows.filter(row => row.assignedTo === 'Scrap'));
+        setExportType('scrap');
+      };
 
     const filterUnassigned = () => {
         const unassignedRows = rows.filter(row => row.assignedTo === 'Unassigned');
         setFilteredRows(unassignedRows);
+        setExportType('unassigned');
     };
 
     return (
@@ -109,6 +119,13 @@ function Assets() {
                         >
                             Add Asset
                         </Button>
+                        <ExportButton
+                             type="assets"
+                             status={exportType}
+                             filter={filterValue}
+                             buttonLabel={`Export ${exportType} Assets`}
+                             filePrefix="Verinite"
+                        />
                         <TextField
                             label="Search"
                             variant="standard"
@@ -120,7 +137,7 @@ function Assets() {
                         <ButtonGroup variant="contained" style={{ boxShadow: 'none' }}>
                             <Button className="btn-border" onClick={filterUnassigned}>Unassigned</Button>
                             <Button className="btn-border" onClick={filterAssigned}>Assigned</Button>
-                            <Button className="btn-border" onClick={filterUnassigned}>Scrap</Button>
+                            <Button className="btn-border" onClick={filterScrap}>Scrap</Button>
                             <Button className="btn-border" variant="contained" onClick={resetFilters}>
                                 Reset
                             </Button>

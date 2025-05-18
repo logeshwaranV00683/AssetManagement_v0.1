@@ -8,6 +8,7 @@ import AddEmployeeModal from './AddEmployeeModal';
 import EditEmployeeModal from './EditEmployeeModal';
 import "./Employee.css";
 import { getEmployeeList } from '../../services/config';
+import ExportButton from './ExportButton';
 
 const useStyles = makeStyles((theme) => ({
     content: {
@@ -39,6 +40,7 @@ function Employee() {
     const [filterValue, setFilterValue] = useState('');
     const [filteredRows, setFilteredRows] = useState([]);
     const [viewOnly, setViewOnly] = useState(false);
+    const [exportType, setExportType] = useState('all');  // renamed here
 
     const fetchEmployees = async () => {
         try {
@@ -85,9 +87,11 @@ function Employee() {
     const resetFilters = () => {
         setFilterValue('');
         setFilteredRows(employees);
+        setExportType('all');  // renamed here
     };
 
     const filterByStatus = (status) => {
+        setExportType(status);  // renamed here
         const filtered = employees.filter(employee => employee.status.toLowerCase() === status.toLowerCase());
         setFilteredRows(filtered);
     };
@@ -134,7 +138,7 @@ function Employee() {
                     >
                         Delete
                     </Button>
-                    
+
                 </div>
             ),
         },
@@ -154,6 +158,13 @@ function Employee() {
                         >
                             Add Employee
                         </Button>
+                       <ExportButton
+                         type="employees"
+                         status={exportType}
+                         filter={filterValue}
+                         buttonLabel={`Export ${exportType} Employees`}
+                         filePrefix="Verinite"
+                       />
                         <TextField
                             label="Search"
                             variant="standard"
