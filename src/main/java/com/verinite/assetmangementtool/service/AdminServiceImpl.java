@@ -3,6 +3,8 @@ package com.verinite.assetmangementtool.service;
 import java.util.List;
 import java.util.Objects;
 
+import com.verinite.assetmangementtool.dto.AdminRegistrationDto;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +36,8 @@ public class AdminServiceImpl implements AdminService {
 	JwtTokenUtil jwtTokenUtil;
 	@Autowired
 	JwtUserDetailsServie jwtUserDetailsServie;
+	@Autowired
+	ModelMapper modelMapper;
 
 	@Autowired
 	BCryptPasswordEncoder encoder;
@@ -84,12 +88,11 @@ public class AdminServiceImpl implements AdminService {
 
 	@Override
 	public ResponseEntity<?> checkLogin(AdminLoginDto login) throws Exception {
-
 		AdminRegistrationEntity adminData = (AdminRegistrationEntity) registerRepo.findByEmpId(login.getEmpId());
 		authenticate(login.getEmpId(), login.getPassword());
 		final UserDetails userDetails = jwtUserDetailsServie.loadUserByUsername(adminData.getEmpId());
 		final String token = jwtTokenUtil.generateToken(userDetails);
-		return new ResponseEntity(new JwtResponse(token), HttpStatus.OK);
+		return new ResponseEntity(new JwtResponse<AdminRegistrationDto>(token, modelMapper.map(adminData,AdminRegistrationDto.class) ), HttpStatus.OK);
 
 	}
 
