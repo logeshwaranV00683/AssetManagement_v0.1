@@ -55,9 +55,8 @@ const Login = () => {
 
       if (data && data.token) {
         localStorage.setItem('authToken', data.token);
-        localStorage.setItem('isLogin', 'yes');
-        localStorage.setItem('empId', formData.employeeId); // Store empId and password in localStorage
-
+        localStorage.setItem('isLogin', 'yes'); 
+        localStorage.setItem('user', JSON.stringify(data.data));
         // if (data.role !== 'ADMIN') {
         //   navigate('/');
         // } else {

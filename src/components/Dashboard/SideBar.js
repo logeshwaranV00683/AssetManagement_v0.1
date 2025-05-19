@@ -40,18 +40,23 @@ const useStyles = makeStyles((theme) => ({
   },
   toolbar: theme.mixins.toolbar,
 }));
-
-const Sidebar = () => {
-  useEffect(() => {
-    console.log('loc', window.location.pathname);
-    if (window.location.pathname === '/dashboard') {
-      setSelectedItem('dashboard')
-    }
-  }, [])
+ const Sidebar = () => {
   const navigate = useNavigate();
-
   const classes = useStyles();
+
   const [selectedItem, setSelectedItem] = useState('');
+  const [userInfo, setUserInfo] = useState({ name: '', empId: '' });
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+      setUserInfo({ name: user.firstName, empId: user.empId });
+    }
+
+    if (window.location.pathname === '/dashboard') {
+      setSelectedItem('dashboard');
+    }
+  }, []);
 
   const handleItemClick = (item) => {
     console.log('item', item);
@@ -72,11 +77,11 @@ const Sidebar = () => {
       <div className={`${classes.toolbar} align`}>
         <div className='admin'>
           <span className='title'>Admin: </span>
-          <span className='title-val'>ABCD</span>
+          <span className='title-val'>{userInfo.name || 'Loading...'}</span>
         </div>
         <div className='emp'>
           <span className='title'>Emp Id: </span>
-          <span className='title-val'>1222332</span>
+          <span className='title-val'>{userInfo.empId || 'Loading...'}</span>
         </div>
       </div>
       <List>
