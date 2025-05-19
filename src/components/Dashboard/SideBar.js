@@ -75,14 +75,6 @@ const useStyles = makeStyles((theme) => ({
       }}
     >
       <div className={`${classes.toolbar} align`}>
-        <div className='admin'>
-          <span className='title'>Admin: </span>
-          <span className='title-val'>{userInfo.name || 'Loading...'}</span>
-        </div>
-        <div className='emp'>
-          <span className='title'>Emp Id: </span>
-          <span className='title-val'>{userInfo.empId || 'Loading...'}</span>
-        </div>
       </div>
       <List>
         <ListItem button className={`${classes.listItem} ${selectedItem === 'dashboard' ? classes.selected : ''}`}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import {
   AppBar,
   Toolbar,
@@ -14,6 +14,7 @@ import { colors } from "@mui/material";
 
 const Header = ({ onLogout }) => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [userInfo, setUserInfo] = useState({ name: ''})
   const navigate = useNavigate();
   onLogout = () => {
     navigate("/login");
@@ -25,6 +26,12 @@ const Header = ({ onLogout }) => {
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
+   useEffect(() => {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (user) {
+        setUserInfo({ name: user.firstName});
+      }
+    }, []);
 
   return (
     <AppBar position="static" color="default">
@@ -33,6 +40,7 @@ const Header = ({ onLogout }) => {
           Your App Name
         </Typography>
         <div>
+          <span className='title-val'>{"Welcome! "+userInfo.name+" "|| 'Loading...'}</span>
           <IconButton
             aria-label="account of current user"
             aria-controls="menu-appbar"
