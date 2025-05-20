@@ -1,0 +1,80 @@
+.floating-button {
+  position: fixed;
+  bottom: 10vh;
+  right: 24px;
+  min-width: 180px;
+  max-width: 240px;
+  padding: 0 16px;
+  height: 60px;
+  background: rgba(0, 177, 6, 0.9); /* ✅ Base green */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: white;
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 177, 6, 0.5), 0 4px 12px rgba(0, 0, 0, 0.15); /* ✅ Green glow */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(12px, 1.2vw, 16px);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  z-index: 2000;
+  text-align: center;
+  text-wrap: balance;
+  overflow: hidden;
+}
+
+.floating-button span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  animation: bounceText 1.2s ease-in-out infinite;
+  color: white; /* ✅ Ensure consistent white text */
+}
+
+/* Hover effects */
+.floating-button:hover {
+  transform: rotateX(8deg) translateY(-6px) scale(1.05);
+  background: rgba(0, 150, 0, 0.95); /* ✅ Darker green on hover */
+  box-shadow: 0 20px 40px rgba(0, 150, 0, 0.5), 0 10px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* Shine effect */
+.floating-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+  transform: skewX(-25deg);
+  pointer-events: none;
+}
+
+.floating-button:hover::before {
+  animation: shine 0.8s forwards;
+}
+
+/* Animations */
+@keyframes shine {
+  from {
+    left: -75%;
+  }
+  to {
+    left: 125%;
+  }
+}
+
+@keyframes bounceText {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}

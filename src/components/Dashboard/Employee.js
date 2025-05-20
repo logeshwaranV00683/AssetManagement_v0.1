@@ -9,6 +9,7 @@ import EditEmployeeModal from './EditEmployeeModal';
 import "./Employee.css";
 import { getEmployeeList } from '../../services/config';
 import ExportButton from './ExportButton';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
 const useStyles = makeStyles((theme) => ({
     content: {
@@ -158,13 +159,7 @@ function Employee() {
                         >
                             Add Employee
                         </Button>
-                       <ExportButton
-                         type="employees"
-                         status={exportType}
-                         filter={filterValue}
-                         buttonLabel={`Export ${exportType} Employees`}
-                         filePrefix="Verinite"
-                       />
+                       
                         <TextField
                             label="Search"
                             variant="standard"
@@ -186,6 +181,20 @@ function Employee() {
                                 pageSize={5}
                                 rowsPerPageOptions={[5, 10, 20]}
                             />
+                        </div>
+                        <div className="floating-button">
+                          <ExportButton
+                            type="employees"
+                            status={exportType}
+                            filter={filterValue}
+                            filePrefix="Verinite"
+                            buttonLabel={
+                              <span style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'white' }}>
+                                <FileDownloadIcon style={{ fontSize: 20 }} />
+                                {`Export ${exportType} Employees`}
+                              </span>
+                            }
+                          />
                         </div>
                     </div>
                 </Container>

@@ -7,6 +7,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import "./Assets.css"
 import AddAssetModal from './AddAssetModal';
 import ExportButton from './ExportButton';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 const useStyles = makeStyles((theme) => ({
     content: {
         flexGrow: 1,
@@ -37,66 +38,10 @@ function Assets() {
     ];
 
     const columns = [
-        { field: 'name',headerName: 'Name', width: 200, sortable: true,
-            renderHeader: () => (
-                <Box display="flex" flexDirection="column" alignItems="center" padding={0}>
-                <div>Name</div>
-                <TextField
-                    label="Search"
-                    variant="outlined"
-                    size="small"
-                    onChange={handleSearch}
-                    InputLabelProps={{ style: { fontSize: 11 } }}
-                    style={{ marginTop: 2, width: 140, height: 30 }}
-                    inputProps={{ style: { fontSize: 10, padding: '6px 8px' } }}
-                >Search</TextField>
-                </Box>
-            ),},
-    
-        { field: 'serialNumber', headerName: 'Serial Number', width: 200, sortable: true, renderHeader: () => (
-                <Box display="flex" flexDirection="column" alignItems="center" padding={0}>
-                <div>Serial Number</div>
-                <TextField
-                    label="Search"
-                    variant="outlined"
-                    size="small"
-                    onChange={handleSearch}
-                    InputLabelProps={{ style: { fontSize: 11 } }}
-                    style={{ marginTop: 2, width: 140, height: 30 }}
-                    inputProps={{ style: { fontSize: 10, padding: '6px 8px' } }}
-                >Search</TextField>
-                </Box>
-            ),},
-
-
-        { field: 'assignedTo', headerName: 'Assigned To', width: 200, sortable: true, renderHeader: () => (
-                <Box display="flex" flexDirection="column" alignItems="center" padding={0}>
-                <div>Assigned To</div>
-                <TextField
-                    label="Search"
-                    variant="outlined"
-                    size="small"
-                    onChange={handleSearch}
-                    InputLabelProps={{ style: { fontSize: 11 } }}
-                    style={{ marginTop: 2, width: 140, height: 30 }}
-                    inputProps={{ style: { fontSize: 10, padding: '6px 8px' } }}
-                >Search</TextField>
-                </Box>
-            ),},
-        { field: 'location', headerName: 'Location', width: 200, sortable: true, renderHeader: () => (
-                <Box display="flex" flexDirection="column" alignItems="center" padding={0}>
-                <div>Location</div>
-                <TextField
-                    label="Search"
-                    variant="outlined"
-                    size="small"
-                    onChange={handleSearch}
-                    InputLabelProps={{ style: { fontSize: 11 } }}
-                    style={{ marginTop: 2, width: 140, height: 30 }}
-                    inputProps={{ style: { fontSize: 10, padding: '6px 8px' } }}
-                >Search</TextField>
-                </Box>
-            ),},
+        { field: 'name',headerName: 'Name', width: 200, sortable: true},
+        { field: 'serialNumber', headerName: 'Serial Number', width: 200, sortable: true},
+        { field: 'assignedTo', headerName: 'Assigned To', width: 200, sortable: true},
+        { field: 'location', headerName: 'Location', width: 200, sortable: true},
         {
             field: 'actions',
             headerName: 'Actions',
@@ -164,7 +109,7 @@ function Assets() {
     };
 
     return (
-        <div>
+        <div style={{width:'195vh'}}>
             <main className={classes.content}>
                 <Container maxWidth="lg">
                     <div className={classes.filterContainer}>
@@ -172,24 +117,18 @@ function Assets() {
                         <Button
                             variant="contained"
                             color="primary"
-                            style={{ marginRight: 10 }}
+                            style={{ marginRight: 10, width: '10vw' }}
                             startIcon={<AddCircleOutlineIcon />} // Add the icon as startIcon
                             onClick={handleOpenModal}
                         >
                             Add Asset
                         </Button>
-                        <ExportButton
-                             type="assets"
-                             status={exportType}
-                             filter={filterValue}
-                             buttonLabel={`Export ${exportType} Assets`}
-                             filePrefix="Verinite"
-                        />
+                        
                         <TextField
                             label="Search"
                             variant="standard"
                             onChange={handleSearch}
-                            style={{ width: 400 }}
+                            style={{ width: 400,margin: '30px' }}
                         />
                         {/* </Box> */}
                         {/* <Box display="flex" alignItems="center" justifyContent={'centr'}> */}
@@ -204,7 +143,7 @@ function Assets() {
                         </ButtonGroup>
                         {/* </Box> */}
                     </div>
-                    <div style={{ height: 400, width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div style={{ height: '70vh', width: '85vw', display: 'flex', flexDirection: 'column', alignItems: 'center', }}>
                         <div style={{ height: 350, marginLeft: '2%', width: '95%', flexGrow: 1 }}>
                             <DataGrid
                                 rows={filteredRows}
@@ -212,14 +151,31 @@ function Assets() {
                                 pageSize={5}
                                 rowsPerPageOptions={[5, 10, 20]}
                             />
+                            
                         </div>
+                        <div className="floating-button">
+                            <ExportButton
+                                type="assets"
+                                status={exportType}
+                                filter={filterValue}
+                                filePrefix="Verinite"
+                                buttonLabel={
+                                <span style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'white' }}>
+                                    <FileDownloadIcon style={{ fontSize: 20 }} />
+                                    {`Export ${exportType} Assets`}
+                                </span>
+                                }
+                            />
+                            </div>
                     </div>
+                    
                 </Container>
                 
                 <AddAssetModal open={openModal} handleClose={handleClose} />
-
+                
             </main>
         </div>
+        
     );
 }
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Button } from '@mui/material';
-
+import './ExportButton.css'
 const ExportButton = ({
   type,        // 'employees' or 'assets' or anything your backend supports
   status = '', // 'assigned', 'unassigned', 'scrap', etc. Optional
@@ -56,13 +56,14 @@ const ExportButton = ({
 
   return (
     <Button
-      variant="contained"
-      color="primary"
-      onClick={handleExport}
-      disabled={loading}
-    >
-      {loading ? 'Exporting...' : buttonLabel || `Export ${type}`}
-    </Button>
+  onClick={handleExport}
+  disabled={loading} 
+>
+  {loading ? 'Exporting...' : buttonLabel || `Export ${type}`}
+</Button>
+
+
+    
   );
 };
 

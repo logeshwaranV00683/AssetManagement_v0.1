@@ -17,7 +17,7 @@ function AddAssetModal({ open, handleClose }) {
   const [purchaseDate, setPurchaseDate] = useState('');
   const [warrantyDate, setWarrantyDate] = useState('');
   const [addedBy, setAddedBy] = useState('');
-  const [assertSourcedBy, setAssertSourcedBy] = useState('');
+  const [assertSourcedBy, setAssertSourcedBy] = useState('Verinite');
 
   const handleAddAsset = () => {
     console.log('Asset added:', {
