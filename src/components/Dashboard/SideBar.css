@@ -1,20 +1,62 @@
 .admin {
-    margin-top: 30px;
-    margin-bottom: 15px;
+    margin-top: 32px;
+    margin-bottom: 12px;
+    text-align: center;
 }
+
+.emp {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
 .align {
     display: flex;
-    justify-content: center;
     flex-direction: column;
     align-items: center;
+    padding: 1px;
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #ddd;
 }
-.emp {
-    margin-bottom: 15px;
-}
+
 .title {
-    color: red;
+    color: #333;
+    font-weight: 500;
+    margin-right: 4px;
 }
+
 .title-val {
-    color: green;
-    font-weight: bold;
+    color: #616161; /* A deeper green for better contrast */
+    font-weight: 600;
+    font-size: 15px;
+
 }
+
+.drawerPaper {
+    background-color: #ffffff;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-hover .MuiListItem-root {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.sidebar-hover .MuiListItem-root:hover {
+  background-color: #e3f2fd; /* Light hover */
+  color: #000;
+}
+
+.sidebar-hover .MuiListItem-root:hover .MuiListItemIcon-root {
+  color: #1976d2; /* Highlight icon on hover */
+}
+
+.sidebar-hover .Mui-selected {
+  background-color: #1FCBEA !important;
+  color: white;
+}
+
+.sidebar-hover .Mui-selected .MuiListItemIcon-root {
+  color: white !important;
+}
+
+
+

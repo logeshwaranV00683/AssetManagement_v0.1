@@ -31,14 +31,72 @@ function Assets() {
     const rows = [
         { id: 1, name: 'Laptop', serialNumber: 'SN001', location: 'Room A', assignedTo: 'User A' },
         { id: 2, name: 'Desktop', serialNumber: 'SN002', location: 'Room B', assignedTo: 'User B' },
+        { id: 3, name: 'Laptop', serialNumber: 'SN003', location: 'Room C', assignedTo: 'User B' },
+
         // Add more rows as needed
     ];
 
     const columns = [
-        { field: 'name', headerName: 'Name', width: 150, sortable: true },
-        { field: 'serialNumber', headerName: 'Serial Number', width: 200, sortable: true },
-        { field: 'assignedTo', headerName: 'Assigned To', width: 200, sortable: true },
-        { field: 'location', headerName: 'Location', width: 150, sortable: true },
+        { field: 'name',headerName: 'Name', width: 200, sortable: true,
+            renderHeader: () => (
+                <Box display="flex" flexDirection="column" alignItems="center" padding={0}>
+                <div>Name</div>
+                <TextField
+                    label="Search"
+                    variant="outlined"
+                    size="small"
+                    onChange={handleSearch}
+                    InputLabelProps={{ style: { fontSize: 11 } }}
+                    style={{ marginTop: 2, width: 140, height: 30 }}
+                    inputProps={{ style: { fontSize: 10, padding: '6px 8px' } }}
+                >Search</TextField>
+                </Box>
+            ),},
+    
+        { field: 'serialNumber', headerName: 'Serial Number', width: 200, sortable: true, renderHeader: () => (
+                <Box display="flex" flexDirection="column" alignItems="center" padding={0}>
+                <div>Serial Number</div>
+                <TextField
+                    label="Search"
+                    variant="outlined"
+                    size="small"
+                    onChange={handleSearch}
+                    InputLabelProps={{ style: { fontSize: 11 } }}
+                    style={{ marginTop: 2, width: 140, height: 30 }}
+                    inputProps={{ style: { fontSize: 10, padding: '6px 8px' } }}
+                >Search</TextField>
+                </Box>
+            ),},
+
+
+        { field: 'assignedTo', headerName: 'Assigned To', width: 200, sortable: true, renderHeader: () => (
+                <Box display="flex" flexDirection="column" alignItems="center" padding={0}>
+                <div>Assigned To</div>
+                <TextField
+                    label="Search"
+                    variant="outlined"
+                    size="small"
+                    onChange={handleSearch}
+                    InputLabelProps={{ style: { fontSize: 11 } }}
+                    style={{ marginTop: 2, width: 140, height: 30 }}
+                    inputProps={{ style: { fontSize: 10, padding: '6px 8px' } }}
+                >Search</TextField>
+                </Box>
+            ),},
+        { field: 'location', headerName: 'Location', width: 200, sortable: true, renderHeader: () => (
+                <Box display="flex" flexDirection="column" alignItems="center" padding={0}>
+                <div>Location</div>
+                <TextField
+                    label="Search"
+                    variant="outlined"
+                    size="small"
+                    onChange={handleSearch}
+                    InputLabelProps={{ style: { fontSize: 11 } }}
+                    style={{ marginTop: 2, width: 140, height: 30 }}
+                    inputProps={{ style: { fontSize: 10, padding: '6px 8px' } }}
+                >Search</TextField>
+                </Box>
+            ),},
         {
             field: 'actions',
             headerName: 'Actions',
@@ -49,6 +107,7 @@ function Assets() {
                     <Button variant="contained" color="primary" style={{ marginRight: 8 }}>
                         View
                     </Button>
+                    
                     <Button variant="contained" color="secondary" style={{ marginRight: 8 }}>
                         Edit
                     </Button>
@@ -134,7 +193,7 @@ function Assets() {
                         />
                         {/* </Box> */}
                         {/* <Box display="flex" alignItems="center" justifyContent={'centr'}> */}
-                        <ButtonGroup variant="contained" style={{ boxShadow: 'none' }}>
+                        <ButtonGroup variant="contained" style={{ boxShadow: 'none', gap:'3px' }}>
                             <Button className="btn-border" onClick={filterUnassigned}>Unassigned</Button>
                             <Button className="btn-border" onClick={filterAssigned}>Assigned</Button>
                             <Button className="btn-border" onClick={filterScrap}>Scrap</Button>
@@ -156,6 +215,7 @@ function Assets() {
                         </div>
                     </div>
                 </Container>
+                
                 <AddAssetModal open={openModal} handleClose={handleClose} />
 
             </main>

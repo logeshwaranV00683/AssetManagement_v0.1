@@ -1,121 +1,113 @@
 import React, { useEffect, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import DashboardIcon from '@material-ui/icons/Dashboard';
-import PeopleIcon from '@material-ui/icons/People';
+import Drawer from '@mui/material/Drawer';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Tooltip from '@mui/material/Tooltip';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import PeopleIcon from '@mui/icons-material/People';
 import HistoryIcon from '@mui/icons-material/History';
 import MonitorIcon from '@mui/icons-material/Monitor';
 import AppsIcon from '@mui/icons-material/Apps';
-import './SideBar.css'
 import { useNavigate } from 'react-router-dom';
 
-const drawerWidth = 240;
 
-const useStyles = makeStyles((theme) => ({
-  drawer: {
-    width: drawerWidth,
-    flexShrink: 0,
-  },
-  drawerPaper: {
-    width: drawerWidth,
-  },
-  listItem: {
-    '&:hover': {
-      backgroundColor: '#1FCBEA', // Background color on hover
-    },
-  },
-  selected: {
-    backgroundColor: '#1FCBEA',
-    color: 'white', // Text color of selected item
-    '&:hover': {
-      backgroundColor: '#1FCBEA', // Background color on hover
-    },
-  },
-  blueIcon: {
-    color: '#2196F3', // Blue color for icon
-  },
-  toolbar: theme.mixins.toolbar,
-}));
- const Sidebar = () => {
-  const navigate = useNavigate();
-  const classes = useStyles();
 
+const drawerWidth = 90;
+
+const Sidebar = () => {
   const [selectedItem, setSelectedItem] = useState('');
-  const [userInfo, setUserInfo] = useState({ name: '', empId: '' });
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (user) {
-      setUserInfo({ name: user.firstName, empId: user.empId });
-    }
-
-    if (window.location.pathname === '/dashboard') {
-      setSelectedItem('dashboard');
-    }
+    const path = window.location.pathname.split('/')[1];
+    setSelectedItem(path);
   }, []);
 
   const handleItemClick = (item) => {
-    console.log('item', item);
-
-    let routeVal = `/${item}`
     setSelectedItem(item);
-    navigate(routeVal)
+    navigate(`/${item}`);
   };
+
+  const menuItems = [
+    { key: 'dashboard', icon: <DashboardIcon fontSize="large" />, label: 'Dashboard' },
+    { key: 'assets', icon: <MonitorIcon fontSize="large" />, label: 'Assets' },
+    { key: 'employee', icon: <PeopleIcon fontSize="large" />, label: 'Employees' },
+    { key: 'history', icon: <HistoryIcon fontSize="large" />, label: 'Asset History' },
+    { key: 'services', icon: <AppsIcon fontSize="large" />, label: 'Services' },
+    { key: 'report', icon: <HistoryIcon fontSize="large" />, label: 'Report' },
+  ];
 
   return (
     <Drawer
-      className={classes.drawer}
       variant="permanent"
-      classes={{
-        paper: classes.drawerPaper,
+      sx={{
+        width: drawerWidth,
+        flexShrink: 0,
+        [`& .MuiDrawer-paper`]: {
+          width: drawerWidth,
+          boxSizing: 'border-box',
+          backgroundColor: '#ebf7fd',
+        },
       }}
     >
-      <div className={`${classes.toolbar} align`}>
+      <div
+        onClick={() => handleItemClick('dashboard')}
+        style={{ padding: '16px 0', display: 'flex', justifyContent: 'center', cursor: 'pointer' }}
+      >
+        <img
+          src="/Verinite-Logo.png"
+          alt="Logo"
+          style={{ width: '55px', height: 'auto', marginTop: '8px' }}
+        />
       </div>
-      <List>
-        <ListItem button className={`${classes.listItem} ${selectedItem === 'dashboard' ? classes.selected : ''}`}
-          onClick={(e) => {
-            e.preventDefault();
-            handleItemClick('dashboard')
-          }}
-        >
-          <ListItemIcon className={selectedItem === 'dashboard' ? classes.selected : classes.blueIcon}><DashboardIcon /></ListItemIcon>
-          <ListItemText className={classes.listItemText} primary="Dashboard" />
-        </ListItem>
 
-        <ListItem button className={`${classes.listItem} ${selectedItem === 'assets' ? classes.selected : ''}`}
-          onClick={() => {
-            handleItemClick('assets')
-          }
-          }>
-          <ListItemIcon><MonitorIcon /></ListItemIcon>
-          <ListItemText className={classes.listItemText} primary="Assets" />
-        </ListItem>
-        <ListItem className={`${classes.listItem} ${selectedItem === 'employee' ? classes.selected : ''}`} button  onClick={() => {
-            handleItemClick('employee')
-          }}>          
-        <ListItemIcon><PeopleIcon /></ListItemIcon>
-          <ListItemText className={classes.listItemText} primary="Employees" />
-        </ListItem>
-        <ListItem button className={classes.listItem}>
-          <ListItemIcon>< HistoryIcon /></ListItemIcon>
-          <ListItemText className={classes.listItemText} primary="Asset History" />
-        </ListItem>
-        <ListItem button className={classes.listItem}>
-          <ListItemIcon><AppsIcon /></ListItemIcon>
-          <ListItemText className={classes.listItemText} primary="Services" />
-        </ListItem>
-        <ListItem button className={classes.listItem}>
-          <ListItemIcon>< HistoryIcon /></ListItemIcon>
-          <ListItemText className={classes.listItemText} primary="Report" />
-        </ListItem>
+      <List sx={{ mt: 6 }}>
+        {menuItems.map(({ key, icon, label }) => (
+          <Tooltip key={key} title={label} placement="right" arrow
+           componentsProps={{
+                            tooltip: {
+                              sx: {
+                                fontSize: '18px',        // Larger font
+                                fontWeight: 'bold',      // Bold text
+                                backgroundColor: '#1FCBEA', // Custom background
+                                color: '#fff',           // White text
+                                padding: '6px 12px',     // More padding
+                                borderRadius: '6px',     // Rounded corners
+                                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)', // Subtle shadow
+                              },
+                            },
+                            arrow: {
+                              sx: {
+                                color: '#1FCBEA', // Match arrow color with tooltip background
+                              },
+                            },
+                          }}>
+            <ListItem
+              button
+              onClick={() => handleItemClick(key)}
+              sx={{
+                justifyContent: 'center',
+                backgroundColor: selectedItem === key ? '#1FCBEA' : 'inherit', mb: 4,
+                '&:hover': {
+                  backgroundColor: '#1FCBEA',
+                },
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  color: selectedItem === key ? 'white' : '#2196F3',
+                }}
+              >
+                {icon}
+              </ListItemIcon>
+            </ListItem>
+          </Tooltip>
+        ))}
       </List>
     </Drawer>
   );
-}
+};
 
 export default Sidebar;

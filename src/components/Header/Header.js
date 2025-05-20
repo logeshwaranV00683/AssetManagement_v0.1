@@ -33,12 +33,35 @@ const Header = ({ onLogout }) => {
       }
     }, []);
 
+  const handleLogout = () => {
+    handleMenuClose();
+    if (onLogout) {
+      onLogout();
+    } else {
+      navigate('/login'); // fallback
+    }
+  };
+
   return (
-    <AppBar position="static" color="default">
+
+    <AppBar position="static" style={{ backgroundColor: '#ebf7fd' }} color='black'>
+
       <Toolbar>
-        <Typography variant="h6" style={{ flexGrow: 1 }}>
-          Your App Name
+        {/* Logo 
+        <div style={{ display: 'flex', alignItems: 'center', marginLeft: 100 }}>
+          <img
+            src="/verinite-open-graph-logo.jpeg"
+            alt="Logo"
+            style={{ width: '180px', height: 'auto' }}
+          />
+        </div>
+          */}
+        {/* Title */}
+        <Typography variant="h6" style={{ flexGrow: 1, marginLeft: 100 }}>
+          Asset Management
         </Typography>
+
+        {/* User Menu */}
         <div>
           <span className='title-val'>{"Welcome! "+userInfo.name+" "|| 'Loading...'}</span>
           <IconButton
