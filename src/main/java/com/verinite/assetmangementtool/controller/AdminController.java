@@ -7,13 +7,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.verinite.assetmangementtool.entity.AdminRegistrationEntity;
 import com.verinite.assetmangementtool.service.AdminServiceImpl;
@@ -47,5 +41,10 @@ public class AdminController {
 //       return service.checkLogin(login);
 //    }
 	// 176571974
+	@DeleteMapping("/delete/{empId}")
+	public Object delete(String empId){
+		return service.deleteAdmin(empId);
+
+	}
 
 }

@@ -2,6 +2,7 @@ package com.verinite.assetmangementtool.service;
 
 import com.verinite.assetmangementtool.dto.EmployeeDto;
 import com.verinite.assetmangementtool.entity.EmployeeEntity;
+import com.verinite.assetmangementtool.repository.AdminRegistrationRepository;
 import com.verinite.assetmangementtool.repository.EmployeeRepository;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -19,9 +20,11 @@ import java.util.stream.Collectors;
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
-    EmployeeService employeeService;
-    @Autowired
     EmployeeRepository employeeRepo;
+    @Autowired
+    AdminRegistrationRepository adminRegistrationRepository;
+    @Autowired
+    AdminServiceImpl adminServiceImpl;
 
 
     public EmployeeDto saveEmployee(EmployeeDto employeeDTO) {
@@ -157,11 +160,29 @@ public class EmployeeServiceImpl implements EmployeeService {
             if (employee.getMobile() != null) {
                 existingEmployee.setMobile(employee.getMobile());
             }
-            if (employee.getRole() != null) {
-                existingEmployee.setRole(employee.getRole());
-            }
             if (employee.getStatus() != null) {
                 existingEmployee.setStatus(employee.getStatus());
+            }
+
+            if (employee.getRole() != null) {
+                if(employee.getRole().equalsIgnoreCase("Admin"))
+                {
+                    if(!adminRegistrationRepository.existsByEmpId(employee.getEmpId()))
+                    {
+                    adminServiceImpl.registerNewAdminWithoutPassword(existingEmployee);
+                    }
+                    else
+                    {
+                        adminServiceImpl.updateAdminEntity(existingEmployee);
+                    }
+                }
+                if(employee.getRole().equalsIgnoreCase("User"))
+                {
+                    if(existingEmployee.getRole().equalsIgnoreCase("Admin")) {
+                        adminServiceImpl.deleteAdmin(existingEmployee.getEmpId());
+                    }
+                }
+                existingEmployee.setRole(employee.getRole());
             }
             return employeeRepo.save(existingEmployee);
         } catch (Exception e) {

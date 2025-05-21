@@ -1,5 +1,8 @@
 package com.verinite.assetmangementtool.service;
 
+import java.beans.Transient;
+import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,6 +28,7 @@ import com.verinite.assetmangementtool.repository.AdminRegistrationRepository;
 //import com.verinite.assetmangementtool.service.mailservice.OTPMailer;
 //import net.bytebuddy.utility.RandomString;
 import com.verinite.assetmangementtool.repository.EmployeeRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AdminServiceImpl implements AdminService {
@@ -96,6 +100,23 @@ public class AdminServiceImpl implements AdminService {
 
 	}
 
+	@Override
+	public ResponseEntity updateAdminEntity(EmployeeEntity employee) {
+		AdminRegistrationEntity adminRegistrationEntity = registerRepo.findByEmpId(employee.getEmpId());
+		adminRegistrationEntity.setMail(employee.getMail());
+		adminRegistrationEntity.setFirstName(employee.getFirstName());
+		adminRegistrationEntity.setLastName(employee.getLastName());
+		adminRegistrationEntity.setStatus(employee.getStatus());
+		adminRegistrationEntity.setLocation(employee.getLocation());
+
+		// update the existing admin registration
+		registerRepo.save(adminRegistrationEntity);
+
+		// Return a success response
+		return ResponseEntity.status(HttpStatus.CREATED).body("Admin Updated successfully.");
+
+	}
+
 	public AdminRegistrationEntity getById(String empId) {
 		return registerRepo.findByEmpId(empId);
 
@@ -122,4 +143,66 @@ public class AdminServiceImpl implements AdminService {
 
 	}
 
+	public void registerNewAdminWithoutPassword(EmployeeEntity employee)
+	{
+		AdminRegistrationEntity adminRegistrationEntity = new AdminRegistrationEntity();
+		adminRegistrationEntity.setMail(employee.getMail());
+		adminRegistrationEntity.setRole(employee.getRole());
+		adminRegistrationEntity.setEmpId(employee.getEmpId());
+		adminRegistrationEntity.setFirstName(employee.getFirstName());
+		adminRegistrationEntity.setLastName(employee.getLastName());
+		adminRegistrationEntity.setStatus(employee.getStatus());
+		adminRegistrationEntity.setLocation(employee.getLocation());
+		String password = generateComplexPassword(16);
+		System.out.println("\n "+password+"\n");
+		adminRegistrationEntity.setPassword(password);
+		registerNewAdmin(adminRegistrationEntity);
+
+	}
+	private String generateComplexPassword(int length) {
+		if (length < 8) throw new IllegalArgumentException("Minimum length is 8");
+
+		String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		String lower = "abcdefghijklmnopqrstuvwxyz";
+		String digits = "0123456789";
+		String special = "!@#$%^&*()-_=+[]{}|;:,.<>?";
+		String all = upper + lower + digits + special;
+
+		SecureRandom rand = new SecureRandom();
+		StringBuilder password = new StringBuilder();
+
+		// Ensure one character from each category
+		password.append(upper.charAt(rand.nextInt(upper.length())));
+		password.append(lower.charAt(rand.nextInt(lower.length())));
+		password.append(digits.charAt(rand.nextInt(digits.length())));
+		password.append(special.charAt(rand.nextInt(special.length())));
+
+		// Fill remaining characters
+		for (int i = 4; i < length; i++) {
+			password.append(all.charAt(rand.nextInt(all.length())));
+		}
+
+		// Shuffle result
+		return shuffleString(password.toString(), rand);
+	}
+
+	private static String shuffleString(String input, SecureRandom rand) {
+		char[] a = input.toCharArray();
+		for (int i = a.length - 1; i > 0; i--) {
+			int j = rand.nextInt(i + 1);
+			char temp = a[i];
+			a[i] = a[j];
+			a[j] = temp;
+		}
+		return new String(a);
+	}
+
+	@Transactional
+	public ResponseEntity deleteAdmin(String empId) {
+		EmployeeEntity employee = employeeRepository.findByEmpId(empId);
+		registerRepo.deleteByEmpId(empId);
+		employee.setRole("User");
+		employeeRepository.save(employee);
+		return ResponseEntity.status(HttpStatus.CREATED).body("Admin Deleted successfully.");
+	}
 }
