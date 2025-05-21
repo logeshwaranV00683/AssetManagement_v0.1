@@ -13,7 +13,7 @@ public class OTPMailer {
 
     @Autowired
     private JavaMailSender mailSender;
-    public String mailAuthenticator(String name, String mail, String random, String empId) throws MessagingException, UnsupportedEncodingException {
+    public String mailAuthenticator(String name, String mail,  String empId) throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
         helper.setFrom("elangovan.p@verinite.com", "Asset manager");
@@ -24,7 +24,7 @@ public class OTPMailer {
 
         helper.setSubject(subject);
 
-        String host="http://localhost:8080/assetManager/v1/admin/verifyAccount/";
+        String host="http://localhost:8081/assetManager/v1/admin/verifyAccount/";
         String content="<!DOCTYPE html>\n" +
                 "<html>\n" +
                 "\n" +
@@ -172,7 +172,7 @@ public class OTPMailer {
                 "                                    <td bgcolor=\"#ffffff\" align=\"center\" style=\"padding: 20px 30px 60px 30px;\">\n" +
                 "                                        <table border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n" +
                 "                                            <tr>\n" +
-                "                                                <td align=\"center\" style=\"border-radius: 3px;\" bgcolor=\"#03bcff\"><a target=\"_blank\" href=\"http://localhost:8080/assetManager/v1/admin/verifyAccount/"+empId+"/"+random+"\"  style=\"font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #00c8ff; display: inline-block;\">Confirm Account</a></td>\n" +
+                "                                                <td align=\"center\" style=\"border-radius: 3px;\" bgcolor=\"#03bcff\"><a target=\"_blank\" href=\"http://localhost:8080/assetManager/v1/admin/verifyAccount/"+empId+"/"+"\"  style=\"font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #00c8ff; display: inline-block;\">Confirm Account</a></td>\n" +
                 "                                            </tr>\n" +
                 "                                        </table>\n" +
                 "                                    </td>\n" +
@@ -187,7 +187,7 @@ public class OTPMailer {
                 "                    </tr> <!-- COPY -->\n" +
                 "                    <tr>\n" +
                 "                        <td bgcolor=\"#ffffff\" align=\"left\" style=\"padding: 20px 30px 20px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;\">\n" +
-                "                            <p style=\"margin: 0;\"><a href=\""+host+empId+"/"+random+"\" target=\"_blank\" style=\"color: #03bcff;\">localhost:8080/assetManager/v1/admin/verifyAccount/</a></p>\n" +
+                "                            <p style=\"margin: 0;\"><a href=\""+host+empId+"/"+"\" target=\"_blank\" style=\"color: #03bcff;\">localhost:8080/assetManager/v1/admin/verifyAccount/</a></p>\n" +
                 "                        </td>\n" +
                 "                    </tr>\n" +
                 "                    \n" +

@@ -2,7 +2,7 @@ package com.verinite.assetmangementtool.config;
 
 import com.verinite.assetmangementtool.entity.AssetsEntity;
 import com.verinite.assetmangementtool.repository.AssetsRepository;
-import com.verinite.assetmangementtool.service.mailservice.NotificationMail;
+import com.verinite.assetmangementtool.service.mailservice.NotificationMailer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -24,7 +24,7 @@ public class WarrentyMailSender {
    private AssetsRepository repository;
 
    @Autowired
-   private NotificationMail notificationMail;
+   private NotificationMailer notificationMail;
 
     @Scheduled(cron = "0 18 14 * * *")
     public void getWarrentyExpiredAssets() throws MessagingException, UnsupportedEncodingException {

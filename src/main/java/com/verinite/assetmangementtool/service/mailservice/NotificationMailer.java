@@ -13,7 +13,7 @@ import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 @Service
-public class NotificationMail {
+public class NotificationMailer {
     @Autowired
     private JavaMailSender mailSender;
     public ResponseEntity notifyMailer(String mail, List<AssetsEntity> list) throws MessagingException, UnsupportedEncodingException {

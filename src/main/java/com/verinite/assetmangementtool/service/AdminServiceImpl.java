@@ -1,12 +1,11 @@
 package com.verinite.assetmangementtool.service;
 
-import java.beans.Transient;
 import java.security.SecureRandom;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import com.verinite.assetmangementtool.dto.AdminRegistrationDto;
+import com.verinite.assetmangementtool.service.mailservice.AdminPromotionMailer;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,6 +44,9 @@ public class AdminServiceImpl implements AdminService {
 
 	@Autowired
 	BCryptPasswordEncoder encoder;
+
+	@Autowired
+	private AdminPromotionMailer adminPromotionService;
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
@@ -146,6 +148,8 @@ public class AdminServiceImpl implements AdminService {
 	public void registerNewAdminWithoutPassword(EmployeeEntity employee)
 	{
 		AdminRegistrationEntity adminRegistrationEntity = new AdminRegistrationEntity();
+		String password = generateComplexPassword(16);
+
 		adminRegistrationEntity.setMail(employee.getMail());
 		adminRegistrationEntity.setRole(employee.getRole());
 		adminRegistrationEntity.setEmpId(employee.getEmpId());
@@ -153,10 +157,9 @@ public class AdminServiceImpl implements AdminService {
 		adminRegistrationEntity.setLastName(employee.getLastName());
 		adminRegistrationEntity.setStatus(employee.getStatus());
 		adminRegistrationEntity.setLocation(employee.getLocation());
-		String password = generateComplexPassword(16);
-		System.out.println("\n "+password+"\n");
 		adminRegistrationEntity.setPassword(password);
 		registerNewAdmin(adminRegistrationEntity);
+		adminPromotionService.promoteToAdmin(modelMapper.map(adminRegistrationEntity,AdminRegistrationDto.class), password);
 
 	}
 	private String generateComplexPassword(int length) {

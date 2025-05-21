@@ -1,13 +1,11 @@
 package com.verinite.assetmangementtool.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "tbl_admin")
 public class AdminRegistrationEntity {
@@ -15,16 +13,12 @@ public class AdminRegistrationEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "admin_Id", nullable = false, unique = true)
 	private Long adminId;
-
 	@Column(name = "firstName")
 	private String firstName;
-
 	@Column(name = "lastName")
 	private String lastName;
-
 	@Column(name = "empId")
 	private String empId;
-
 	@Email
 	private String mail;
 	private String status;
@@ -32,5 +26,4 @@ public class AdminRegistrationEntity {
 	private String location;
 	@Column(name = "password", nullable = false)
 	private String password;
-	// private String otp;
 }

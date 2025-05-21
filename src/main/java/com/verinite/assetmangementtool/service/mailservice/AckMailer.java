@@ -18,7 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Service
-public class AckMail {
+public class AckMailer {
    @Autowired
    private JavaMailSender javaMailSender;
 
