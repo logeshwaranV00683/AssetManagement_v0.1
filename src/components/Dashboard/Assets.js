@@ -143,7 +143,7 @@ function Assets() {
                         </ButtonGroup>
                         {/* </Box> */}
                     </div>
-                    <div style={{ height: '70vh', width: '85vw', display: 'flex', flexDirection: 'column', alignItems: 'center', }}>
+                    <div style={{ height: '60vh', width: '85vw', display: 'flex', flexDirection: 'column', alignItems: 'center', }}>
                         <div style={{ height: 350, marginLeft: '2%', width: '95%', flexGrow: 1 }}>
                             <DataGrid
                                 rows={filteredRows}

@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   AppBar,
   Toolbar,
@@ -8,16 +8,22 @@ import {
   MenuItem,
 } from "@material-ui/core";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-import LogoutIcon from '@mui/icons-material/Logout';
+import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
+import '../Style/font.css';
 
 const Header = ({ onLogout }) => {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [userInfo, setUserInfo] = useState({ name: ''})
+  const [userInfo, setUserInfo] = useState({ name: '' });
   const navigate = useNavigate();
-  onLogout = () => {
-    navigate("/login");
-  };
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+      setUserInfo({ name: user.firstName });
+    }
+  }, []);
+
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -25,79 +31,113 @@ const Header = ({ onLogout }) => {
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
-   useEffect(() => {
-      const user = JSON.parse(localStorage.getItem('user'));
-      if (user) {
-        setUserInfo({ name: user.firstName});
-      }
-    }, []);
 
   const handleLogout = () => {
     handleMenuClose();
     if (onLogout) {
       onLogout();
     } else {
-      navigate('/login'); // fallback
+      navigate('/login');
     }
   };
 
   return (
-
-    <AppBar position="static" style={{ backgroundColor: '#ebf7fd' }} color='black'>
-
-      <Toolbar>
-        {/* Logo 
-        <div style={{ display: 'flex', alignItems: 'center', marginLeft: 100 }}>
-          <img
-            src="/verinite-open-graph-logo.jpeg"
-            alt="Logo"
-            style={{ width: '180px', height: 'auto' }}
-          />
-        </div>
-          */}
-        {/* Title */}
-        <Typography variant="h6" style={{ flexGrow: 1, marginLeft: 100 }}>
-          Asset Management
-        </Typography>
-
-        {/* User Menu */}
-        <div>
-          <span className='title-val'>{"Welcome! "+userInfo.name+" "|| 'Loading...'}</span>
-          <IconButton
-            aria-label="account of current user"
-            aria-controls="menu-appbar"
-            aria-haspopup="true"
-            onClick={handleMenuOpen}
-            color="inherit"
+    <>
+      <AppBar
+        position="fixed"
+        elevation={0}
+        style={{
+          background: 'linear-gradient(45deg, rgb(78, 203, 219), rgb(120, 218, 233))',
+          height: '14vh',
+          width: '90%',
+          margin: '0 auto',
+          top: 0,
+          left: 0,
+          right: 0,
+          borderRadius: '0 0 60px 60px',
+          boxShadow: '0 0 25px rgb(78, 203, 219), 0 0 50px rgb(120, 218, 233)',
+          zIndex: 1300,
+          display: 'flex',
+          justifyContent: 'center',
+        }}
+      >
+        <Toolbar
+          style={{
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '0 32px',
+          }}
+        >
+          {/* Left: Title */}
+          <Typography
+            variant="h5"
             style={{
-              transform: "scale(2.0)", // 1.5x larger (50% bigger)
+              fontSize: '32px',
+              color: '#083A40',
+              fontFamily: "'Racing Sans One', sans-serif",
+              textShadow: '0 0 8px #fff, 0 0 16px #1FCBEA',
             }}
           >
-            <AccountCircleIcon />
-          </IconButton>
-          <Menu
-            id="menu-appbar"
-            anchorEl={anchorEl}
-            anchorOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-            keepMounted
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-            open={Boolean(anchorEl)}
-            onClose={handleMenuClose}
-          >
-            <MenuItem onClick={onLogout} style={{color:'red'}}>
-            <LogoutIcon style={{ marginRight: '8px' }} />
-            Logout</MenuItem>
-            {/* <MenuItem onClick={}>Profile</MenuItem> */}
-          </Menu>
-        </div>
-      </Toolbar>
-    </AppBar>
+            Verinite - Assets Management
+          </Typography>
+
+          {/* Right: Welcome + Icon */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span
+              style={{
+                fontSize: '18px',
+                color: '#083A40',
+                fontFamily: "'Racing Sans One', sans-serif",
+                textShadow: '0 0 6px #fff, 0 0 12px #1FCBEA',
+                marginLeft: '30px'
+              }}
+            >
+              {userInfo.name ? `Welcome! - ${userInfo.name}` : 'Loading...'}
+            </span>
+
+            <IconButton
+              aria-label="account"
+              onClick={handleMenuOpen}
+              color="inherit"
+              style={{
+                transform: 'scale(1.8)',
+                color: '#083A40',
+                textShadow: '0 0 6px #fff, 0 0 12px #1FCBEA',
+                marginRight: '60px'
+              }}
+            >
+              <AccountCircleIcon />
+            </IconButton>
+
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorEl}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+            >
+              <MenuItem
+                onClick={handleLogout}
+                style={{
+                  color: 'red',
+                  fontWeight: 'bold',
+                  textShadow: '0 0 6px #fff, 0 0 12px #ff4d4d',
+                }}
+              >
+                <LogoutIcon style={{ marginRight: '8px' }} />
+                Logout
+              </MenuItem>
+            </Menu>
+          </div>
+        </Toolbar>
+      </AppBar>
+
+      {/* Push content below the fixed header */}
+      <div style={{ height: '14vh' }} />
+    </>
   );
 };
 

@@ -11,9 +11,7 @@ import MonitorIcon from '@mui/icons-material/Monitor';
 import AppsIcon from '@mui/icons-material/Apps';
 import { useNavigate } from 'react-router-dom';
 
-
-
-const drawerWidth = 90;
+const drawerWidth = 80;
 
 const Sidebar = () => {
   const [selectedItem, setSelectedItem] = useState('');
@@ -46,58 +44,72 @@ const Sidebar = () => {
         flexShrink: 0,
         [`& .MuiDrawer-paper`]: {
           width: drawerWidth,
+          height: 'auto',
+          top: '52%',
+          transform: 'translateY(-50%)',
+          left: 0,
+          bottom: 'auto',
+          position: 'fixed',
           boxSizing: 'border-box',
-          backgroundColor: '#ebf7fd',
+          background: 'linear-gradient(45deg,rgb(78, 203, 219),rgb(120, 218, 233))',
+          borderRadius: '0px 40px 40px 0px',
+          paddingTop: '12px',
+          paddingBottom: '12px',
+          boxShadow: '0 0 25px rgb(78, 203, 219), 0 0 50px rgb(120, 218, 233)',
         },
       }}
     >
-      <div
-        onClick={() => handleItemClick('dashboard')}
-        style={{ padding: '16px 0', display: 'flex', justifyContent: 'center', cursor: 'pointer' }}
-      >
-        <img
-          src="/Verinite-Logo.png"
-          alt="Logo"
-          style={{ width: '55px', height: 'auto', marginTop: '8px' }}
-        />
-      </div>
-
-      <List sx={{ mt: 6 }}>
+      <List sx={{ mt: 0 }}>
         {menuItems.map(({ key, icon, label }) => (
-          <Tooltip key={key} title={label} placement="right" arrow
-           componentsProps={{
-                            tooltip: {
-                              sx: {
-                                fontSize: '18px',        // Larger font
-                                fontWeight: 'bold',      // Bold text
-                                backgroundColor: '#1FCBEA', // Custom background
-                                color: '#fff',           // White text
-                                padding: '6px 12px',     // More padding
-                                borderRadius: '6px',     // Rounded corners
-                                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)', // Subtle shadow
-                              },
-                            },
-                            arrow: {
-                              sx: {
-                                color: '#1FCBEA', // Match arrow color with tooltip background
-                              },
-                            },
-                          }}>
+          <Tooltip
+            key={key}
+            title={label}
+            placement="right"
+            arrow
+            componentsProps={{
+              tooltip: {
+                sx: {
+                  fontSize: '18px',
+                  fontWeight: 'bold',
+                  backgroundColor: 'rgb(78, 203, 219)',
+                  color: '#fff',
+                  padding: '6px 12px',
+                  borderRadius: '6px',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
+                },
+              },
+              arrow: {
+                sx: {
+                  color: '#1FCBEA',
+                },
+              },
+            }}
+          >
             <ListItem
               button
               onClick={() => handleItemClick(key)}
               sx={{
                 justifyContent: 'center',
-                backgroundColor: selectedItem === key ? '#1FCBEA' : 'inherit', mb: 4,
+                backgroundColor: selectedItem === key ? '#1FCBEA' : 'inherit',
+                mb: 2.5,
                 '&:hover': {
                   backgroundColor: '#1FCBEA',
+                  '& .MuiListItemIcon-root': {
+                    color: '#fff',
+                    textShadow: '0 0 8px #fff, 0 0 16px #1FCBEA, 0 0 24px #1FCBEA',
+                  },
                 },
               }}
             >
               <ListItemIcon
                 sx={{
                   minWidth: 0,
-                  color: selectedItem === key ? 'white' : '#2196F3',
+                  color: selectedItem === key ? '#fff' : '#083A40',
+                  textShadow:
+                    selectedItem === key
+                      ? '0 0 8px #fff, 0 0 16px #1FCBEA, 0 0 24px #1FCBEA'
+                      : 'none',
+                  transition: 'all 0.3s ease-in-out',
                 }}
               >
                 {icon}
