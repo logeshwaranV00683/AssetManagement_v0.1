@@ -506,22 +506,13 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             List<AssetsHistoryEntity> assetsHistoryEntities = assetsHistoryRepository.findAll();
             List<CountOfAssets> countOfAssets = assetCountRepository.findAll();
             if (!asset.getStatus().equalsIgnoreCase("scrap")) {
-                assetsHistoryEntity.setAssetId(asset.getAssetId());
-                assetsHistoryEntity.setAssetName(asset.getAssetName());
+
                 assetsHistoryEntity.setEmpId(asset.getEmpId());
-                assetsHistoryEntity.setLocation(asset.getLocation());
-                assetsHistoryEntity.setModelName(asset.getModelName());
-                assetsHistoryEntity.setOperatingSystem(asset.getOperatingSystem());
-                assetsHistoryEntity.setPurchaseDate(asset.getPurchaseDate());
-                assetsHistoryEntity.setWarrantyDate(asset.getWarrantyDate());
                 assetsHistoryEntity.setReturnDate(new Date());
-                assetsHistoryEntity.setStatus("Unassigned");
                 assetsHistoryEntity.setEmpId(asset.getEmpId());
-                assetsHistoryEntity.setType(asset.getType());
                 assetsHistoryEntity.setSerialNumber(asset.getSerialNumber());
                 assetsHistoryEntity.setAssignedBy(asset.getAssignedBy());
                 assetsHistoryEntity.setAssignedDate(asset.getAssignedDate());
-                assetsHistoryEntity.setAssertSourcedBy(asset.getAssertSourcedBy());
                 asset.setEmpId(null);
                 asset.setAssignedBy(null);
                 asset.setAssignedDate(null);

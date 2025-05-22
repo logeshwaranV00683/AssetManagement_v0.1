@@ -63,7 +63,7 @@ CREATE TABLE `tbl_assets` (
   `operating_system` varchar(255) DEFAULT NULL,
   `purchase_date` varchar(255) DEFAULT NULL,
   `return_date` datetime(6) DEFAULT NULL,
-  `serial_number` varchar(255) DEFAULT NULL,
+  `serial_number` varchar(255)  UNIQUE DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
   `type` varchar(255) DEFAULT NULL,
   `warranty_date` varchar(255) DEFAULT NULL,
@@ -72,21 +72,11 @@ CREATE TABLE `tbl_assets` (
 
 CREATE TABLE `tbl_assets_history` (
   `history_id` bigint NOT NULL,
-  `asset_id` int NOT NULL,
-  `asset_name` varchar(255) DEFAULT NULL,
   `assigned_by` varchar(255) DEFAULT NULL,
   `assigned_date` datetime(6) DEFAULT NULL,
   `emp_id` varchar(255) DEFAULT NULL,
-  `loc_code` int NOT NULL,
-  `location` varchar(255) DEFAULT NULL,
-  `model_name` varchar(255) DEFAULT NULL,
-  `operating_system` varchar(255) DEFAULT NULL,
-  `purchase_date` varchar(255) DEFAULT NULL,
   `return_date` datetime(6) DEFAULT NULL,
   `serial_number` varchar(255) DEFAULT NULL,
-  `status` varchar(255) DEFAULT NULL,
-  `type` varchar(255) DEFAULT NULL,
-  `warranty_date` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`history_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 

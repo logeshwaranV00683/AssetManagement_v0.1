@@ -90,18 +90,10 @@ public class EmailAssetService {
     private void saveHistory(AssetsEntity asset, AssignedAssetsEntity assignedAssetsEntity) {
 
         AssetsHistoryEntity assetHistory = new AssetsHistoryEntity();
-        assetHistory.setAssetId(asset.getAssetId());
-        assetHistory.setAssetName(asset.getAssetName());
         assetHistory.setSerialNumber(asset.getSerialNumber());
         assetHistory.setEmpId(assignedAssetsEntity.getEmpId());
-        assetHistory.setStatus("Assigned");
-        assetHistory.setLocation(asset.getLocation());
-        assetHistory.setModelName(asset.getModelName());
-        assetHistory.setOperatingSystem(asset.getOperatingSystem());
         assetHistory.setAssignedDate(assignedAssetsEntity.getAssignedDate());
         assetHistory.setAssignedBy(assignedAssetsEntity.getAssignedBy());
-        assetHistory.setPurchaseDate(asset.getPurchaseDate());
-        assetHistory.setWarrantyDate(asset.getWarrantyDate());
 
         // Save history to repository
         assetsHistoryRepository.save(assetHistory);

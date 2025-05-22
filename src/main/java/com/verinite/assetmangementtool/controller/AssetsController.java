@@ -44,7 +44,7 @@ public class AssetsController implements ApplicationRunner {
 //		List<AssetsEntity> assets = assetService.listOfAllAsset();
 //		return ResponseEntity.ok(assets); // Respond with the list of assets and HTTP 200 OK
 //	}
-    @GetMapping("/listOfAssets")
+    @GetMapping("assets/listOfAssets")
     public ResponseEntity<List<AssetsDto>> getAllAssets() {
         List<AssetsDto> assetsList = assetService.listOfAllAsset();
         if (assetsList.isEmpty()) {
@@ -99,7 +99,7 @@ public class AssetsController implements ApplicationRunner {
 
     }
 
-    @GetMapping("/export/assets/{exportType}")
+    @GetMapping("/export/asset/{exportType}")
     public ResponseEntity<byte[]> exportAssets(
             @PathVariable String exportType,
             @RequestParam(required = false) String filter) {
