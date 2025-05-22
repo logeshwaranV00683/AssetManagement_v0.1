@@ -6,8 +6,8 @@ import { DataGrid } from '@mui/x-data-grid';
 import TextField from '@mui/material/TextField';
 import AddEmployeeModal from './AddEmployeeModal';
 import EditEmployeeModal from './EditEmployeeModal';
-import "./Employee.css";
-import { getEmployeeList } from '../../services/config';
+import "../Style/Employee.css";
+import { getEmployeeList } from '../Services/EmployeeService';
 import ExportButton from './ExportButton';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 

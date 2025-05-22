@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { logIn } from '../services/config';
-
-import './Login.css';
+import {logIn} from './Services/AuthService';
+import './Style/Login.css';
 
 const CustomInput = ({ type, name, placeholder, value, onChange, icon }) => (
   <div className="input-container">
@@ -76,7 +75,7 @@ const Login = () => {
     <div className="login-page">
       <div className="container">
         <div className="login-form-container form-container">
-          <img src="/logo2.png" alt="Verinite Open Graph Logo" width={90} className="mb-4"/>
+          <img src='../assets/logo2.png' alt="Verinite Open Graph Logo" width={90} className="mb-4"/>
           <h1 style={{ color: '#41b5f0' }}>Asset Manager</h1>
           <form onSubmit={handleSubmit} className="space-y-4 login-form">
             <input

@@ -4,7 +4,7 @@ import { Container, Box, Button, ButtonGroup } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import TextField from '@mui/material/TextField';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import "./Assets.css"
+import "../Style/Assets.css"
 import AddAssetModal from './AddAssetModal';
 import ExportButton from './ExportButton';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';

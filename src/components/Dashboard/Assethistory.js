@@ -4,7 +4,7 @@ import { Container, Box, Button, ButtonGroup } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import TextField from '@mui/material/TextField';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import "./Assethistory.css";
+import "../Style/Assethistory.css";
 import AddAssetModal from './AddAssetModal';
 
 const useStyles = makeStyles((theme) => ({

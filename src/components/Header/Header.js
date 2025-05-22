@@ -10,7 +10,6 @@ import {
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate } from "react-router-dom";
-import { colors } from "@mui/material";
 
 const Header = ({ onLogout }) => {
   const [anchorEl, setAnchorEl] = useState(null);

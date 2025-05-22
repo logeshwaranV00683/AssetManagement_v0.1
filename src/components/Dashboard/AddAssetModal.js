@@ -16,7 +16,8 @@ function AddAssetModal({ open, handleClose }) {
   const [location, setLocation] = useState('');
   const [purchaseDate, setPurchaseDate] = useState('');
   const [warrantyDate, setWarrantyDate] = useState('');
-  const [addedBy, setAddedBy] = useState('');
+  const user = JSON.parse(localStorage.getItem('user'));
+  const [addedBy, setAddedBy] = useState(user.empId);
   const [assertSourcedBy, setAssertSourcedBy] = useState('Verinite');
 
   const handleAddAsset = () => {
@@ -39,7 +40,7 @@ function AddAssetModal({ open, handleClose }) {
     setLocation('');
     setPurchaseDate('');
     setWarrantyDate('');
-    setAddedBy('');
+    setAddedBy(user.empId);
     setAssertSourcedBy('');
   };
 
@@ -115,13 +116,6 @@ function AddAssetModal({ open, handleClose }) {
             label="Location"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            fullWidth
-          />
-
-          <TextField
-            label="Added by"
-            value={addedBy}
-            onChange={(e) => setAddedBy(e.target.value)}
             fullWidth
           />
 

@@ -10,7 +10,7 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import { IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { saveEmployee } from '../../services/config';
+import { saveEmployee } from '../Services/EmployeeService';
 
 const useStyles = makeStyles((theme) => ({
   modal: {
