@@ -44,7 +44,7 @@ public class AssetsController implements ApplicationRunner {
 //		List<AssetsEntity> assets = assetService.listOfAllAsset();
 //		return ResponseEntity.ok(assets); // Respond with the list of assets and HTTP 200 OK
 //	}
-    @GetMapping("assets/listOfAssets")
+    @GetMapping("asset/listOfAssets")
     public ResponseEntity<List<AssetsDto>> getAllAssets() {
         List<AssetsDto> assetsList = assetService.listOfAllAsset();
         if (assetsList.isEmpty()) {
