@@ -65,7 +65,7 @@ function AddAssetModal({ open, handleClose }) {
           maxWidth: 700,
           mx: 'auto',
           my: '10%',
-          borderRadius: 2,
+          borderRadius: 4,
           position: 'relative',
         }}
       >
@@ -77,7 +77,7 @@ function AddAssetModal({ open, handleClose }) {
           <CloseIcon />
         </IconButton>
 
-        <h2 id="add-asset-modal-title" style={{ textAlign: 'center' }}>
+        <h2 id="add-asset-modal-title" style={{ textAlign: 'center', color: '#083A40' }}>
           Add Asset
         </h2>
 

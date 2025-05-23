@@ -10,6 +10,7 @@ import HistoryIcon from '@mui/icons-material/History';
 import MonitorIcon from '@mui/icons-material/Monitor';
 import AppsIcon from '@mui/icons-material/Apps';
 import { useNavigate } from 'react-router-dom';
+import '../Style/font.css';
 
 const drawerWidth = 80;
 
@@ -51,11 +52,11 @@ const Sidebar = () => {
           bottom: 'auto',
           position: 'fixed',
           boxSizing: 'border-box',
-          background: 'linear-gradient(45deg,rgb(78, 203, 219),rgb(120, 218, 233))',
+          background: 'linear-gradient(45deg, #6DE0FF, #2BC4F3)',
           borderRadius: '0px 40px 40px 0px',
           paddingTop: '12px',
           paddingBottom: '12px',
-          boxShadow: '0 0 25px rgb(78, 203, 219), 0 0 50px rgb(120, 218, 233)',
+          boxShadow: '0 0 15px #6DE0FF, 0 0 10px #2BC4F3',
         },
       }}
     >
@@ -69,18 +70,18 @@ const Sidebar = () => {
             componentsProps={{
               tooltip: {
                 sx: {
-                  fontSize: '18px',
-                  fontWeight: 'bold',
-                  backgroundColor: 'rgb(78, 203, 219)',
-                  color: '#fff',
+                  fontSize: '22px',
+                  backgroundColor: '#2BC4F3',
+                  color: '#083A40',
                   padding: '6px 12px',
                   borderRadius: '6px',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
+                  fontFamily: "'Racing Sans One', sans-serif",
+                  boxShadow: '0 0 6px #6DE0FF, 0 0 12px #2BC4F3',
                 },
               },
               arrow: {
                 sx: {
-                  color: '#1FCBEA',
+                  color: '#2BC4F3',
                 },
               },
             }}
@@ -92,11 +93,13 @@ const Sidebar = () => {
                 justifyContent: 'center',
                 backgroundColor: selectedItem === key ? '#1FCBEA' : 'inherit',
                 mb: 2.5,
+                borderRadius: '12px',
+                transition: 'background-color 0.3s ease',
                 '&:hover': {
                   backgroundColor: '#1FCBEA',
                   '& .MuiListItemIcon-root': {
-                    color: '#fff',
-                    textShadow: '0 0 8px #fff, 0 0 16px #1FCBEA, 0 0 24px #1FCBEA',
+                    color: '#ffffff',
+                    textShadow: '0 0 6px #ffffff, 0 0 12px #6DE0FF, 0 0 18px #2BC4F3',
                   },
                 },
               }}
@@ -104,10 +107,10 @@ const Sidebar = () => {
               <ListItemIcon
                 sx={{
                   minWidth: 0,
-                  color: selectedItem === key ? '#fff' : '#083A40',
+                  color: selectedItem === key ? '#ffffff' : '#083A40',
                   textShadow:
                     selectedItem === key
-                      ? '0 0 8px #fff, 0 0 16px #1FCBEA, 0 0 24px #1FCBEA'
+                      ? '0 0 6px #ffffff, 0 0 12px #6DE0FF, 0 0 18px #2BC4F3'
                       : 'none',
                   transition: 'all 0.3s ease-in-out',
                 }}

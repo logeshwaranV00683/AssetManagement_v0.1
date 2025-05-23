@@ -8,6 +8,13 @@ import "../Style/Assets.css"
 import AddAssetModal from './AddAssetModal';
 import ExportButton from './ExportButton';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import SidebarAssets  from './SideBarAssets';
+import ImportButton from './ImportButton';
+import UploadFileIcon from '@mui/icons-material/UploadFile'; // Add this at the top with other imports
+
+
+
+
 const useStyles = makeStyles((theme) => ({
     content: {
         flexGrow: 1,
@@ -33,6 +40,11 @@ function Assets() {
         { id: 1, name: 'Laptop', serialNumber: 'SN001', location: 'Room A', assignedTo: 'User A' },
         { id: 2, name: 'Desktop', serialNumber: 'SN002', location: 'Room B', assignedTo: 'User B' },
         { id: 3, name: 'Laptop', serialNumber: 'SN003', location: 'Room C', assignedTo: 'User B' },
+        { id: 4, name: 'Laptop', serialNumber: 'SN001', location: 'Room A', assignedTo: 'User A' },
+        { id: 5, name: 'Desktop', serialNumber: 'SN002', location: 'Room B', assignedTo: 'User B' },
+        { id: 6, name: 'Laptop', serialNumber: 'SN003', location: 'Room C', assignedTo: 'User B' },
+        { id: 7, name: 'Laptop', serialNumber: 'SN001', location: 'Room A', assignedTo: 'User A' },
+
 
         // Add more rows as needed
     ];
@@ -109,64 +121,152 @@ function Assets() {
     };
 
     return (
-        <div style={{width:'195vh'}}>
+        <div style={{width:'185vh'}}>
             <main className={classes.content}>
                 <Container maxWidth="lg">
                     <div className={classes.filterContainer}>
                         {/* <Box display="flex" alignItems="center"> */}
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            style={{ marginRight: 10, width: '10vw' }}
-                            startIcon={<AddCircleOutlineIcon />} // Add the icon as startIcon
-                            onClick={handleOpenModal}
-                        >
-                            Add Asset
-                        </Button>
+                        <div style={{ display: 'flex', position: 'relative' }}>
+                            {/* Main content area */}
+                            <main className={classes.content} style={{ flexGrow: 1, paddingRight: '80px' }}>
+                                <Container maxWidth="lg">
+                                {/* ...your existing content... */}
+                                </Container>
+                            </main>
+
+                            {/* Sidebar only shown on /assets */}
+                            <SidebarAssets
+                                onAddAsset={handleOpenModal}
+                                onFilterAssigned={filterAssigned}
+                                onFilterUnassigned={filterUnassigned}
+                                onFilterScrap={filterScrap}
+                                onResetFilters={resetFilters}
+                            />
+
+                        </div>
                         
                         <TextField
                             label="Search"
-                            variant="standard"
+                            variant="outlined"
                             onChange={handleSearch}
-                            style={{ width: 400,margin: '30px' }}
+                            value={filterValue}
+                            sx={{
+                                width: '85vw',
+                                borderRadius: '60px',
+                                '& .MuiOutlinedInput-root': {
+                                background: '#ffffff', // White background
+                                borderRadius: '15px',
+                                color: '#083A40', // Text color
+                                fontWeight: 500,
+                                boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)', // Glowing white + blue shadow
+                                '& fieldset': {
+                                    border: '2px solid transparent',
+                                },
+                                '&:hover fieldset': {
+                                    border: '2px solid #1FCBEA',
+                                },
+                                '&.Mui-focused fieldset': {
+                                    border: '2px solid #000',
+                                },
+                                '& input': {
+                                    background: 'transparent',
+                                    color: '#083A40',
+                                    fontFamily: "'Racing Sans One', sans-serif",
+                                    marginLeft: '200px',
+                                },
+                                },
+                                '& .MuiInputLabel-root': {
+                                color: '#083A40',
+                                fontFamily: "'Racing Sans One', sans-serif",
+                                marginLeft: '20px',
+                                letterSpacing: '1.5px',
+                                },
+                                '& .Mui-focused .MuiInputLabel-root': {
+                                color: '#083A40',
+                                },
+                            }}
                         />
-                        {/* </Box> */}
-                        {/* <Box display="flex" alignItems="center" justifyContent={'centr'}> */}
-                        <ButtonGroup variant="contained" style={{ boxShadow: 'none', gap:'3px' }}>
-                            <Button className="btn-border" onClick={filterUnassigned}>Unassigned</Button>
-                            <Button className="btn-border" onClick={filterAssigned}>Assigned</Button>
-                            <Button className="btn-border" onClick={filterScrap}>Scrap</Button>
-                            <Button className="btn-border" variant="contained" onClick={resetFilters}>
-                                Reset
-                            </Button>
-                            {/* Add buttons for other actions */}
-                        </ButtonGroup>
-                        {/* </Box> */}
+
+
+                        
                     </div>
-                    <div style={{ height: '60vh', width: '85vw', display: 'flex', flexDirection: 'column', alignItems: 'center', }}>
+                    <div style={{ height: '65vh', width: '85vw', display: 'flex', flexDirection: 'column', alignItems: 'center', }}>
                         <div style={{ height: 350, marginLeft: '2%', width: '95%', flexGrow: 1 }}>
                             <DataGrid
                                 rows={filteredRows}
                                 columns={columns}
                                 pageSize={5}
                                 rowsPerPageOptions={[5, 10, 20]}
+                                sx={{
+                                    borderRadius: '16px',
+                                    overflow: 'hidden',
+                                    border: '2px solid #1FCBEA',
+                                    boxShadow: '0 0 3px #6DE0FF, 0 0 4px #2BC4F3',
+                                    fontFamily: "'Racing Sans One', sans-serif",
+                                    color: '#083A40',
+                                    '& .MuiDataGrid-columnHeaders': {
+                                    background: 'linear-gradient(45deg, #6DE0FF, #2BC4F3)',
+                                    color: '#083A40',
+                                    fontSize: '16px',
+                                    fontWeight: 700,
+                                    },
+                                    '& .MuiDataGrid-cell': {
+                                    background: '#F0FBFF',
+                                    color: '#083A40',
+                                    fontSize: '15px',
+                                    borderBottom: '1px solid #D0F0FF',
+                                    },
+                                    '& .MuiDataGrid-footerContainer': {
+                                    background: 'linear-gradient(45deg, #6DE0FF, #2BC4F3)',
+                                    color: '#083A40',
+                                    fontWeight: 600,
+                                    },
+                                    '& .MuiDataGrid-row:hover': {
+                                    backgroundColor: '#E0F9FF',
+                                    },
+                                    '& .MuiDataGrid-selectedRowCount': {
+                                    color: '#083A40',
+                                    },
+                                    '& .MuiCheckbox-root': {
+                                    color: '#083A40',
+                                    },
+                                }}
                             />
+
                             
                         </div>
-                        <div className="floating-button">
-                            <ExportButton
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', width: '95%', marginTop: '40px' }}>
+                            <div className="export-button">
+                                <ExportButton
                                 type="assets"
                                 status={exportType}
                                 filter={filterValue}
                                 filePrefix="Verinite"
                                 buttonLabel={
-                                <span style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'white' }}>
+                                    <span>
                                     <FileDownloadIcon style={{ fontSize: 20 }} />
                                     {`Export ${exportType} Assets`}
-                                </span>
+                                    </span>
                                 }
-                            />
+                                />
                             </div>
+
+                            <div className="import-button">
+                                <ImportButton
+                                type="assets"
+                                status={exportType}
+                                filter={filterValue}
+                                filePrefix="Verinite"
+                                buttonLabel={
+                                    <span>
+                                    <UploadFileIcon style={{ fontSize: 20 }} />
+                                    Import Assets
+                                    </span>
+                                }
+                                />
+                            </div>
+                        </div>
+
                     </div>
                     
                 </Container>

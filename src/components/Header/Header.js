@@ -47,7 +47,7 @@ const Header = ({ onLogout }) => {
         position="fixed"
         elevation={0}
         style={{
-          background: 'linear-gradient(45deg, rgb(78, 203, 219), rgb(120, 218, 233))',
+          background: 'linear-gradient(45deg, #6DE0FF, #2BC4F3)',
           height: '14vh',
           width: '90%',
           margin: '0 auto',
@@ -55,7 +55,7 @@ const Header = ({ onLogout }) => {
           left: 0,
           right: 0,
           borderRadius: '0 0 60px 60px',
-          boxShadow: '0 0 25px rgb(78, 203, 219), 0 0 50px rgb(120, 218, 233)',
+          boxShadow: '0 0 15px #6DE0FF, 0 0 10px #2BC4F3',
           zIndex: 1300,
           display: 'flex',
           justifyContent: 'center',
@@ -77,7 +77,9 @@ const Header = ({ onLogout }) => {
               fontSize: '32px',
               color: '#083A40',
               fontFamily: "'Racing Sans One', sans-serif",
-              textShadow: '0 0 8px #fff, 0 0 16px #1FCBEA',
+              textShadow: '0 0 4px #B2F1FF, 0 0 8px #2BC4F3',
+              letterSpacing: '2px',
+              marginLeft: '30px'
             }}
           >
             Verinite - Assets Management
@@ -90,7 +92,7 @@ const Header = ({ onLogout }) => {
                 fontSize: '18px',
                 color: '#083A40',
                 fontFamily: "'Racing Sans One', sans-serif",
-                textShadow: '0 0 6px #fff, 0 0 12px #1FCBEA',
+                textShadow: '0 0 3px #B2F1FF, 0 0 6px #2BC4F3',
                 marginLeft: '30px'
               }}
             >
@@ -104,7 +106,7 @@ const Header = ({ onLogout }) => {
               style={{
                 transform: 'scale(1.8)',
                 color: '#083A40',
-                textShadow: '0 0 6px #fff, 0 0 12px #1FCBEA',
+                textShadow: '0 0 4px #B2F1FF, 0 0 6px #2BC4F3',
                 marginRight: '60px'
               }}
             >
@@ -124,7 +126,7 @@ const Header = ({ onLogout }) => {
                 style={{
                   color: 'red',
                   fontWeight: 'bold',
-                  textShadow: '0 0 6px #fff, 0 0 12px #ff4d4d',
+                  textShadow: '0 0 3px #fff, 0 0 6px #FF4D4D',
                 }}
               >
                 <LogoutIcon style={{ marginRight: '8px' }} />
