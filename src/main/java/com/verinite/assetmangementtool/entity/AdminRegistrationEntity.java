@@ -26,4 +26,6 @@ public class AdminRegistrationEntity {
     private String location;
     @Column(name = "password", nullable = false)
     private String password;
+    private String otp;
+    private boolean otpVerify;
 }

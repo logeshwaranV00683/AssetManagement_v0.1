@@ -13,4 +13,6 @@ public class AdminRegistrationDto implements Serializable {
     private String mail;
     private String role;
     private String location;
+    private String otp;
+    private boolean otpVerify;
 }
