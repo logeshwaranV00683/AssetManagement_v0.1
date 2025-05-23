@@ -11,6 +11,8 @@ import com.verinite.assetmangementtool.repository.AssetCountRepository;
 import com.verinite.assetmangementtool.repository.AssetsRepository;
 import com.verinite.assetmangementtool.repository.AssignedAssetsRepository;
 import com.verinite.assetmangementtool.repository.EmployeeRepository;
+import com.verinite.assetmangementtool.service.mailservice.AckMailer;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,9 +39,11 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
     @Autowired
     AssetCountRepository assetCountRepository;
     @Autowired
-    EmailAssetService emailAssetService;
-    @Autowired
     private AssignedAssetsRepository assignedAssetsRepository;
+    @Autowired
+    private AckMailer ackMailer;
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Override
     public AssignedAssetsEntity saveAssignedAssets(AssignedAssetsEntity assignedAssetsEntity) {
@@ -183,13 +187,23 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
 
                         assignedAssetsRepository.save(assignedAssetsEntity);
                         assetsRepo.save(asset); // Update asset status
-                        emailAssetService.save(assignableAssetDtos);
+                        List<AssetsEntity> assetsEntityList= assignableAssetDtos.stream().map((data)->{
+                            AssetsEntity assetsEntity= new AssetsEntity();
+                            assetsEntity.setEmpId(data.getEmpId());
+                            assetsEntity.setAssetName(data.getAssetName());
+                            assetsEntity.setSerialNumber(data.getSerialNumber());
+                            assetsEntity.setAssignedBy(data.getAssignedBy());
+                            assetsEntity.setAssignedDate(data.getAssignedDate());
+                            return assetsEntity;
+                        }) .collect(Collectors.toList());
+                        ackMailer.sendAckMail(empId,assetsEntityList);
                     } else {
                         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Asset was in Scrap");
                     }
                 }
                 return ResponseEntity.ok("Asset Assigned To " + employeeEntity.getEmpId());
             } catch (Exception e) {
+                e.printStackTrace();
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("asset");
             }
         } else {
