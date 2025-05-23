@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Container, Box, Button, ButtonGroup } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import TextField from '@mui/material/TextField';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import "../Style/Assets.css"
 import AddAssetModal from './AddAssetModal';
 import ExportButton from './ExportButton';
@@ -11,7 +10,10 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import SidebarAssets  from './SideBarAssets';
 import ImportButton from './ImportButton';
 import UploadFileIcon from '@mui/icons-material/UploadFile'; // Add this at the top with other imports
-
+import {IconButton, Tooltip } from '@mui/material';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 
 
@@ -57,20 +59,57 @@ function Assets() {
         {
             field: 'actions',
             headerName: 'Actions',
-            width: 300,
+            width: 150,
             sortable: false,
             renderCell: (params) => (
-                <Box>
-                    <Button variant="contained" color="primary" style={{ marginRight: 8 }}>
-                        View
-                    </Button>
-                    
-                    <Button variant="contained" color="secondary" style={{ marginRight: 8 }}>
-                        Edit
-                    </Button>
-                    <Button variant="contained" color="error">
-                        Delete
-                    </Button>
+                <Box display="flex" alignItems="center">
+                    <Tooltip title="View">
+                        <IconButton
+                            color="inherit"
+                            sx={{
+                                transition: 'transform 0.2s',
+                                '&:hover': {
+                                    transform: 'scale(1.3)',
+                                    color: 'primary.main',
+                                    filter: 'drop-shadow(0 0 4px rgba(25, 118, 210, 0.8))',
+                                },
+                                mr: 1,
+                            }}
+                        >
+                            <VisibilityIcon />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Edit">
+                        <IconButton
+                            color="inherit"
+                            sx={{
+                                transition: 'transform 0.2s',
+                                '&:hover': {
+                                    transform: 'scale(1.3)',
+                                    color: 'secondary.main',
+                                    filter: 'drop-shadow(0 0 4px rgba(156, 39, 176, 0.8))',
+                                },
+                                mr: 1,
+                            }}
+                        >
+                            <EditIcon />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Delete">
+                        <IconButton
+                            color="inherit"
+                            sx={{
+                                transition: 'transform 0.2s',
+                                '&:hover': {
+                                    transform: 'scale(1.3)',
+                                    color: 'error.main',
+                                    filter: 'drop-shadow(0 0 4px rgba(211, 47, 47, 0.8))',
+                                },
+                            }}
+                        >
+                            <DeleteIcon />
+                        </IconButton>
+                    </Tooltip>
                 </Box>
             ),
         },
