@@ -10,6 +10,8 @@ import InputLabel from '@mui/material/InputLabel';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import { saveAsset } from '../Services/AssetService';
+import { toast } from 'react-hot-toast';
+
 
 function AddAssetModal({ open, handleClose, refreshAssetList }) {
 
@@ -47,9 +49,11 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
              await saveAsset(newAsset);
              console.log('Asset added:', newAsset);
              refreshAssetList();
-             handleClose();
+             toast.success(`${newAsset.serialNumber} Asset Added Successfully`); 
+             handleCloseModal();
            } catch (error) {
              console.error('Error adding Asset:', error);
+             toast.error(`Adding ${newAsset.serialNumber} Asset Failed`); 
            }
   };
 

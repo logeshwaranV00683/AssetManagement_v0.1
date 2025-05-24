@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 const token = localStorage.getItem('authToken');
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -45,3 +47,46 @@ export const getAssetList = async() => {
         throw error;
       }
     };
+
+    export const updateAsset = async (asset,serialNumber) => {
+      console.log('json',  JSON.stringify(asset),serialNumber);
+      try {
+        const response = await fetch(`${apiUrl}/assetManager/v1/asset/updateAsset/${serialNumber}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(asset),
+        });
+        
+        if (!response.ok) {
+          throw new Error('Network response was not ok ' + response.statusText);
+        }
+        return await response.json();
+      } catch (error) {
+        console.error('Error updating asset:', error);
+        throw error;
+      }
+    };
+
+export const scrapAsset = async (assetId) => {
+  console.log(`Scrapping Asset with ID: ${assetId}`);
+  try {
+    const response = await fetch(`${apiUrl}/assetManager/v1/asset/delete/${assetId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok ' + response.statusText);
+    }
+    return true;
+  } catch (error) {
+    console.error('Error updating asset:', error);
+    throw error;
+  }
+};

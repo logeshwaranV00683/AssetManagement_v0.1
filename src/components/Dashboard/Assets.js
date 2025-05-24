@@ -9,13 +9,16 @@ import ExportButton from './ExportButton';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import SidebarAssets  from './SideBarAssets';
 import ImportButton from './ImportButton';
-import UploadFileIcon from '@mui/icons-material/UploadFile'; // Add this at the top with other imports
+import UploadFileIcon from '@mui/icons-material/UploadFile';  
 import {IconButton, Tooltip } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import HistoryIcon from '@mui/icons-material/History';
-import { getAssetList } from '../Services/AssetService';
+import { getAssetList, scrapAsset } from '../Services/AssetService';
+import  EditAssetModal  from './EditAssetModal';
+import { toast } from 'react-hot-toast';
+
 
 const useStyles = makeStyles((theme) => ({
     content: {
@@ -51,6 +54,23 @@ function Assets() {
             }
         };
 
+const handleDelete = async (asset) => {
+  const confirmDelete = window.confirm("Are you sure you want to scrape this asset?");
+  if (!confirmDelete) return;
+
+  try {
+    const success = await scrapAsset(asset.assetId);
+    if (success) {
+         toast.success(`Scrapped the Asset with ID: ${asset.serialNumber}`); 
+         fetchAssets();
+    }
+  } catch (error) {
+    console.error('Error deleting asset:', error);
+    toast.error(`Cannot Scrapped the Asset with ID: ${asset.serialNumber}`); 
+  }
+};
+
+
     useEffect(() => {
             fetchAssets();
         }, []);
@@ -81,7 +101,12 @@ function Assets() {
         setOpenEditModal(false);
         setSelectedAsset(null);
         setViewOnly(false);
-    }
+    };
+    const handleOpenEditModal = (asset, isViewOnly = false) => {
+        setSelectedAsset(asset);
+        setViewOnly(isViewOnly);
+        setOpenEditModal(true);
+    };
 
     const filterByAssetStatus = (status) => {
     setExportType(status);
@@ -116,8 +141,24 @@ function Assets() {
                                 },
                                 mr: 1,
                             }}
+                            onClick={() => handleOpenEditModal(params.row, true)}
                         >
                             <VisibilityIcon />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="History">
+                        <IconButton
+                            color="inherit"
+                            sx={{
+                                transition: 'transform 0.2s',
+                                '&:hover': {
+                                    transform: 'scale(1.3)',
+                                    color: 'primary.main',
+                                    filter: 'drop-shadow(0 0 4px rgba(0, 224, 240, 0.8))',
+                                },
+                            }}
+                        >
+                            <HistoryIcon />
                         </IconButton>
                     </Tooltip>
                     <Tooltip title="Edit">
@@ -132,11 +173,12 @@ function Assets() {
                                 },
                                 mr: 1,
                             }}
+                            onClick={()=>handleOpenEditModal(params.row)}
                         >
                             <EditIcon />
                         </IconButton>
                     </Tooltip>
-                    <Tooltip title="Delete">
+                    <Tooltip title="Scrap">
                         <IconButton
                             color="inherit"
                             sx={{
@@ -147,23 +189,9 @@ function Assets() {
                                     filter: 'drop-shadow(0 0 4px rgba(211, 47, 47, 0.8))',
                                 },
                             }}
+                            onClick={()=>handleDelete(params.row)}
                         >
                             <DeleteIcon />
-                        </IconButton>
-                    </Tooltip>
-                     <Tooltip title="History">
-                        <IconButton
-                            color="inherit"
-                            sx={{
-                                transition: 'transform 0.2s',
-                                '&:hover': {
-                                    transform: 'scale(1.3)',
-                                    color: 'secondary.main',
-                                    filter: 'drop-shadow(0 0 4px rgba(0, 224, 240, 0.8))',
-                                },
-                            }}
-                        >
-                            <HistoryIcon />
                         </IconButton>
                     </Tooltip>
                 </Box>
@@ -205,11 +233,11 @@ function Assets() {
                                 width: '85vw',
                                 borderRadius: '60px',
                                 '& .MuiOutlinedInput-root': {
-                                background: '#ffffff', // White background
+                                background: '#ffffff', 
                                 borderRadius: '15px',
-                                color: '#083A40', // Text color
+                                color: '#083A40', 
                                 fontWeight: 500,
-                                boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)', // Glowing white + blue shadow
+                                boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)', 
                                 '& fieldset': {
                                     border: '2px solid transparent',
                                 },
@@ -288,7 +316,7 @@ function Assets() {
                         <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', width: '95%', marginTop: '40px' }}>
                             <div className="export-button">
                                 <ExportButton
-                                type="assets"
+                                type="asset"
                                 status={exportType}
                                 filter={filterValue}
                                 filePrefix="Verinite"
@@ -303,7 +331,7 @@ function Assets() {
 
                             <div className="import-button">
                                 <ImportButton
-                                type="assets"
+                                type="asset"
                                 status={exportType}
                                 filter={filterValue}
                                 filePrefix="Verinite"
@@ -321,7 +349,19 @@ function Assets() {
                     
                 </Container>
                 
-                <AddAssetModal open={openAddModal} handleClose={handleClose} refreshAssetList={fetchAssets}/>
+                <AddAssetModal 
+                open={openAddModal} 
+                handleClose={handleClose} 
+                refreshAssetList={fetchAssets}
+                />
+
+                <EditAssetModal
+                    open={openEditModal}
+                    handleClose={handleClose}
+                    asset={selectedAsset}
+                    refreshAssetList={fetchAssets}
+                    viewOnly={viewOnly}
+                />
                 
             </main>
         </div>
