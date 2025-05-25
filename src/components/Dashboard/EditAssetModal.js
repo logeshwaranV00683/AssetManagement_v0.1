@@ -30,7 +30,7 @@ function EditAssetModal({ open, handleClose, refreshAssetList, asset, viewOnly }
     assignedDate: '',
     returnDate: '',
     type: '',
-    assertSourcedBy: '',
+    assetSourcedBy: '',
     empId: '',
     status: '',
   });
@@ -52,7 +52,7 @@ function EditAssetModal({ open, handleClose, refreshAssetList, asset, viewOnly }
         assignedDate: asset.assignedDate || '',
         returnDate: asset.returnDate || '',
         type: asset.type || '',
-        assertSourcedBy: asset.assertSourcedBy || '',
+        assetSourcedBy: asset.assetSourcedBy || '',
         empId: asset.empId || '',
         status: asset.status || '',
       });
@@ -71,12 +71,12 @@ function EditAssetModal({ open, handleClose, refreshAssetList, asset, viewOnly }
     []
   );
 
-  const handleAssertSourcedByChange = useCallback(
+  const handleAssetSourcedByChange = useCallback(
     (e) => {
       const val = e.target.value;
       setFields((prev) => ({
         ...prev,
-        assertSourcedBy: val === 'Verinite' ? 'Verinite' : '',
+        assetSourcedBy: val === 'Verinite' ? 'Verinite' : '',
       }));
     },
     []
@@ -87,7 +87,7 @@ function EditAssetModal({ open, handleClose, refreshAssetList, asset, viewOnly }
       const val = e.target.value;
       setFields((prev) => ({
         ...prev,
-        assertSourcedBy: val,
+        assetSourcedBy: val,
       }));
     },
     []
@@ -317,22 +317,22 @@ function EditAssetModal({ open, handleClose, refreshAssetList, asset, viewOnly }
           )}
 
           <FormControl fullWidth disabled={viewOnly}>
-            <InputLabel id="assert-sourced-by-label">Asset Sourced By</InputLabel>
+            <InputLabel id="asset-sourced-by-label">Asset Sourced By</InputLabel>
             <Select
-              labelId="assert-sourced-by-label"
-              value={fields.assertSourcedBy === 'Verinite' ? 'Verinite' : 'Client Company'}
+              labelId="asset-sourced-by-label"
+              value={fields.assetSourcedBy === 'Verinite' ? 'Verinite' : 'Client Company'}
               label="Asset Sourced By"
-              onChange={handleAssertSourcedByChange}
+              onChange={handleAssetSourcedByChange}
             >
               <MenuItem value="Verinite">Verinite</MenuItem>
               <MenuItem value="Client Company">Client Company</MenuItem>
             </Select>
           </FormControl>
 
-          {fields.assertSourcedBy !== 'Verinite' && (
+          {fields.assetSourcedBy !== 'Verinite' && (
             <TextField
               label="Enter Client Company Name"
-              value={fields.assertSourcedBy}
+              value={fields.assetSourcedBy}
               onChange={handleClientCompanyNameChange}
               fullWidth
               disabled={viewOnly}

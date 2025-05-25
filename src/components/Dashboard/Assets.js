@@ -122,7 +122,7 @@ const handleDelete = async (asset) => {
         { field: 'status', headerName: 'Status', width: 120, sortable: true},
         { field: 'empId', headerName: 'Assigned To', width: 120, sortable: true},
         { field: 'location', headerName: 'Location', width: 100, sortable: true},
-        { field: 'assertSourcedBy', headerName: 'Assert Sourced By', width: 170, sortable: true},
+        { field: 'assetSourcedBy', headerName: 'Asset Sourced By', width: 170, sortable: true},
         {
             field: 'actions',
             headerName: 'Actions',
@@ -327,6 +327,7 @@ const handleDelete = async (asset) => {
                                     {`Export ${exportType} Assets`}
                                     </span>
                                 }
+                                filteredRows={filteredRows}
                                 />
                             </div>
 
@@ -336,6 +337,7 @@ const handleDelete = async (asset) => {
                                 status={exportType}
                                 filter={filterValue}
                                 filePrefix="Verinite"
+                                filteredRows={filteredRows}
                                 buttonLabel={
                                     <span>
                                     <UploadFileIcon style={{ fontSize: 20 }} />

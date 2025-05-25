@@ -28,7 +28,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
   const [warrantyDate, setWarrantyDate] = useState('');
   const [addedBy, setAddedBy] = useState(user.empId);
   const [type, setType] = useState('');
-  const [assertSourcedBy, setAssertSourcedBy] = useState('Verinite');
+  const [assetSourcedBy, setAssetSourcedBy] = useState('Verinite');
 
   const handleAddAsset = async () => {
     const newAsset = {
@@ -42,7 +42,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
       purchaseDate,
       warrantyDate,
       addedBy,
-      assertSourcedBy,
+      assetSourcedBy,
     };
     console.log('Asset added:', newAsset);
     setIsAdding(true);
@@ -71,7 +71,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
     setPurchaseDate('');
     setWarrantyDate('');
     setAddedBy(user.empId);
-    setAssertSourcedBy('');
+    setAssetSourcedBy('');
   };
 
   const handleCloseModal = () => {
@@ -191,22 +191,22 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
           />
 
           <FormControl fullWidth>
-            <InputLabel id="assert-sourced-by-label">Assert Sourced By</InputLabel>
+            <InputLabel id="asset-sourced-by-label">Asset Sourced By</InputLabel>
             <Select
-              labelId="assert-sourced-by-label"
-              id="assert-sourced-by"
+              labelId="asset-sourced-by-label"
+              id="asset-sourced-by"
               value={
-                ['Verinite', 'Client Company'].includes(assertSourcedBy)
-                  ? assertSourcedBy
+                ['Verinite', 'Client Company'].includes(assetSourcedBy)
+                  ? assetSourcedBy
                   : 'Client Company'
               }
-              label="Assert Sourced By"
+              label="Asset Sourced By"
               onChange={(e) => {
                 const value = e.target.value;
                 if (value === 'Verinite') {
-                  setAssertSourcedBy('Verinite');
+                  setAssetSourcedBy('Verinite');
                 } else {
-                  setAssertSourcedBy('');
+                  setAssetSourcedBy('');
                 }
               }}
             >
@@ -215,11 +215,11 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
             </Select>
           </FormControl>
 
-          {assertSourcedBy !== 'Verinite' && (
+          {assetSourcedBy !== 'Verinite' && (
             <TextField
               label="Enter Client Company Name"
-              value={assertSourcedBy}
-              onChange={(e) => setAssertSourcedBy(e.target.value)}
+              value={assetSourcedBy}
+              onChange={(e) => setAssetSourcedBy(e.target.value)}
               fullWidth
             />
           )}

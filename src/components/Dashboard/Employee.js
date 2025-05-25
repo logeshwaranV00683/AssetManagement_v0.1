@@ -183,10 +183,11 @@ function Employee() {
                         </div>
                         <div className="floating-button">
                           <ExportButton
-                            type="employees"
+                            type="employee"
                             status={exportType}
                             filter={filterValue}
                             filePrefix="Verinite"
+                            filteredRows={filteredRows}
                             buttonLabel={
                               <span style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'white' }}>
                                 <FileDownloadIcon style={{ fontSize: 20 }} />

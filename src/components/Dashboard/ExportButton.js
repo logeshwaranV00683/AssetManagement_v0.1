@@ -1,32 +1,58 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Button } from '@mui/material';
-import '../Style/ExportButton.css';
 import { toast } from 'react-hot-toast';
+import { showDataPreviewAlert, showErrorAlert } from '../Utils/alerts';
+import '../Style/ExportButton.css';
+
 const ExportButton = ({
-  type,
-  status = '',
-  filter = '',
-  buttonLabel,
-  filePrefix,
+  type,                 // 'asset' or 'employee'
+  filteredRows = [],   // filtered data to export
+  state = '',          // optional state string used in filename
+  buttonLabel = 'Export' // button label text
 }) => {
   const [loading, setLoading] = useState(false);
+  const exportFilteredData = async () => {
+    if (!Array.isArray(filteredRows) || filteredRows.length === 0) {
+      showErrorAlert("Export Failed",'No data available to export.');
+      return;
+    }
+   const cleanData = filteredRows.map(row => {
+     if (type === 'asset') {
+       const newRow = {};
+       Object.entries(row).forEach(([key, value]) => {
+         if (key === 'id' || key === 'assetId') return;
+         if (key === 'empId') {
+           newRow['Assigned To'] = value;
+         } else {
+           newRow[key] = value;
+         }
+       });
+       return newRow;
+     } else {
+       const newRow = { ...row };
+       delete newRow.name;
+       delete newRow.id;
+       return newRow;
+     }
+   });
 
-  const handleExport = async () => {
-    setLoading(true);
+  filteredRows=cleanData;
+    const confirmed = await showDataPreviewAlert(filteredRows, type);
+    if (!confirmed) return;
+
     try {
+      setLoading(true);
       const token = localStorage.getItem('authToken');
-      const endpoint = status
-        ? `/assetManager/v1/export/${type}/${status}`
-        : `/assetManager/v1/export/${type}`;
 
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}${endpoint}`,
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/assetManager/v1/${type}/export`,
+        filteredRows,
         {
-          params: filter ? { filter } : {},
           responseType: 'blob',
           headers: {
             Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
           },
         }
       );
@@ -34,20 +60,15 @@ const ExportButton = ({
       const blob = new Blob([response.data], {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       });
+
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-
-      const prefix = filePrefix ? `${filePrefix}_` : '';
-      const statusPart = status && status !== 'all' ? `${status}_` : '';
-      const filterPart = filter ? `_${filter}` : '';
-      const fileName = `${prefix}${statusPart}${type}${filterPart}.xlsx`;
-
-      a.download = fileName;
+      a.download = `${type}_${state || 'data'}_export.xlsx`;
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      toast.error('Failed to export data. Please try again.');
+      showErrorAlert('Export Failed', 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -55,14 +76,11 @@ const ExportButton = ({
 
   return (
     <Button
-  onClick={handleExport}
-  disabled={loading} 
->
-  {loading ? 'Exporting...' : buttonLabel || `Export ${type}`}
-</Button>
-
-
-    
+      onClick={exportFilteredData}
+      disabled={loading}
+    >
+      {loading ? 'Exporting...' : buttonLabel}
+    </Button>
   );
 };
 
