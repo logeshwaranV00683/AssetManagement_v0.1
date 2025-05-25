@@ -1,6 +1,7 @@
 package com.verinite.assetmangementtool.service;
 
 import com.verinite.assetmangementtool.dto.AssetCounterDto;
+import com.verinite.assetmangementtool.dto.AssetExportDto;
 import com.verinite.assetmangementtool.dto.AssetsDto;
 import com.verinite.assetmangementtool.entity.*;
 import com.verinite.assetmangementtool.repository.*;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -247,7 +249,6 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
 
         AssetsEntity existingAsset = assetRepo.findBySerialNumber(asset.getSerialNumber());
         if (existingAsset != null) {
-            // Map only non-null fields from the input asset to the existing asset
             if (asset.getAssetName() != null)
                 existingAsset.setAssetName(asset.getAssetName());
             if (asset.getPurchaseDate() != null)
@@ -266,12 +267,25 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                 existingAsset.setOperatingSystem(asset.getOperatingSystem());
             if (asset.getModelName() != null)
                 existingAsset.setModelName(asset.getModelName());
-            // Save the updated asset to the repository
-            AssetsEntity updatedAsset = assetRepo.save(existingAsset);
+            if (asset.getEmpId() != null)
+                existingAsset.setEmpId(asset.getEmpId());
+            if (asset.getLocation() != null)
+                existingAsset.setLocation(asset.getLocation());
+            if (asset.getLocCode() != null)
+                existingAsset.setLocCode(asset.getLocCode());
+            if(asset.getReturnDate()!=null)
+                existingAsset.setReturnDate(asset.getReturnDate());
+            if(asset.getAssignedDate()!=null)
+                existingAsset.setAssignedDate(asset.getAssignedDate());
+            if(asset.getAssignedBy()!=null)
+                existingAsset.setAssignedBy(asset.getAssignedBy());
+            if(asset.getAssertSourcedBy()!=null)
+                existingAsset.setAssetSourcedBy(asset.getAssertSourcedBy());
+
+            return modelMapper.map(assetRepo.save(existingAsset), SaveAssetResponse.class);
         } else {
-            assetRepo.save(existingAsset);
+           return null;
         }
-        return modelMapper.map(asset, SaveAssetResponse.class);
     }
 
     // below code i write
@@ -642,31 +656,43 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                 .collect(Collectors.toList()); // Collect the results as a list of DTOs
     }
 
-    public void exportAssetsToExcel(OutputStream outputStream, String exportType, String filter) throws Exception {
-
-        List<?> assets;
-
-        if ("Scrap".equalsIgnoreCase(exportType)) {
-            assets = filter == null || filter.isEmpty()
-                    ? scrapRepository.findAll()
-                    : scrapRepository.findByFilter("%" + filter.toLowerCase() + "%");
-        } else if (exportType.isBlank() || exportType.equalsIgnoreCase("all")) {
-            assets = filter == null || filter.isEmpty()
-                    ? assetRepo.findAll()
-                    : assetRepo.findByFilter("%" + filter.toLowerCase() + "%");
-        } else {
-            assets = filter == null || filter.isEmpty()
-                    ? assetRepo.findByStatus(exportType)
-                    : assetRepo.findByStatusAndFilter(exportType, "%" + filter.toLowerCase() + "%");
-        }
-
+    public void exportAssetsToExcel(List<AssetExportDto> allAssets, OutputStream outputStream) throws IOException {
         Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet(exportType + " Assets");
 
+        // Prepare styles
         CellStyle headerStyle = createHeaderStyle(workbook);
         CellStyle dataStyle = createDataStyle(workbook);
 
-        String[] headers = getHeaders(exportType);
+        // Filter and export: Assigned
+        List<AssetExportDto> assigned = allAssets.stream()
+                .filter(a -> "Assigned".equalsIgnoreCase(a.getStatus()))
+                .collect(Collectors.toList());
+        writeAssignedSheet(workbook, assigned, headerStyle, dataStyle);
+
+        // Unassigned
+        List<AssetExportDto> unassigned = allAssets.stream()
+                .filter(a -> "Unassigned".equalsIgnoreCase(a.getStatus()))
+                .collect(Collectors.toList());
+        writeUnassignedSheet(workbook, unassigned, headerStyle, dataStyle);
+
+        // Scrap
+        List<AssetExportDto> scrap = allAssets.stream()
+                .filter(a -> "Scrap".equalsIgnoreCase(a.getStatus()))
+                .collect(Collectors.toList());
+        writeScrapSheet(workbook, scrap, headerStyle, dataStyle);
+
+        workbook.write(outputStream);
+        workbook.close();
+    }
+
+    private void writeAssignedSheet(Workbook workbook, List<AssetExportDto> data, CellStyle headerStyle, CellStyle dataStyle) {
+        Sheet sheet = workbook.createSheet("Assigned Assets");
+        String[] headers = {
+                "Asset Name", "Serial Number", "Assigned To (Emp ID)", "Status", "Type", "Purchase Date",
+                "Warranty Date", "Location", "Loc Code", "Model Name", "Operating System",
+                "Return Date", "Added By", "Assigned Date", "Assigned By", "Sourced By"
+        };
+
         Row headerRow = sheet.createRow(0);
         for (int i = 0; i < headers.length; i++) {
             Cell cell = headerRow.createCell(i);
@@ -675,22 +701,107 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
         }
 
         int rowNum = 1;
-        for (Object asset : assets) {
+        for (AssetExportDto dto : data) {
             Row row = sheet.createRow(rowNum++);
-            populateDataRow(row, asset, dataStyle, exportType);
+            int col = 0;
+            createDataCell(row, col++, dto.getAssetName(), dataStyle);
+            createDataCell(row, col++, dto.getSerialNumber(), dataStyle);
+            createDataCell(row, col++, dto.getAssignedTo(), dataStyle); // Assigned To
+            createDataCell(row, col++, dto.getStatus(), dataStyle);
+            createDataCell(row, col++, dto.getType(), dataStyle);
+            createDataCell(row, col++, String.valueOf(dto.getPurchaseDate()), dataStyle);
+            createDataCell(row, col++, String.valueOf(dto.getWarrantyDate()), dataStyle);
+            createDataCell(row, col++, dto.getLocation(), dataStyle);
+            createDataCell(row, col++, dto.getLocCode(), dataStyle);
+            createDataCell(row, col++, dto.getModelName(), dataStyle);
+            createDataCell(row, col++, dto.getOperatingSystem(), dataStyle);
+            createDataCell(row, col++, String.valueOf(dto.getReturnDate()), dataStyle);
+            createDataCell(row, col++, dto.getAddedBy(), dataStyle);
+            createDataCell(row, col++, String.valueOf(dto.getAssignedDate()), dataStyle);
+            createDataCell(row, col++, dto.getAssignedBy(), dataStyle);
+            createDataCell(row, col++, dto.getAssetSourcedBy(), dataStyle);
         }
 
+        for (int i = 0; i < headers.length; i++) sheet.autoSizeColumn(i);
+    }
+
+    private void writeUnassignedSheet(Workbook workbook, List<AssetExportDto> data, CellStyle headerStyle, CellStyle dataStyle) {
+        Sheet sheet = workbook.createSheet("Unassigned Assets");
+        String[] headers = {
+                "Asset Name", "Serial Number", "Status", "Type", "Purchase Date",
+                "Warranty Date", "Location", "Loc Code", "Model Name", "Operating System",
+                "Added By", "Sourced By"
+        };
+
+        Row headerRow = sheet.createRow(0);
         for (int i = 0; i < headers.length; i++) {
-            sheet.autoSizeColumn(i);
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(headerStyle);
         }
 
-        workbook.write(outputStream);
-        workbook.close();
+        int rowNum = 1;
+        for (AssetExportDto dto : data) {
+            Row row = sheet.createRow(rowNum++);
+            int col = 0;
+            createDataCell(row, col++, dto.getAssetName(), dataStyle);
+            createDataCell(row, col++, dto.getSerialNumber(), dataStyle);
+            createDataCell(row, col++, dto.getStatus(), dataStyle);
+            createDataCell(row, col++, dto.getType(), dataStyle);
+            createDataCell(row, col++, String.valueOf(dto.getPurchaseDate()), dataStyle);
+            createDataCell(row, col++, String.valueOf(dto.getWarrantyDate()), dataStyle);
+            createDataCell(row, col++, dto.getLocation(), dataStyle);
+            createDataCell(row, col++, dto.getLocCode(), dataStyle);
+            createDataCell(row, col++, dto.getModelName(), dataStyle);
+            createDataCell(row, col++, dto.getOperatingSystem(), dataStyle);
+            createDataCell(row, col++, dto.getAddedBy(), dataStyle);
+            createDataCell(row, col++, dto.getAssetSourcedBy(), dataStyle);
+        }
+
+        for (int i = 0; i < headers.length; i++) sheet.autoSizeColumn(i);
+    }
+
+    private void writeScrapSheet(Workbook workbook, List<AssetExportDto> data, CellStyle headerStyle, CellStyle dataStyle) {
+        Sheet sheet = workbook.createSheet("Scrap Assets");
+        String[] headers = {
+                "Asset Name", "Serial Number", "Purchase Date", "Scraped Date", "Scraped By",
+                "Operating System"/*, "Users"*/, "Status", "Type", "Location", "Loc Code",
+                "Model Name", "Added By", "Sourced By"
+        };
+
+        Row headerRow = sheet.createRow(0);
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(headerStyle);
+        }
+
+        int rowNum = 1;
+        for (AssetExportDto dto : data) {
+            Row row = sheet.createRow(rowNum++);
+            int col = 0;
+            createDataCell(row, col++, dto.getAssetName(), dataStyle);
+            createDataCell(row, col++, dto.getSerialNumber(), dataStyle);
+            createDataCell(row, col++, String.valueOf(dto.getPurchaseDate()), dataStyle);
+            createDataCell(row, col++, String.valueOf(dto.getAssignedDate()), dataStyle); // Scraped Date
+            createDataCell(row, col++, dto.getAssignedBy(), dataStyle); // Scraped By
+            createDataCell(row, col++, dto.getOperatingSystem(), dataStyle);
+        //    createDataCell(row, col++, dto.getAssignedTo(), dataStyle); // Users
+            createDataCell(row, col++, dto.getStatus(), dataStyle);
+            createDataCell(row, col++, dto.getType(), dataStyle);
+            createDataCell(row, col++, dto.getLocation(), dataStyle);
+            createDataCell(row, col++, dto.getLocCode(), dataStyle);
+            createDataCell(row, col++, dto.getModelName(), dataStyle);
+            createDataCell(row, col++, dto.getAddedBy(), dataStyle);
+            createDataCell(row, col++, dto.getAssetSourcedBy(), dataStyle);
+        }
+
+        for (int i = 0; i < headers.length; i++) sheet.autoSizeColumn(i);
     }
 
     private void createDataCell(Row row, int colIdx, String value, CellStyle style) {
         Cell cell = row.createCell(colIdx);
-        cell.setCellValue(value);
+        cell.setCellValue(value != null ? value : "");
         cell.setCellStyle(style);
     }
 
@@ -725,50 +836,5 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
         style.setBorderLeft(BorderStyle.THIN);
         style.setBorderRight(BorderStyle.THIN);
         return style;
-    }
-
-    private void populateDataRow(Row row, Object asset, CellStyle style, String exportType) {
-        int col = 0;
-        if (asset instanceof ScrapEntity) {
-            ScrapEntity scrap = (ScrapEntity) asset;
-            createDataCell(row, col++, String.valueOf(scrap.getScrapId()), style);
-            createDataCell(row, col++, scrap.getAssetname(), style);
-            createDataCell(row, col++, scrap.getSerialNo(), style);
-            createDataCell(row, col++, String.valueOf(scrap.getPurchaseDate()), style);
-            createDataCell(row, col++, String.valueOf(scrap.getWarrantyDate()), style);
-            createDataCell(row, col++, scrap.getUsers(), style);
-            createDataCell(row, col++, scrap.getStatus(), style);
-            createDataCell(row, col++, scrap.getType(), style);
-            createDataCell(row, col++, String.valueOf(scrap.getAssetId()), style);
-        } else if (asset instanceof AssetsEntity) {
-            AssetsEntity a = (AssetsEntity) asset;
-            createDataCell(row, col++, String.valueOf(a.getAssetId()), style);
-            createDataCell(row, col++, a.getAssetName(), style);
-            createDataCell(row, col++, a.getSerialNumber(), style);
-            createDataCell(row, col++, String.valueOf(a.getEmpId()), style);
-            createDataCell(row, col++, a.getStatus(), style);
-            createDataCell(row, col++, a.getType(), style);
-            createDataCell(row, col++, String.valueOf(a.getPurchaseDate()), style);
-            createDataCell(row, col++, String.valueOf(a.getWarrantyDate()), style);
-            createDataCell(row, col++, a.getLocation(), style);
-            createDataCell(row, col++, a.getLocCode() != null ? a.getLocCode().toString() : "0", style);
-            createDataCell(row, col++, a.getModelName(), style);
-            createDataCell(row, col++, a.getOperatingSystem(), style);
-            createDataCell(row, col++, String.valueOf(a.getReturnDate()), style);
-            createDataCell(row, col++, a.getAddedBy(), style);
-            createDataCell(row, col++, String.valueOf(a.getAssignedDate()), style);
-            createDataCell(row, col++, a.getAssignedBy(), style);
-            createDataCell(row, col++, a.getAssertSourcedBy(), style);
-        }
-    }
-
-    private String[] getHeaders(String exportType) {
-        if ("Scrap".equalsIgnoreCase(exportType)) {
-            return new String[]{"Scrap ID", "Asset Name", "Serial No", "Purchase Date", "Warranty Date",
-                    "Users", "Status", "Type", "Asset ID"};
-        }
-        return new String[]{"Asset ID", "Asset Name", "Serial Number", "Emp ID", "Status", "Type", "Purchase Date",
-                "Warranty Date", "Location", "Loc Code", "Model Name", "Operating System", "Return Date",
-                "Added By", "Assigned Date", "Assigned By", "Sourced By"};
     }
 }

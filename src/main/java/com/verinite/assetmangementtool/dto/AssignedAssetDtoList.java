@@ -24,7 +24,7 @@ public class AssignedAssetDtoList {
     private Date assignedDate; // LocalDateTime could be used here too
     private String assignedBy;
 
-    private String assertSourcedBy;
+    private String assetSourcedBy;
 
     public int getAssignedAssetsId() {
         return assignedAssetsId;
@@ -178,12 +178,12 @@ public class AssignedAssetDtoList {
         this.assignedBy = assignedBy;
     }
 
-    public String getAssertSourcedBy() {
-        return assertSourcedBy;
+    public String getAssetSourcedBy() {
+        return assetSourcedBy;
     }
 
-    public void setAssertSourcedBy(String assertSourcedBy) {
-        this.assertSourcedBy = assertSourcedBy;
+    public void setAssetSourcedBy(String assetSourcedBy) {
+        this.assetSourcedBy = assetSourcedBy;
     }
 
 }

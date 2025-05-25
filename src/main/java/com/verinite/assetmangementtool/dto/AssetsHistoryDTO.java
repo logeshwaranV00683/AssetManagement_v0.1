@@ -22,6 +22,6 @@ public class AssetsHistoryDTO {
     private Date assignedDate;
     private String assignedBy;
 
-    private String assertSourcedBy;
+    private String assetSourcedBy;
 
 }

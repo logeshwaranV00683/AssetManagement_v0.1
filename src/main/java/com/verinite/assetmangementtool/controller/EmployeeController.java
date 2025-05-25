@@ -1,6 +1,7 @@
 package com.verinite.assetmangementtool.controller;
 
 import com.verinite.assetmangementtool.dto.EmployeeDto;
+import com.verinite.assetmangementtool.dto.EmployeeExportDto;
 import com.verinite.assetmangementtool.entity.EmployeeEntity;
 import com.verinite.assetmangementtool.service.EmployeeServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,29 +74,28 @@ public class EmployeeController {
 
     }
 
-    @GetMapping("/export/employees/{exportType}")
-    public ResponseEntity<byte[]> exportEmployees(
-            @PathVariable String exportType,
-            @RequestParam(required = false) String filter) {
+    @PostMapping("employee/export")
+    public ResponseEntity<byte[]> exportData(@RequestBody List<EmployeeExportDto> filteredRows) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            String filename = filter != null ? filter + "_" : "";
-            employeeService.exportEmployeesToExcel(out, exportType, filter);
 
+            employeeService.exportEmployeesToExcel(filteredRows, out);
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
 
-            String fileName = URLEncoder.encode(filename + exportType + "_employees.xlsx", StandardCharsets.UTF_8);
+            String fileName = URLEncoder.encode("exported_employees.xlsx", StandardCharsets.UTF_8);
             headers.setContentDisposition(ContentDisposition.attachment().filename(fileName).build());
 
             return ResponseEntity.ok()
                     .headers(headers)
                     .body(out.toByteArray());
+
         } catch (IOException e) {
             return ResponseEntity.internalServerError()
                     .body(("Error generating Excel file: " + e.getMessage()).getBytes());
         }
     }
+
 
 
     @PutMapping("/updateEmp/{empId}")

@@ -1,6 +1,7 @@
 package com.verinite.assetmangementtool.service;
 
 import com.verinite.assetmangementtool.dto.EmployeeDto;
+import com.verinite.assetmangementtool.dto.EmployeeExportDto;
 import com.verinite.assetmangementtool.entity.EmployeeEntity;
 import com.verinite.assetmangementtool.repository.AdminRegistrationRepository;
 import com.verinite.assetmangementtool.repository.EmployeeRepository;
@@ -218,34 +219,34 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     }
 
-    public void exportEmployeesToExcel(OutputStream outputStream, String exportType, String filter) throws IOException {
-        List<EmployeeEntity> employees;
+    public void exportEmployeesToExcel(List<EmployeeExportDto> data, OutputStream outputStream) throws IOException {
 
-        // Fetch employees based on export type and filter
-        if ("Active".equalsIgnoreCase(exportType)) {
-            employees = filter == null || filter.isEmpty()
-                    ? employeeRepo.findByStatus("Active")
-                    : employeeRepo.findByStatusAndFilter("Active", "%" + filter.toLowerCase() + "%");
-        } else if ("Inactive".equalsIgnoreCase(exportType)) {
-            employees = filter == null || filter.isEmpty()
-                    ? employeeRepo.findByStatus("Inactive")
-                    : employeeRepo.findByStatusAndFilter("Inactive", "%" + filter.toLowerCase() + "%");
-        } else {
-            employees = filter == null || filter.isEmpty()
-                    ? employeeRepo.findAll()
-                    : employeeRepo.findByFilter("%" + filter.toLowerCase() + "%");
-        }
+        List<EmployeeExportDto> activeEmployees = data.stream()
+                .filter(e -> "Active".equalsIgnoreCase(e.getStatus()))
+                .collect(Collectors.toList());
 
-        // Create Excel workbook and sheet
+        List<EmployeeExportDto> inactiveEmployees = data.stream()
+                .filter(e -> "Inactive".equalsIgnoreCase(e.getStatus()))
+                .collect(Collectors.toList());
+
         Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Employees");
 
-        // Create styles
         CellStyle headerStyle = createHeaderStyle(workbook);
         CellStyle dataStyle = createDataStyle(workbook);
 
-        // Create header row with styling
+        createEmployeeSheet(workbook, "Active", activeEmployees, headerStyle, dataStyle);
+        createEmployeeSheet(workbook, "Inactive", inactiveEmployees, headerStyle, dataStyle);
+
+        workbook.write(outputStream);
+        workbook.close();
+    }
+
+    private void createEmployeeSheet(Workbook workbook, String sheetName, List<EmployeeExportDto> employees,
+                                     CellStyle headerStyle, CellStyle dataStyle) {
+
+        Sheet sheet = workbook.createSheet(sheetName);
         String[] headers = {"Employee ID", "First Name", "Last Name", "Role", "Mail", "Mobile", "Location", "Status", "Department", "Designation"};
+
         Row headerRow = sheet.createRow(0);
         for (int i = 0; i < headers.length; i++) {
             Cell cell = headerRow.createCell(i);
@@ -253,9 +254,8 @@ public class EmployeeServiceImpl implements EmployeeService {
             cell.setCellStyle(headerStyle);
         }
 
-        // Fill data rows with styling
         int rowNum = 1;
-        for (EmployeeEntity employee : employees) {
+        for (EmployeeExportDto employee : employees) {
             Row row = sheet.createRow(rowNum++);
             createDataCell(row, 0, employee.getEmpId(), dataStyle);
             createDataCell(row, 1, employee.getFirstName(), dataStyle);
@@ -269,25 +269,17 @@ public class EmployeeServiceImpl implements EmployeeService {
             createDataCell(row, 9, employee.getDesignation(), dataStyle);
         }
 
-        // Auto-size all columns for better presentation
         for (int i = 0; i < headers.length; i++) {
             sheet.autoSizeColumn(i);
         }
-
-        // Write to the output stream
-        workbook.write(outputStream);
-        workbook.close();
     }
 
-
-    // Helper method: Create a styled data cell
     private void createDataCell(Row row, int colIdx, String value, CellStyle style) {
         Cell cell = row.createCell(colIdx);
         cell.setCellValue(value);
         cell.setCellStyle(style);
     }
 
-    // Helper method: Create a professional header style
     private CellStyle createHeaderStyle(Workbook workbook) {
         CellStyle style = workbook.createCellStyle();
         Font font = workbook.createFont();
@@ -306,7 +298,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         return style;
     }
 
-    // Helper method: Create a professional data style
     private CellStyle createDataStyle(Workbook workbook) {
         CellStyle style = workbook.createCellStyle();
         Font font = workbook.createFont();
@@ -321,6 +312,5 @@ public class EmployeeServiceImpl implements EmployeeService {
         style.setBorderRight(BorderStyle.THIN);
         return style;
     }
-
 
 }

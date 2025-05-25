@@ -1,27 +1,28 @@
 package com.verinite.assetmangementtool.dto;
-
+import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import java.util.Date;
+import lombok.NoArgsConstructor;
 
 @Data
-public class AssetsDto {
+@NoArgsConstructor
+@AllArgsConstructor
+public class AssetExportDto {
 
-    private int assetId;
     private String assetName;
     private String serialNumber;
-    private String empId;
+    private String assignedTo;
     private String status;
     private String type;
     private String purchaseDate;
     private String warrantyDate;
     private String location;
-    private Integer locCode;
+    private String locCode;
     private String modelName;
     private String operatingSystem;
-    private Date returnDate;
+    private String returnDate;
     private String addedBy;
-    private Date assignedDate;
+    private String assignedDate;
     private String assignedBy;
     private String assetSourcedBy;
+            ;
 }

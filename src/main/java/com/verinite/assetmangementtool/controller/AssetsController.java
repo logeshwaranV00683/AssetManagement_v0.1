@@ -1,5 +1,6 @@
 package com.verinite.assetmangementtool.controller;
 
+import com.verinite.assetmangementtool.dto.AssetExportDto;
 import com.verinite.assetmangementtool.dto.AssetsDto;
 import com.verinite.assetmangementtool.response.SaveAssetResponse;
 import com.verinite.assetmangementtool.service.AssetNameServiceImpl;
@@ -99,31 +100,27 @@ public class AssetsController implements ApplicationRunner {
 
     }
 
-    @GetMapping("/export/asset/{exportType}")
-    public ResponseEntity<byte[]> exportAssets(
-            @PathVariable String exportType,
-            @RequestParam(required = false) String filter) {
+    @PostMapping("asset/export")
+    public ResponseEntity<byte[]> exportData(@RequestBody List<AssetExportDto> filteredRows) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
-            String filename = filter != null ? filter + "_" : "";
-            assetService.exportAssetsToExcel(out, exportType, filter);
+            assetService.exportAssetsToExcel(filteredRows, out);
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-
-            headers.setContentDispositionFormData("attachment", filename + exportType + "_assets.xlsx");
+            headers.setContentDispositionFormData("attachment", "exported_assets.xlsx");
 
             return ResponseEntity.ok()
                     .headers(headers)
                     .body(out.toByteArray());
-        } catch (Exception e) {
-            System.err.println("Error generating Excel file: " + e.getMessage());
-            e.printStackTrace();
 
+        } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.internalServerError()
                     .body(("Error generating Excel file: " + e.getMessage()).getBytes());
         }
     }
+
 
 //	@GetMapping("/getAllAssetType/{names}")
 //	public List<AssetsEntity> getByAssetType(@PathVariable String names) {

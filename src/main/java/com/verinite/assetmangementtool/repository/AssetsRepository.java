@@ -62,45 +62,4 @@ public interface AssetsRepository extends JpaRepository<AssetsEntity, Number> {
 
     @Query(value = "SELECT DISTINCT LOWER(a.asset_name) FROM tbl_assets a", nativeQuery = true)
     List<String> findDistinctAssetTypes();
-
-    // Method to find assets by status with filter
-    @Query("SELECT a FROM AssetsEntity a WHERE LOWER(a.status) = LOWER(:status) AND ("
-            + "LOWER(a.assetName) LIKE LOWER(:filter) "
-            + "OR LOWER(a.serialNumber) LIKE LOWER(:filter) "
-            + "OR LOWER(a.empId) LIKE LOWER(:filter) "
-            + "OR LOWER(a.type) LIKE LOWER(:filter) "
-            + "OR LOWER(a.purchaseDate) LIKE LOWER(:filter) "
-            + "OR LOWER(a.warrantyDate) LIKE LOWER(:filter) "
-            + "OR LOWER(a.location) LIKE LOWER(:filter) "
-            + "OR LOWER(CAST(a.locCode AS string)) LIKE LOWER(:filter) "
-            + "OR LOWER(a.modelName) LIKE LOWER(:filter) "
-            + "OR LOWER(a.operatingSystem) LIKE LOWER(:filter) "
-            + "OR LOWER(CAST(a.returnDate AS string)) LIKE LOWER(:filter) "
-            + "OR LOWER(a.addedBy) LIKE LOWER(:filter) "
-            + "OR LOWER(CAST(a.assignedDate AS string)) LIKE LOWER(:filter) "
-            + "OR LOWER(a.assignedBy) LIKE LOWER(:filter) "
-            + "OR LOWER(CAST(a.assetId AS string)) LIKE LOWER(:filter))"
-            + "OR LOWER(CAST(a.assertSourcedBy AS string)) LIKE LOWER(:filter)")
-    List<AssetsEntity> findByStatusAndFilter(@Param("status") String status, @Param("filter") String filter);
-
-    // Method to find assets using only a filter (without status)
-    @Query("SELECT a FROM AssetsEntity a WHERE "
-            + "LOWER(a.assetName) LIKE LOWER(:filter) "
-            + "OR LOWER(a.serialNumber) LIKE LOWER(:filter) "
-            + "OR LOWER(a.empId) LIKE LOWER(:filter) "
-            + "OR LOWER(a.type) LIKE LOWER(:filter) "
-            + "OR LOWER(a.purchaseDate) LIKE LOWER(:filter) "
-            + "OR LOWER(a.warrantyDate) LIKE LOWER(:filter) "
-            + "OR LOWER(a.location) LIKE LOWER(:filter) "
-            + "OR LOWER(CAST(a.locCode AS string)) LIKE LOWER(:filter) "
-            + "OR LOWER(a.modelName) LIKE LOWER(:filter) "
-            + "OR LOWER(a.operatingSystem) LIKE LOWER(:filter) "
-            + "OR LOWER(CAST(a.returnDate AS string)) LIKE LOWER(:filter) "
-            + "OR LOWER(a.addedBy) LIKE LOWER(:filter) "
-            + "OR LOWER(CAST(a.assignedDate AS string)) LIKE LOWER(:filter) "
-            + "OR LOWER(a.assignedBy) LIKE LOWER(:filter) "
-            + "OR LOWER(CAST(a.assetId AS string)) LIKE LOWER(:filter)"
-            + "OR LOWER(CAST(a.assertSourcedBy AS string)) LIKE LOWER(:filter)")
-    List<AssetsEntity> findByFilter(@Param("filter") String filter);
-
 }

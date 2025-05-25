@@ -30,5 +30,5 @@ public class AssetsEntity {
     private String addedBy;
     private Date assignedDate;
     private String assignedBy;
-    private String assertSourcedBy;
+    private String assetSourcedBy;
 }

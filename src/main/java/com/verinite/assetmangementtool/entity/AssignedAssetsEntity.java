@@ -45,7 +45,7 @@ public class AssignedAssetsEntity {
     private Date assignedDate;
     private String assignedBy;
 
-    private String assertSourcedBy;
+    private String assetSourcedBy;
 
 
     public int getLocCode() {
@@ -184,12 +184,12 @@ public class AssignedAssetsEntity {
         this.assignedBy = assignedBy;
     }
 
-    public String getAssertSourcedBy() {
-        return assertSourcedBy;
+    public String getAssetSourcedBy() {
+        return assetSourcedBy;
     }
 
-    public void setAssertSourcedBy(String assertSourcedBy) {
-        this.assertSourcedBy = assertSourcedBy;
+    public void setAssetSourcedBy(String assetSourcedBy) {
+        this.assetSourcedBy = assetSourcedBy;
     }
 
 }

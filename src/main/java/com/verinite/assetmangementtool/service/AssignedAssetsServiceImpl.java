@@ -85,7 +85,7 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
             dto.setAddedBy(asset.getAddedBy() != null ? asset.getAddedBy() : "");
             dto.setAssignedDate(asset.getAssignedDate());
             dto.setAssignedBy(asset.getAssignedBy() != null ? asset.getAssignedBy() : "");
-            dto.setAssertSourcedBy(asset.getAssertSourcedBy() != null ? asset.getAssertSourcedBy() : "");
+            dto.setAssetSourcedBy(asset.getAssetSourcedBy() != null ? asset.getAssetSourcedBy() : "");
 
             // Null check for employee
             if (employee != null) {
@@ -176,7 +176,7 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
                         asset.setAssignedDate(assignableAssetDto.getAssignedDate());
                         asset.setAssignedBy(assignableAssetDto.getAssignedBy());
                         asset.setEmpId(empId);
-                        assignedAssetsEntity.setAssertSourcedBy(asset.getAssertSourcedBy());
+                        assignedAssetsEntity.setAssetSourcedBy(asset.getAssetSourcedBy());
 
                         for (CountOfAssets i : countOfAssets) {
                             if (asset.getLocation().equalsIgnoreCase(i.getLocation())) {
