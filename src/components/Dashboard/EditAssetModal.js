@@ -59,7 +59,7 @@ function EditAssetModal({ open, handleClose, refreshAssetList, asset, viewOnly }
     }
   }, [asset]);
 
-  const isUnassigned = useMemo(() => fields.status === 'UnAssigned', [fields.status]);
+//  const isUnassigned = useMemo(() => fields.status === 'UnAssigned', [fields.status]);
   const isAssigned = useMemo(() => fields.status === 'Assigned', [fields.status]);
   const isScrap = useMemo(() => fields.status === 'Scrap', [fields.status]);
 
@@ -107,19 +107,21 @@ function EditAssetModal({ open, handleClose, refreshAssetList, asset, viewOnly }
 
     if (Object.keys(updatedFields).length === 0) {
       handleClose();
-      await showErrorAlert('No changes detected', 'Please update some fields before submitting.');
+      showErrorAlert('No changes detected', 'Please update some fields before submitting.');
       return;
     }
 
     setIsUpdating(true);
     try {
+      handleClose();
       await updateAsset(updatedFields, fields.serialNumber);
      toast.success(`${fields.serialNumber} Updated Successfully`);
       await refreshAssetList();
-      handleClose();
+      
     } catch (error) {
       console.error('Error updating Asset:', error);
-      await showErrorAlert('Update Failed', `${fields.serialNumber} Update Failed`);
+      handleClose();
+      showErrorAlert('Update Failed', `${fields.serialNumber} Updation Failed`);
     } finally {
       setIsUpdating(false);
     }
