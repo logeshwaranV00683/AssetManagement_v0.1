@@ -23,7 +23,7 @@ public class OtpController {
 
         public String resetPassword(@RequestParam String mail,
                                     @RequestParam String newPassword) {
-            AdminRegistrationEntity adminRegistrationEntity = adminRegistrationRepository.findBymail(mail);
+            AdminRegistrationEntity adminRegistrationEntity = adminRegistrationRepository.findByMail(mail).get();
             if (adminRegistrationEntity == null || !adminRegistrationEntity.isOtpVerify()) {
                 return "OTP not verified.";
             }

@@ -30,14 +30,14 @@ public class OtpService {
             adminRegistrationDto.setOtp(otp);
             adminRegistrationDto.setOtpVerify(false);
             AdminRegistrationEntity adminRegistrationEntity= modelMapper.map(adminRegistrationDto, AdminRegistrationEntity.class);
-            adminRegistrationRepository.save(adminRegistrationEntity);
+           // adminRegistrationRepository.save(adminRegistrationEntity);
             String subject = "OTP for Password Reset";
             String body = "Your OTP is: " + otp;
             otpMailer.mailAuthenticator(adminRegistrationDto.getFirstName(),adminRegistrationDto.getMail(),adminRegistrationDto.getEmpId());
         }
 
         public boolean verifyOTP(String email, String otp) {
-           AdminRegistrationEntity adminRegistrationEntity = adminRegistrationRepository.findBymail(email);
+           AdminRegistrationEntity adminRegistrationEntity = adminRegistrationRepository.findByMail(email).get();
             if (adminRegistrationEntity != null && adminRegistrationEntity.getOtp().equals(otp)) {
                 adminRegistrationEntity.setOtpVerify(true);
                 adminRegistrationEntity.setOtp(null);

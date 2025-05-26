@@ -7,7 +7,7 @@ import javax.validation.constraints.Email;
 
 @Data
 @Entity
-@Table(name = "tbl_admin")
+@Table(name = "tbl_admin" , uniqueConstraints = @UniqueConstraint(columnNames = "mail"))
 public class AdminRegistrationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

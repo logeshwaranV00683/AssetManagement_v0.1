@@ -2,10 +2,14 @@ package com.verinite.assetmangementtool.controller;
 
 import com.verinite.assetmangementtool.dto.AdminLoginDto;
 import com.verinite.assetmangementtool.service.AdminServiceImpl;
+import com.verinite.assetmangementtool.service.ForgotPasswordInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import javax.mail.MessagingException;
+import java.io.UnsupportedEncodingException;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
