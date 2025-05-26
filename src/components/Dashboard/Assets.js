@@ -10,10 +10,10 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import SidebarAssets  from './SideBarAssets';
 import ImportButton from './ImportButton';
 import UploadFileIcon from '@mui/icons-material/UploadFile';  
-import {IconButton, Tooltip } from '@mui/material';
+import {IconButton, Tooltip } from '@mui/material';         //
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from '@mui/icons-material/Delete'; //
 import HistoryIcon from '@mui/icons-material/History';
 import { getAssetList, scrapAsset } from '../Services/AssetService';
 import  EditAssetModal  from './EditAssetModal';
@@ -231,41 +231,43 @@ const handleDelete = async (asset) => {
                             onChange={handleSearch}
                             value={filterValue}
                             sx={{
-                                width: '85vw',
-                                borderRadius: '60px',
+                                width: { xs: '100%', md: '85vw' },
+                                maxWidth: '1000px',
                                 '& .MuiOutlinedInput-root': {
-                                background: '#ffffff', 
+                                background: '#ffffff',
                                 borderRadius: '15px',
-                                color: '#083A40', 
+                                color: '#083A40',
                                 fontWeight: 500,
-                                boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)', 
+                                boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)',
                                 '& fieldset': {
-                                    border: '2px solid transparent',
+                                    border: '0.5px solid transparent',
                                 },
                                 '&:hover fieldset': {
-                                    border: '2px solid #1FCBEA',
+                                    border: '0.5px solid #1FCBEA',
                                 },
                                 '&.Mui-focused fieldset': {
-                                    border: '2px solid #000',
+                                    //border: '0.5px solid #000',
+                                     boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)',
+                                     fontSize: '20px'
+
                                 },
                                 '& input': {
                                     background: 'transparent',
                                     color: '#083A40',
                                     fontFamily: "'Racing Sans One', sans-serif",
-                                    marginLeft: '200px',
                                 },
                                 },
                                 '& .MuiInputLabel-root': {
                                 color: '#083A40',
                                 fontFamily: "'Racing Sans One', sans-serif",
-                                marginLeft: '20px',
-                                letterSpacing: '1.5px',
+                                letterSpacing: '2.0px',
                                 },
                                 '& .Mui-focused .MuiInputLabel-root': {
                                 color: '#083A40',
                                 },
                             }}
-                        />
+                            />
+
 
 
 
