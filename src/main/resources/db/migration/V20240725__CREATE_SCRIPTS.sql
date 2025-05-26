@@ -22,6 +22,8 @@ CREATE TABLE `tbl_admin` (
   `password` varchar(255) NOT NULL,
   `role` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
+  `otp` varchar(255) DEFAULT NULL,
+  `otp_verify` varchar(255) DEFAULT 'FALSE',
   PRIMARY KEY (`admin_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -67,6 +69,7 @@ CREATE TABLE `tbl_assets` (
   `status` varchar(255) DEFAULT NULL,
   `type` varchar(255) DEFAULT NULL,
   `warranty_date` varchar(255) DEFAULT NULL,
+  `asset_sourced_by` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`asset_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -80,7 +83,7 @@ CREATE TABLE `tbl_assets_history` (
   PRIMARY KEY (`history_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `tbl_assined_assets` (
+CREATE TABLE `tbl_assigned_assets` (
   `assigned_assets_id` int NOT NULL,
   `added_by` varchar(255) DEFAULT NULL,
   `asset_id` int DEFAULT NULL,
@@ -98,6 +101,7 @@ CREATE TABLE `tbl_assined_assets` (
   `status` varchar(255) DEFAULT NULL,
   `type` varchar(255) DEFAULT NULL,
   `warranty_date` varchar(255) DEFAULT NULL,
+  `asset_sourced_by` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`assigned_assets_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 

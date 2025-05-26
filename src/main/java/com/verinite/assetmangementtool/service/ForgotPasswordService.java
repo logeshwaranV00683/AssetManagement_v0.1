@@ -22,13 +22,14 @@ public class ForgotPasswordService implements ForgotPasswordInterface {
     AdminRegistrationRepository adminRegistrationRepository;
 
     @Autowired
-    OtpService otpService;
+    private OTPMailer otpMailer;
 
     @Override
     public ResponseEntity<?> checkMail(String mail) throws MessagingException, UnsupportedEncodingException {
         AdminRegistrationDto adminRegistrationDto = modelMapper.map(adminRegistrationRepository.findByMail(mail),AdminRegistrationDto.class);
         if(adminRegistrationDto != null) {
-            otpService.sendOTP(adminRegistrationDto);
+            //otpService.sendOTP(adminRegistrationDto);
+            otpMailer.sendOTP(adminRegistrationDto);
             return new ResponseEntity<>(HttpStatus.ACCEPTED);
         }
         else{
