@@ -62,10 +62,10 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public ResponseEntity<String> registerNewAdmin(AdminRegistrationEntity registration) {
         // Set admin role, encode password, and other default properties
-        registration.setRole("admin");
+        registration.setRole("Admin");
         String encodedPassword = encoder.encode(registration.getPassword());
         registration.setPassword(encodedPassword);
-        registration.setStatus("active");
+        registration.setStatus("Active");
         registration.setEmpId(registration.getEmpId().toUpperCase());
 
         // Check if the admin already exists
@@ -173,7 +173,7 @@ public class AdminServiceImpl implements AdminService {
         }).start();
     }
 
-    private String generateComplexPassword(int length) {
+    public String generateComplexPassword(int length) {
         if (length < 8) throw new IllegalArgumentException("Minimum length is 8");
 
         String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

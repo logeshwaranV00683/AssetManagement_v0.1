@@ -21,7 +21,6 @@ public class NotificationMailer {
     public ResponseEntity notifyMailer(String mail, List<AssetsEntity> list) throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
-        helper.setFrom("elangovan.p@verinite.com", "Asstemanager Notification");
         helper.setTo(mail);
 
         String subject = "Warranty Notification";
