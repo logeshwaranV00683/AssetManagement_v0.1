@@ -2,6 +2,7 @@ package com.verinite.assetmangementtool.dto;
 
 import lombok.Data;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 
 @Data
@@ -14,5 +15,5 @@ public class AdminRegistrationDto implements Serializable {
     private String role;
     private String location;
     private String otp;
-    private boolean otpVerify;
+
 }

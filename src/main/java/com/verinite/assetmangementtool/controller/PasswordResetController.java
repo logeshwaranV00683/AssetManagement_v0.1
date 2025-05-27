@@ -1,13 +1,11 @@
 package com.verinite.assetmangementtool.controller;
 
+import com.verinite.assetmangementtool.dto.ResetPasswordDTO;
 import com.verinite.assetmangementtool.service.ForgotPasswordInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
@@ -23,4 +21,13 @@ public class PasswordResetController {
         return forgotPasswordInterface.checkMail(mail);
     }
 
+    @PostMapping("forgot_password/checkOTP")
+    public ResponseEntity<?> checkOtp(@RequestBody ResetPasswordDTO resetPassword){
+        return forgotPasswordInterface.checkOtp(resetPassword);
+    }
+
+    @PostMapping("/changePassword")
+    public ResponseEntity<?> changePassword(@RequestBody ResetPasswordDTO changePassword){
+        return forgotPasswordInterface.changePassword(changePassword);
+    }
 }
