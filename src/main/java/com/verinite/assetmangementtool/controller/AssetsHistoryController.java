@@ -25,21 +25,15 @@ public class AssetsHistoryController {
     public List<AssetsHistoryEntity> getAll() {
         return assetsHistoryServices.getAll();
     }
-//	@GetMapping("histyory/get/by/mail/{mail}")
-//	public Object getByMail(@PathVariable String mail) {
-//		return assetsHistoryServices.getByMail(mail);
-//	}
-//	@DeleteMapping("history/delete/by/mail/{mail}")
-//	public Object delete(@PathVariable String mail) {
-//		return assetsHistoryServices.returnDetails(mail);
-//	}
-//	@PatchMapping("history/update/by/mail/{mail}")
-//	public Object update(@PathVariable String mail,@RequestBody AssetsHistoryEntity history) {
-//		return assetsHistoryServices.updateHistory(mail, history);
-//	}
+
 
     @GetMapping("Assets/history/get/by/id/{id}")
     public Object getByHistoryId(@RequestParam String serialNumber) {
         return assetsHistoryServices.getByHistoryId(serialNumber);
+    }
+
+    @GetMapping("Assets/history/specificAssetHistory/{serialNumber}")
+    public List<AssetsHistoryEntity> getAssetsHistoryBySerialNumber(@PathVariable String serialNumber) {
+        return assetsHistoryServices.getAssetsHistoryBySerialNumberSorted(serialNumber);
     }
 }

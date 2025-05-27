@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.List;
 
 public interface AssignedAssetsRepository extends JpaRepository<AssignedAssetsEntity, Integer> {
@@ -25,11 +26,14 @@ public interface AssignedAssetsRepository extends JpaRepository<AssignedAssetsEn
     @Query(value = "select from tbl_assined_assets where assets_id =?", nativeQuery = true)
     AssignedAssetsEntity getAssignedAssetsByAssetsId(int assetId);
 
-    AssignedAssetsEntity findBySerialNumber(String serialNo);
+    @Query(value = "select * from tbl_assined_assets where serial_number=?", nativeQuery = true)
+    AssignedAssetsEntity findBySerialNumber(String serialNumber);
 
     AssignedAssetsEntity findBySerialNumberAndEmpId(String serialNo, String empId);
 
     List<AssignedAssetsEntity> findByEmpId(String empId);
 
     List<AssignedAssetsEntity> findByEmpIdNotNull();
+
+
 }

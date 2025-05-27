@@ -1,6 +1,8 @@
 package com.verinite.assetmangementtool.service;
 
+import com.verinite.assetmangementtool.entity.AssetsEntity;
 import com.verinite.assetmangementtool.entity.AssetsHistoryEntity;
+import com.verinite.assetmangementtool.entity.AssignedAssetsEntity;
 
 import java.util.List;
 
@@ -10,9 +12,10 @@ public interface AssetsHistoryServices {
 
     public List<AssetsHistoryEntity> getAll();
 
-    //public Object getByMail(String mail);
-    //public Object returnDetails(String mail);
-    //public Object updateHistory(String mail,AssetsHistoryEntity history);
+
     public Object getByHistoryId(String serialNumber);
 
+    public void saveHistory(AssignedAssetsEntity assignedAssetsEntity);
+
+    List<AssetsHistoryEntity> getAssetsHistoryBySerialNumberSorted(String serialNumber);
 }

@@ -1,11 +1,16 @@
 package com.verinite.assetmangementtool.service;
 
 import com.verinite.assetmangementtool.entity.AssetsHistoryEntity;
+import com.verinite.assetmangementtool.entity.AssignedAssetsEntity;
 import com.verinite.assetmangementtool.repository.AssetsHistoryRepository;
+import com.verinite.assetmangementtool.repository.AssignedAssetsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -13,6 +18,12 @@ public class AssetsHistoryServiceImpl implements AssetsHistoryServices {
 
     @Autowired
     AssetsHistoryRepository assetsHistoryRepository;
+
+    @Autowired
+    AssetsHistoryServices assetsHistoryServices;
+
+    @Autowired
+    AssignedAssetsRepository assignedAssetsRepository;
 
     @Override
     public AssetsHistoryEntity saveHistory(AssetsHistoryEntity assetsHistoryEntity) {
@@ -38,4 +49,32 @@ public class AssetsHistoryServiceImpl implements AssetsHistoryServices {
         return null;
     }
 
+    public void saveHistory(AssignedAssetsEntity assignedAssetsEntity) {
+
+        AssetsHistoryEntity assetHistory = new AssetsHistoryEntity();
+
+        assetHistory.setSerialNumber(assignedAssetsEntity.getSerialNumber());
+        assetHistory.setEmpId(assignedAssetsEntity.getEmpId());
+
+        assetHistory.setAssignedDate(assignedAssetsEntity.getAssignedDate());
+        assetHistory.setAssignedBy(assignedAssetsEntity.getAssignedBy());
+        assetHistory.setReturnDate(assignedAssetsEntity.getReturnDate());
+
+
+        assetsHistoryRepository.save(assetHistory);
+    }
+
+
+    public void updateHistory(AssignedAssetsEntity assignedAssets, String serialNumber) {
+        AssetsHistoryEntity assets = assetsHistoryRepository.findBySerialNumberAndAssignedDate(serialNumber, assignedAssets.getAssignedDate());
+        LocalDate localDate = LocalDate.now();
+        Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        assets.setReturnDate(date);
+        assetsHistoryServices.saveHistory(assets);
+    }
+
+    @Override
+    public List<AssetsHistoryEntity> getAssetsHistoryBySerialNumberSorted(String serialNumber) {
+        return assetsHistoryRepository.findBySerialNumberOrderByAssignedDateAsc(serialNumber);
+    }
 }

@@ -21,7 +21,8 @@ public interface AssignedAssetsService {
 
     String deleteAssignedAssets(int assignedId);
 
-    Object save(AssignableAssetDto assignableAssetDto);
 
     ResponseEntity<?> getRecentAssigned();
+
+    String unAssignAsset(String serialNumber);
 }

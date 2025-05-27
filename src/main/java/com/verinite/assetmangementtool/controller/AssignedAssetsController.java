@@ -14,7 +14,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/assetManager/v1/admin/")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-//@CrossOrigin(origins = "https://asset-tool.netlify.app", allowedHeaders = "*", allowCredentials = "true")
 public class AssignedAssetsController {
 
     @Autowired
@@ -23,30 +22,20 @@ public class AssignedAssetsController {
     @Autowired
     private AssetServiceImpl assetService;
 
-//	@PostMapping("assignable/save")
-//	public ResponseEntity<?> assignAsset(@RequestBody AssignableAssetDto assignableAssetDto) {
-//		try {
-//			return assignedAssetsService.save(assignableAssetDto);
-//		} catch (Exception e) {
-//			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//					.body("An error occurred while assigning the asset.");
-//		}
-//	}
 
-    @PostMapping("assignable/save")
+    @PostMapping("Asset/assign")
     public ResponseEntity<?> assignMultipleAssets(@RequestBody List<AssignableAssetDto> assignableAssetDtos) {
         if (assignableAssetDtos == null || assignableAssetDtos.isEmpty()) {
             return ResponseEntity.badRequest().body("Asset list is empty");
         }
 
-        // Call the service method to save/assign assets
         return assignedAssetsService.save(assignableAssetDtos);
     }
 
     @PutMapping("asset/un-assign")
-    public ResponseEntity<?> unassignAssetApi(@RequestParam Integer assignedAssetId) {
+    public ResponseEntity<?> unassignAssetApi(@RequestParam String serialNumber) {
 
-        AssignedAssetsEntity assignedAssets = assignedAssetsService.unAssignAsset(assignedAssetId);
+        String assignedAssets = assignedAssetsService.unAssignAsset(serialNumber);
         return ResponseEntity.ok(assignedAssets);
     }
 
