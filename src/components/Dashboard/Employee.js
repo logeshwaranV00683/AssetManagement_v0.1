@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import { toast } from 'react-hot-toast';
 import { DataGrid } from '@mui/x-data-grid';
 import TextField from '@mui/material/TextField';
 import AddEmployeeModal from './AddEmployeeModal';
@@ -13,8 +13,9 @@ import SidebarEmployee from './SideBarEmployee';
 import DeleteIcon from '@mui/icons-material/Delete'; //
 import {Container, Box, Button, ButtonGroup, IconButton, Tooltip } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import HistoryIcon from '@mui/icons-material/History';
 import EditIcon from '@mui/icons-material/Edit';
+import { showConfirmAlert } from '../Utils/alerts';
+import { deleteEmployee } from '../Services/EmployeeService';
 
 
 
@@ -98,18 +99,30 @@ function Employee() {
     const resetFilters = () => {
         setFilterValue('');
         setFilteredRows(employees);
-        setExportType('all');  // renamed here
+        setExportType('all');
     };
 
     const filterByStatus = (status) => {
-        setExportType(status);  // renamed here
+        setExportType(status);
         const filtered = employees.filter(employee => employee.status.toLowerCase() === status.toLowerCase());
         setFilteredRows(filtered);
     };
 
-    const handleDelete = (employeeId) => {
-        // Implement your delete logic here
-        console.log(`Delete employee with ID: ${employeeId}`);
+    const handleDelete = async (employee) => {
+        const confirmDelete = await showConfirmAlert('Are you sure?', `Do you want to Delete this Employee? ${employee.empId}`);
+         if (!confirmDelete) return;
+
+          try {
+    const success = await deleteEmployee(employee.empId);
+            if (success) {
+                toast.success(`Deleted the Employee with ID: ${employee.empId}`); 
+                fetchEmployees();
+            }
+        } catch (error) {
+            console.error('Error deleting Employee:', error);
+            toast.error(`Cannot Delete the Employee with ID: ${employee.empId}`); 
+        }
+        console.log(`Delete employee with ID: ${employee.empId}`);
     };
 
     const columns = [
@@ -187,18 +200,15 @@ function Employee() {
             <main className={classes.content}>
                 <Container maxWidth="lg">
                     <div className={classes.filterContainer}>
-                    {/* <Box display="flex" alignItems="center"> */}
                         <div style={{ display: 'flex', position: 'relative' }}>
-                            {/* Main content area */}
                             <main className={classes.content} style={{ flexGrow: 1, paddingRight: '80px' }}>
                                 <Container maxWidth="lg">
-                                {/* ...your existing content... */}
                                 </Container>
                             </main>
 
                             <SidebarEmployee
                             onAddEmployee={handleOpenAddModal}
-                            filterByStatus={filterByStatus} // ✅ correct
+                            filterByStatus={filterByStatus} 
                             resetFilters={resetFilters}
                             />
 
@@ -225,7 +235,6 @@ function Employee() {
                                     border: '0.5px solid #1FCBEA',
                                 },
                                 '&.Mui-focused fieldset': {
-                                    //border: '0.5px solid #000',
                                      boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)',
                                      fontSize: '20px'
 
