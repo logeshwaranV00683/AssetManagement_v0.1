@@ -38,44 +38,38 @@ public class NotificationMailer {
 
         }
         String content = "<!DOCTYPE html>\n" +
-                "<html>\n" +
+                "<html lang=\"en\" style=\"margin: 0; box-sizing: border-box;\">\n" +
                 "<head>\n" +
-                "<style>\n" +
-                "    body{\n" +
-                "        margin: 20px;\n" +
-                "    }\n" +
-                "table {\n" +
-                "  font-family: arial, sans-serif;\n" +
-                "  border-collapse: collapse;\n" +
-                "  width: 100%;\n" +
-                "}\n" +
-                "\n" +
-                "td, th {\n" +
-                "  border: 1px solid #dddddd;\n" +
-                "  text-align: left;\n" +
-                "  padding: 8px;\n" +
-                "}\n" +
-                "\n" +
-                "tr:nth-child(even) {\n" +
-                "  background-color: #dddddd;\n" +
-                "}\n" +
-                "</style>\n" +
+                "    <meta charset=\"UTF-8\">\n" +
+                "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
+                "    <title>Warranty Notification</title>\n" +
                 "</head>\n" +
-                "<body>\n" +
-                "\n" +
-                "<h2> <b> Hello User !. </b></h2><br>\n" +
-                " <h3>The Following Assets are in end of warranty Period   </h3>\n" +
-                "\n" +
-                "<table>\n" +
-                "  <tr>\n" +
-                "    <th>Name</th>\n" +
-                "    <th>Serial Number</th>\n" +
-                "    <th>Warranty Date</th>\n" +
-                "  </tr>\n" +
+                "<body style=\"margin: 0; font-family: 'Roboto', sans-serif; background: #00a3e8;\">\n" +
+                "    <div style=\"max-width: 700px; margin: auto; background: #fff; padding: 20px;\">\n" +
+                "        <div style=\"border-bottom: 2px solid #00a63f; padding-bottom: 10px;\">\n" +
+                "            <img src=\"https://raw.githubusercontent.com/g0bikrishnan/images/main/v.jpg\" alt=\"Logo\" style=\"width: 180px;\">\n" +
+                "        </div>\n" +
+                "        <div style=\"padding: 20px 0;\">\n" +
+                "            <h2 style=\"color: #444; margin-bottom: 5px;\">Hello User!</h2>\n" +
+                "            <p style=\"color: #666; font-size: 0.9em;\">The following assets are nearing the end of their warranty period:</p>\n" +
+                "        </div>\n" +
+                "        <table style=\"width: 100%; border-collapse: collapse; font-size: 0.85em;\">\n" +
+                "            <thead>\n" +
+                "                <tr style=\"background-color: #f2f2f2;\">\n" +
+                "                    <th style=\"padding: 10px; border: 1px solid #cccaca; text-align: left;\">Asset Name</th>\n" +
+                "                    <th style=\"padding: 10px; border: 1px solid #cccaca; text-align: left;\">Serial Number</th>\n" +
+                "                    <th style=\"padding: 10px; border: 1px solid #cccaca; text-align: left;\">Warranty Date</th>\n" +
+                "                </tr>\n" +
+                "            </thead>\n" +
+                "            <tbody>\n" +
                 tableRow +
-                "  \n" +
-                "</table>\n" +
-                "\n" +
+                "            </tbody>\n" +
+                "        </table>\n" +
+                "        <div style=\"margin-top: 20px;\">\n" +
+                "            <p style=\"color: #666; font-size: 0.85em;\">Please take the necessary actions regarding the warranty renewals.</p>\n" +
+                "            <p style=\"color: #666; font-size: 0.85em;\">Regards,<br>IT Team</p>\n" +
+                "        </div>\n" +
+                "    </div>\n" +
                 "</body>\n" +
                 "</html>";
         helper.setText(content, true);
