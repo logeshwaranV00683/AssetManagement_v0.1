@@ -8,17 +8,17 @@ import AddAssetModal from './AddAssetModal';
 import ExportButton from './ExportButton';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import SidebarAssets  from './SideBarAssets';
-import ImportButton from './ImportButton';
 import UploadFileIcon from '@mui/icons-material/UploadFile';  
-import {IconButton, Tooltip } from '@mui/material';         //
+import {IconButton, Tooltip } from '@mui/material';         
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete'; //
+import DeleteIcon from '@mui/icons-material/Delete'; 
 import HistoryIcon from '@mui/icons-material/History';
 import { getAssetList, scrapAsset } from '../Services/AssetService';
 import  EditAssetModal  from './EditAssetModal';
 import { toast } from 'react-hot-toast';
 import { showConfirmAlert } from '../Utils/alerts';
+import ImportExcel from  "../Utils/ImportExcel";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -44,6 +44,7 @@ function Assets() {
     const [filterValue, setFilterValue] = useState('');
     const [assets, setAssets] = useState([]);
     const [filteredRows, setFilteredRows] = useState(assets);
+    const [showImportModal, setShowImportModal] = useState(false);
 
     const fetchAssets = async () => {
             try {
@@ -204,33 +205,35 @@ const handleDelete = async (asset) => {
         <div style={{width:'185vh'}}>
             <main className={classes.content}>
                 <Container maxWidth="lg">
-                    <Box
-                        display="flex"
-                        justifyContent="center"
-                        alignItems="center"
-                        gap={4}
-                        flexWrap="wrap"
-                        mt={4}
-                        mb={2}
-                        marginLeft={25}
-                        >
-                        <Box>
-                            <div className="import-button">
-                            <ImportButton
-                            type="asset"
-                            status={exportType}
-                            filter={filterValue}
-                            filePrefix="Verinite"
-                            filteredRows={filteredRows}
-                            buttonLabel={
-                                <span>
-                                <UploadFileIcon style={{ fontSize: 20 }} />
-                                Import Assets
-                                </span>
-                            }
+                    <div className={classes.filterContainer}>
+                        {/* <Box display="flex" alignItems="center"> */}
+                        <div style={{ display: 'flex', position: 'relative' }}>
+                            {/* Main content area */}
+                            <main className={classes.content} style={{ flexGrow: 1, paddingRight: '80px' }}>
+                                <Container maxWidth="lg">
+                                {/* ...your existing content... */}
+                                </Container>
+                            </main>
+
+                            {/* Sidebar only shown on /assets */}
+                            <SidebarAssets
+                              onAddAsset={handleOpenModal}
+                              onFilter={filterByAssetStatus}
+                              onResetFilters={resetFilters}
                             />
-                            </div>
-                        </Box>
+
+                        </div>
+                             <div className="import-button" onClick={() => setShowImportModal(true)}>
+        <span><UploadFileIcon /> Import Assets</span>
+      </div>
+
+      {showImportModal && (
+        <ImportExcel
+          importType="asset"
+          onClose={() => setShowImportModal(false)}
+        />
+      )}
+
 
                         <TextField
                             label="Search"
@@ -238,61 +241,59 @@ const handleDelete = async (asset) => {
                             onChange={handleSearch}
                             value={filterValue}
                             sx={{
-                            width: '30vw',
-                            '& .MuiOutlinedInput-root': {
+                                width: { xs: '100%', md: '85vw' },
+                                maxWidth: '1000px',
+                                '& .MuiOutlinedInput-root': {
+                                    margin: '10px',
                                 background: '#ffffff',
                                 borderRadius: '15px',
                                 color: '#083A40',
                                 fontWeight: 500,
                                 boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)',
                                 '& fieldset': {
-                                border: '0.5px solid transparent',
+                                    border: '0.5px solid transparent',
                                 },
                                 '&:hover fieldset': {
-                                border: '0.5px solid #1FCBEA',
+                                    border: '0.5px solid #1FCBEA',
                                 },
                                 '&.Mui-focused fieldset': {
-                                boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)',
-                                fontSize: '20px',
+                                     boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)',
+                                     fontSize: '20px'
+
                                 },
                                 '& input': {
-                                background: 'transparent',
-                                color: '#083A40',
-                                fontFamily: "'Racing Sans One', sans-serif",
+                                    background: 'transparent',
+                                    color: '#083A40',
+                                    fontFamily: "'Racing Sans One', sans-serif",
                                 },
-                            },
-                            '& .MuiInputLabel-root': {
+                                },
+                                '& .MuiInputLabel-root': {
                                 color: '#083A40',
                                 fontFamily: "'Racing Sans One', sans-serif",
                                 letterSpacing: '2.0px',
-                            },
-                            '& .Mui-focused .MuiInputLabel-root': {
+                                },
+                                '& .Mui-focused .MuiInputLabel-root': {
                                 color: '#083A40',
-                            },
+                                },
+
                             }}
                         />
-
-                        <Box>
-                            <div className="export-button">
-                            <ExportButton
-                            type="asset"
-                            status={exportType}
-                            filter={filterValue}
-                            filePrefix="Verinite"
-                            filteredRows={filteredRows}
-                            buttonLabel={
-                                <span>
-                                <FileDownloadIcon style={{ fontSize: 20 }} />
-                                {`Export ${exportType} Assets`}
-                                </span>
-                            }
-                            />
+                        <div className="export-button">
+                                <ExportButton
+                                type="asset"
+                                status={exportType}
+                                filter={filterValue}
+                                filePrefix="Verinite"
+                                buttonLabel={
+                                    <span>
+                                    <FileDownloadIcon style={{ fontSize: 20 }} />
+                                    Export Assets
+                                    </span>
+                                }
+                                filteredRows={filteredRows}
+                                />
                             </div>
-                        </Box>
-                        </Box>
-
-
-                    
+                    </div>
                     <div style={{ height: '65vh', width: '85vw', display: 'flex', flexDirection: 'column', alignItems: 'center', }}>
                         <div style={{ height: 350, marginLeft: '2%', width: '95%', flexGrow: 1 }}>
                             <DataGrid
@@ -336,6 +337,8 @@ const handleDelete = async (asset) => {
                                 }}
                             />
 
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', width: '95%', marginTop: '40px' }}>
                         </div>
 
                     </div>

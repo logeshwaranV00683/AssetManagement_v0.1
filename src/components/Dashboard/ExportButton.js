@@ -6,10 +6,10 @@ import { showDataPreviewAlert, showErrorAlert } from '../Utils/alerts';
 import '../Style/ExportButton.css';
 
 const ExportButton = ({
-  type,                 // 'asset' or 'employee'
-  filteredRows = [],   // filtered data to export
-  state = '',          // optional state string used in filename
-  buttonLabel = 'Export' // button label text
+  type,
+  filteredRows = [],
+  state = '',
+  buttonLabel = 'Export'
 }) => {
   const [loading, setLoading] = useState(false);
   const exportFilteredData = async () => {

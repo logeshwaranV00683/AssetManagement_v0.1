@@ -6,22 +6,18 @@ import TextField from '@mui/material/TextField';
 import AddEmployeeModal from './AddEmployeeModal';
 import EditEmployeeModal from './EditEmployeeModal';
 import "../Style/Employee.css";
-import { getEmployeeList } from '../Services/EmployeeService';
+import { getEmployeeList,deleteEmployee } from '../Services/EmployeeService';
 import ExportButton from './ExportButton';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import SidebarEmployee from './SideBarEmployee';
-import DeleteIcon from '@mui/icons-material/Delete'; //
-import {Container, Box, Button, ButtonGroup, IconButton, Tooltip } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import {Container, Box, IconButton, Tooltip } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import { showConfirmAlert } from '../Utils/alerts';
-import { deleteEmployee } from '../Services/EmployeeService';
-
-
-
-
-import ImportButton from './ImportButton';
 import UploadFileIcon from '@mui/icons-material/UploadFile'; 
+import '../Style/ImportButton.css';
+import ImportExcel from  "../Utils/ImportExcel";
 
 const useStyles = makeStyles((theme) => ({
     content: {
@@ -53,6 +49,7 @@ function Employee() {
     const [filterValue, setFilterValue] = useState('');
     const [filteredRows, setFilteredRows] = useState([]);
     const [viewOnly, setViewOnly] = useState(false);
+    const [showImportModal, setShowImportModal] = useState(false);
     const [exportType, setExportType] = useState('all');
     const fetchEmployees = async () => {
         try {
@@ -320,22 +317,17 @@ function Employee() {
                           />
                             </div>
 
-                            <div className="import-button">
-                                <ImportButton
-                                type="employees"
-                                status={exportType}
-                                filter={filterValue}
-                                filePrefix="Verinite"
-                                buttonLabel={
-                                    <span>
-                                    <UploadFileIcon style={{ fontSize: 20 }} />
-                                    Import Assets
-                                    </span>
-                                }
-                                />
-                            </div>
-                        </div>
+                           <div className="import-button" onClick={() => setShowImportModal(true)}>
+        <span><UploadFileIcon /> Import Employee</span>
+      </div>
 
+      {showImportModal && (
+        <ImportExcel
+          importType="employee"
+          onClose={() => setShowImportModal(false)}
+        />
+      )}
+                        </div>
                     </div>
                     
                 </Container>
