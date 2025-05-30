@@ -36,7 +36,7 @@ public class ForgotPasswordService implements ForgotPasswordInterface {
         if(adminRegistrationDto != null) {
             //otpService.sendOTP(adminRegistrationDto);
             otpMailer.sendOTP(adminRegistrationDto);
-            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
         else{
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -48,11 +48,11 @@ public class ForgotPasswordService implements ForgotPasswordInterface {
     public ResponseEntity<?> checkOtp(ResetPasswordDTO resetPassword) {
         String mail = resetPassword.getMail();
         String otp = resetPassword.getOtp();
-        String password = resetPassword.getOldPassword();
+        String password = resetPassword.getNewPassword();
 
         AdminRegistrationEntity adminRegistrationEntity = adminRegistrationRepository.findByMail(mail).get();
         if (adminRegistrationEntity.getOtp().equals(otp)){
-            adminRegistrationEntity.setPassword(password);
+            adminRegistrationEntity.setPassword(bCryptPasswordEncoder.encode(password));
             adminRegistrationRepository.save(adminRegistrationEntity);
             return new ResponseEntity<>(HttpStatus.OK);
         }
@@ -69,9 +69,7 @@ public class ForgotPasswordService implements ForgotPasswordInterface {
         String newPassword = changePassword.getNewPassword();
 
         AdminRegistrationEntity adminRegistrationEntity = adminRegistrationRepository.findByMail(mail).get();
-        String comparePass = bCryptPasswordEncoder.encode(adminRegistrationEntity.getPassword());
-        System.out.println("password : "+ comparePass);
-        if (comparePass.equals(oldPassword)){
+        if (bCryptPasswordEncoder.matches(oldPassword,adminRegistrationEntity.getPassword())){
             adminRegistrationEntity.setPassword(newPassword);
             adminRegistrationRepository.save(adminRegistrationEntity);
             return new ResponseEntity<>(HttpStatus.OK);
