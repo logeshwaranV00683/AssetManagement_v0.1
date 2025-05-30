@@ -7,6 +7,7 @@ import './Style/Login.css';
 import { motion, AnimatePresence } from 'framer-motion';
 import 'animate.css';
 
+
 const CustomInput = ({ type, name, placeholder, value, onChange, icon }) => (
   <div className="input-container">
     <input
@@ -31,25 +32,57 @@ const Login = () => {
   const [showLogin, setShowLogin] = useState(true);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [showResetPassword, setShowResetPassword] = useState(false);
-
   const [mail, setMail] = useState('');
   const [empId, setEmpId] = useState('');
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLogin, setIsLogin] = useState(false);
-
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({ employeeId: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
+  const [otpSentTime, setOtpSentTime] = useState(null);
+  const [timeLeft, setTimeLeft] = useState(60);
+  const [otpExpired, setOtpExpired] = useState(false);
 
   useEffect(() => {
     localStorage.removeItem('isLogin');
   }, []);
 
+  useEffect(() => {
+    if (!otpSentTime) return;
+
+    const interval = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - otpSentTime) / 1000);
+      const remaining = 60 - elapsed;
+
+      if (remaining <= 0) {
+        clearInterval(interval);
+        setTimeLeft(0);
+        setOtpExpired(true);
+      } else {
+        setTimeLeft(remaining);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [otpSentTime]);
+
   const passwordIcon = showPassword ? (
     <FaEyeSlash onClick={() => setShowPassword(false)} />
   ) : (
     <FaEye onClick={() => setShowPassword(true)} />
+  );
+  const newPasswordIcon = showNewPassword ? (
+    <FaEyeSlash onClick={() => setShowNewPassword(false)} />
+  ) : (
+    <FaEye onClick={() => setShowNewPassword(true)} />
+  );
+  const confirmPasswordIcon = showConfirmPassword ? (
+    <FaEyeSlash onClick={() => setShowConfirmPassword(false)} />
+  ) : (
+    <FaEye onClick={() => setShowConfirmPassword(true)} />
   );
 
   const handleChange = (e) => {
@@ -85,11 +118,15 @@ const Login = () => {
   };
 
   const handleCancel = () => {
+  if (showResetPassword) {
+    setShowResetPassword(false);
+    setShowForgotPassword(true);
+  } else {
     setShowLogin(true);
     setShowForgotPassword(false);
     setShowResetPassword(false);
+  }
   };
-
   return (
     <motion.div className="login-page" initial="hidden" animate="visible" exit="exit" variants={fadeVariant}>
       <div className="container">
@@ -144,7 +181,13 @@ const Login = () => {
                   <button
                     type="button"
                     className="submit-btn"
-                    onClick={() => ResetPassword(empId, setShowResetPassword, setShowForgotPassword, setShowLogin)}
+                    onClick={() => {
+                      ResetPassword(empId, setShowResetPassword, setShowForgotPassword, setShowLogin);
+                      const now = Date.now();
+                      setOtpSentTime(now);
+                      setTimeLeft(60);
+                      setOtpExpired(false);
+                    }}
                   >
                     Send OTP
                   </button>
@@ -156,7 +199,12 @@ const Login = () => {
 
               {showResetPassword && (
                 <motion.div key="reset" variants={fadeVariant} initial="hidden" animate="visible" exit="exit">
-                  <h3>Reset Password</h3>
+                  <h3>Reset Password 
+                    {!otpExpired ? (
+                    <p style={{ color: 'green' }}>OTP valid for {timeLeft} seconds</p>
+                  ) : (
+                    <p style={{ color: 'red' }}>OTP expired. Please request a new one</p>
+                  )}</h3>
                   <input
                     type="email"
                     placeholder="Enter your email"
@@ -169,27 +217,42 @@ const Login = () => {
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
                   />
-                  <input
-                    type="password"
+                  <CustomInput
+                    type={showNewPassword ? 'text' : 'password'}
+                    name="newPassword"
                     placeholder="Enter New Password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
+                    icon={newPasswordIcon}
                   />
-                  <input
-                    type="password"
+                  <CustomInput
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    name="confirmPassword"
                     placeholder="Confirm Password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
+                    icon={confirmPasswordIcon}
                   />
-                  <button
-                    type="button"
-                    className="submit-btn"
-                    onClick={() =>
-                      handleResetPassword(mail,otp, newPassword, confirmPassword, setShowLogin, setShowResetPassword)
-                    }
-                  >
-                    Reset Password
-                  </button>
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px', marginTop: '15px' }}>
+                <button
+                  type="button"
+                  className="submit-btn"
+                  onClick={() =>
+                  handleResetPassword(mail, otp, newPassword, confirmPassword, setShowLogin, setShowResetPassword)
+                  }
+                  style={{ flex: 1 }}
+                >
+                Reset Password
+                </button>
+                <button
+                  type="button"
+                  className="submit-btn"
+                  style={{ flex: 1 }}
+                  onClick={handleCancel}
+                >
+                Cancel
+                </button>
+              </div>
                 </motion.div>
               )}
             </AnimatePresence>
