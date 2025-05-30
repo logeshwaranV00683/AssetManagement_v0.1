@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Container, Box, Button, ButtonGroup } from '@mui/material';
+import { Container, Box} from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import TextField from '@mui/material/TextField';
 import "../Style/Assets.css"
@@ -9,7 +9,7 @@ import ExportButton from './ExportButton';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import SidebarAssets  from './SideBarAssets';
 import UploadFileIcon from '@mui/icons-material/UploadFile';  
-import {IconButton, Tooltip } from '@mui/material';         
+import {IconButton, Tooltip } from '@mui/material';        
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete'; 
@@ -21,6 +21,8 @@ import { showConfirmAlert } from '../Utils/alerts';
 import ImportExcel from  "../Utils/ImportExcel";
 
 
+import AssetHistoryPopup from './AssetHistoryPop.js'; 
+import { fetchAssetHistory } from '../Services/HistoryServices.js'; 
 const useStyles = makeStyles((theme) => ({
     content: {
         flexGrow: 1,
@@ -46,6 +48,10 @@ function Assets() {
     const [filteredRows, setFilteredRows] = useState(assets);
     const [showImportModal, setShowImportModal] = useState(false);
 
+//sakthi
+const [openHistoryModal, setOpenHistoryModule] = useState(false);
+const [historyData, setHistoryData] = useState([]);
+//sakthi
     const fetchAssets = async () => {
             try {
                 const data = await getAssetList();
@@ -55,6 +61,27 @@ function Assets() {
                 console.error('Error fetching assets:', error);
             }
         };
+
+        //sakthi
+const handleOpenHistoryModal = async (asset) => {
+  try {
+    const data = await fetchAssetHistory(asset.serialNumber);
+    console.log("Fetched History data:", data);
+
+    if (data && data.length > 0) {
+      setSelectedAsset(asset);
+      setHistoryData(data);
+      setOpenHistoryModule(true);
+    } else {
+      toast.error("No history found for this asset.");
+    }
+  } catch (error) {
+    console.error("Failed to fetch history", error);
+    toast.error("Failed to load asset history.");
+  }
+};
+
+//sakthi
 
 const handleDelete = async (asset) => {
   const confirmDelete = await showConfirmAlert('Are you sure?', 'Do you want to Scrap this asset?');
@@ -103,6 +130,7 @@ const handleDelete = async (asset) => {
         setOpenEditModal(false);
         setSelectedAsset(null);
         setViewOnly(false);
+        setOpenHistoryModule(false);
     };
     const handleOpenEditModal = (asset, isViewOnly = false) => {
         setSelectedAsset(asset);
@@ -159,6 +187,7 @@ const handleDelete = async (asset) => {
                                     filter: 'drop-shadow(0 0 4px rgba(0, 224, 240, 0.8))',
                                 },
                             }}
+                            onClick={()=>handleOpenHistoryModal(params.row)}
                         >
                             <HistoryIcon />
                         </IconButton>
@@ -206,22 +235,16 @@ const handleDelete = async (asset) => {
             <main className={classes.content}>
                 <Container maxWidth="lg">
                     <div className={classes.filterContainer}>
-                        {/* <Box display="flex" alignItems="center"> */}
                         <div style={{ display: 'flex', position: 'relative' }}>
-                            {/* Main content area */}
                             <main className={classes.content} style={{ flexGrow: 1, paddingRight: '80px' }}>
                                 <Container maxWidth="lg">
-                                {/* ...your existing content... */}
                                 </Container>
                             </main>
-
-                            {/* Sidebar only shown on /assets */}
                             <SidebarAssets
                               onAddAsset={handleOpenModal}
                               onFilter={filterByAssetStatus}
                               onResetFilters={resetFilters}
                             />
-
                         </div>
                              <div className="import-button" onClick={() => setShowImportModal(true)}>
         <span><UploadFileIcon /> Import Assets</span>
@@ -358,7 +381,12 @@ const handleDelete = async (asset) => {
                     refreshAssetList={fetchAssets}
                     viewOnly={viewOnly}
                 />
-                
+                <AssetHistoryPopup
+                open={openHistoryModal}
+                onClose={handleClose}
+                asset={selectedAsset}
+                history={historyData}
+                />
             </main>
         </div>
         

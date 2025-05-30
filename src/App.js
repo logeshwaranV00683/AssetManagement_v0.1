@@ -8,7 +8,6 @@ import Assets from './components/Dashboard/Assets';
 import Header from './components/Header/Header';
 import Sidebar from './components/Dashboard/SideBar';
 import Employee from './components/Dashboard/Employee';
-import Assethistory from './components/Dashboard/Assethistory';
 
 function App() {
 
@@ -38,13 +37,6 @@ function App() {
             <Employee/>
           </div>
           } />
-          <Route path="/assethistory"  element={
-                    <div className='dashboard-config'>
-                      <Sidebar/>
-                      <Header/>
-                      <Assethistory />
-                    </div>
-                    } />
           <Route path="/" element={<Navigate to="/login" />} />
         </Routes>
       </div>
