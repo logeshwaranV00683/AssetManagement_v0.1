@@ -85,14 +85,21 @@ public class ForgotPasswordService implements ForgotPasswordInterface {
         String oldPassword = changePassword.getOldPassword();
         String newPassword = changePassword.getNewPassword();
 
-        AdminRegistrationEntity adminRegistrationEntity = adminRegistrationRepository.findByMail(mail).get();
-        if (bCryptPasswordEncoder.matches(oldPassword,adminRegistrationEntity.getPassword())){
-            adminRegistrationEntity.setPassword(newPassword);
-            adminRegistrationRepository.save(adminRegistrationEntity);
-            return new ResponseEntity<>(HttpStatus.OK);
+        Optional<AdminRegistrationEntity> optionalAdmin = adminRegistrationRepository.findByMail(mail);
+        if (optionalAdmin.isEmpty()) {
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
 
+        AdminRegistrationEntity admin = optionalAdmin.get();
+
+        if (bCryptPasswordEncoder.matches(oldPassword, admin.getPassword())) {
+            String encodedNewPassword = bCryptPasswordEncoder.encode(newPassword);
+            admin.setPassword(encodedNewPassword);
+            adminRegistrationRepository.save(admin);
+            return new ResponseEntity<>("Password updated successfully", HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>("Old password is incorrect", HttpStatus.BAD_REQUEST);
+    }
 
 }
