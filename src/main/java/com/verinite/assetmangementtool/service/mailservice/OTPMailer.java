@@ -30,27 +30,26 @@ public class OTPMailer {
     @Autowired
     private AdminServiceImpl adminService;
 
-    public void sendOTP(AdminRegistrationDto adminRegistrationDto) throws MessagingException, UnsupportedEncodingException {
+    public void sendOTP(AdminRegistrationDto adminRegistrationDto) throws MessagingException {
         String otp = String.valueOf(100000 + new Random().nextInt(900000));
         AdminRegistrationEntity adminRegistrationEntity = adminRegistrationRepository.findByEmpId(adminRegistrationDto.getEmpId());
         adminRegistrationEntity.setOtp(otp);
         adminRegistrationEntity.setOtpVerify(true);
         adminRegistrationRepository.save(adminRegistrationEntity);
         new Thread(()->{
-            adminRegistrationEntity.setOtpVerify(false);
-            adminRegistrationEntity.setOtp(adminService.generateComplexPassword(64));
             try {
-                Thread.sleep(60000);
+                Thread.sleep(90000);
+                AdminRegistrationEntity adminRegistrationEntityDB=adminRegistrationRepository.findByEmpId(adminRegistrationEntity.getEmpId());
+                adminRegistrationEntityDB.setOtpVerify(false);
+                adminRegistrationEntityDB.setOtp(adminService.generateComplexPassword(64));
+                adminRegistrationRepository.save(adminRegistrationEntityDB);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
-            }finally {
-                adminRegistrationRepository.save(adminRegistrationEntity);
             }
-            //adminRegistrationRepository.save(adminRegistrationEntity);
         }).start();
         sendOtpMail(adminRegistrationDto.getFirstName(), adminRegistrationDto.getMail(), otp);
     }
-    public String sendOtpMail(String name, String email, String otp) throws MessagingException, UnsupportedEncodingException {
+    public String sendOtpMail(String name, String email, String otp) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 

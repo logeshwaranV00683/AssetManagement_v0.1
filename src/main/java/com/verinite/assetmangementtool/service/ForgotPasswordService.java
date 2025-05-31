@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
+import java.util.Optional;
 
 @Service
 public class ForgotPasswordService implements ForgotPasswordInterface {
@@ -31,8 +32,8 @@ public class ForgotPasswordService implements ForgotPasswordInterface {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
-    public ResponseEntity<?> checkMail(String mail) throws MessagingException, UnsupportedEncodingException {
-        AdminRegistrationDto adminRegistrationDto = modelMapper.map(adminRegistrationRepository.findByMail(mail),AdminRegistrationDto.class);
+    public ResponseEntity<?> sendOTPMail(String empId) throws MessagingException, UnsupportedEncodingException {
+        AdminRegistrationDto adminRegistrationDto = modelMapper.map(adminRegistrationRepository.findByEmpId(empId),AdminRegistrationDto.class);
         if(adminRegistrationDto != null) {
             //otpService.sendOTP(adminRegistrationDto);
             otpMailer.sendOTP(adminRegistrationDto);
@@ -50,16 +51,32 @@ public class ForgotPasswordService implements ForgotPasswordInterface {
         String otp = resetPassword.getOtp();
         String password = resetPassword.getNewPassword();
 
-        AdminRegistrationEntity adminRegistrationEntity = adminRegistrationRepository.findByMail(mail).get();
-        if (adminRegistrationEntity.getOtp().equals(otp)){
-            adminRegistrationEntity.setPassword(bCryptPasswordEncoder.encode(password));
-            adminRegistrationRepository.save(adminRegistrationEntity);
-            return new ResponseEntity<>(HttpStatus.OK);
+        if (otp == null || otp.isEmpty() || password == null || password.isEmpty()) {
+            return new ResponseEntity<>("OTP or password cannot be empty", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        Optional<AdminRegistrationEntity> optionalAdmin = adminRegistrationRepository.findByMail(mail);
+        if (optionalAdmin.isEmpty()) {
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        }
+
+        AdminRegistrationEntity admin = optionalAdmin.get();
+
+        if (!otp.equals(admin.getOtp())) {
+            return new ResponseEntity<>("Invalid OTP", HttpStatus.BAD_REQUEST);
+        }
+
+        if (!admin.isOtpVerify()) {
+            return new ResponseEntity<>("OTP not verified. Please verify the OTP before resetting password.", HttpStatus.FORBIDDEN);
+        }
+
+        admin.setPassword(bCryptPasswordEncoder.encode(password));
+        admin.setOtp(null);
+        admin.setOtpVerify(false);
+        adminRegistrationRepository.save(admin);
+
+        return new ResponseEntity<>("Password updated successfully", HttpStatus.OK);
     }
-
-
 
 
     @Override

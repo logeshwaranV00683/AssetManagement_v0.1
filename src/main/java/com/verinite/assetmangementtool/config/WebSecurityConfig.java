@@ -69,9 +69,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(csrf -> csrf.disable())
                 .authorizeRequests(auth -> auth
-                        .antMatchers("/login", "/assetManager/v1/admin/add/admin", "/swagger-ui/**", "/v2/api-docs",
+                        .antMatchers("/login", "/swagger-ui/**", "/v2/api-docs",
                                 "/v3/api-docs/**", "/custom-api-docs/**", "/swagger-resources/**", "/configuration/**", "/webjars/**",
-                                "/generate/bcrypt")
+                                "/generate/bcrypt","/reset-password/send-otp","/reset-password/verify-otp")
                         .permitAll() // Permit all the listed endpoints, including Swagger
                         .anyRequest().authenticated()) // All other endpoints require authentication
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
