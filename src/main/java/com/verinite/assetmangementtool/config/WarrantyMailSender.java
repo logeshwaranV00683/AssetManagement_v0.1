@@ -26,7 +26,7 @@ public class WarrantyMailSender {
     @Autowired
     private NotificationMailer notificationMail;
 
-    @Scheduled(cron = "0 30 9 * * *")
+    @Scheduled(cron = "0 30 11 * * *")
     public void getWarrantyExpiredAssets() throws MessagingException, UnsupportedEncodingException {
         List<AssetsEntity> nearingExpiryAssets = new ArrayList<>();
         List<AssetsEntity> allAssets = repository.findAll();

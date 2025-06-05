@@ -12,7 +12,7 @@ import java.util.Date;
 public class AssetsEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "asset_id")
     private int assetId;
     private String assetName;

@@ -74,7 +74,7 @@ CREATE TABLE `tbl_assets` (
 ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `tbl_assets_history` (
-  `history_id` bigint NOT NULL,
+  `history_id` bigint NOT NULL AUTO_INCREMENT,
   `assigned_by` varchar(255) DEFAULT NULL,
   `assigned_date` datetime(6) DEFAULT NULL,
   `emp_id` varchar(255) DEFAULT NULL,
@@ -84,24 +84,12 @@ CREATE TABLE `tbl_assets_history` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `tbl_assigned_assets` (
-  `assigned_assets_id` int NOT NULL,
-  `added_by` varchar(255) DEFAULT NULL,
-  `asset_id` int DEFAULT NULL,
-  `asset_name` varchar(255) DEFAULT NULL,
+  `assigned_assets_id` int NOT NULL AUTO_INCREMENT,
   `assigned_by` varchar(255) DEFAULT NULL,
   `assigned_date` datetime(6) DEFAULT NULL,
   `emp_id` varchar(255) DEFAULT NULL,
-  `loc_code` int NOT NULL,
-  `location` varchar(255) DEFAULT NULL,
-  `model_name` varchar(255) DEFAULT NULL,
-  `operating_system` varchar(255) DEFAULT NULL,
-  `purchase_date` varchar(255) DEFAULT NULL,
-  `return_date` datetime(6) DEFAULT NULL,
   `serial_number` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
-  `type` varchar(255) DEFAULT NULL,
-  `warranty_date` varchar(255) DEFAULT NULL,
-  `asset_sourced_by` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`assigned_assets_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 

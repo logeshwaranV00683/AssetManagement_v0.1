@@ -27,20 +27,11 @@ public class EmployeeEntity {
 
     private String location;
 
-    //private int locCode;
-
     private String status;
 
     private String department;
 
     private String designation;
 
-//	public int getLocCode() {
-//		return locCode;
-//	}
-//
-//	public void setLocCode(int locCode) {
-//		this.locCode = locCode;
-//	}
 
 }

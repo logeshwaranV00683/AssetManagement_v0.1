@@ -1,5 +1,6 @@
 package com.verinite.assetmangementtool.entity;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,13 +8,13 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
-@Getter
-@Setter
+
 @Entity
 @Table(name = "designation")
+@Data
 public class DesignationEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "desc_id", nullable = false)
     private Long descId;
     @NotBlank
@@ -25,29 +26,6 @@ public class DesignationEntity {
 
     private String position;
 
-    public Long getDescId() {
-        return descId;
-    }
-
-    public void setDescId(Long descId) {
-        this.descId = descId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getPosition() {
-        return position;
-    }
-
-    public void setPosition(String position) {
-        this.position = position;
-    }
 
 
 }

@@ -13,7 +13,7 @@ import java.util.Date;
 public class AssetsHistoryEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long historyId;
     private String serialNumber;
     private Date returnDate;

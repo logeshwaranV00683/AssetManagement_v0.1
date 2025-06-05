@@ -33,13 +33,13 @@ public class AssignedAssetsController {
     }
 
     @PutMapping("asset/un-assign")
-    public ResponseEntity<?> unassignAssetApi(@RequestParam String serialNumber) {
+    public ResponseEntity<?> unassignAssetApi(@RequestBody List<String> serialNumber) {
 
         String assignedAssets = assignedAssetsService.unAssignAsset(serialNumber);
         return ResponseEntity.ok(assignedAssets);
     }
 
-    @GetMapping("get-assigned-assetss/{assignedId}")
+    @GetMapping("get-assigned-assets/{assignedId}")
     public AssignedAssetsEntity getAssignedAssetsById(@PathVariable("assignedId") int assignedId) {
         return assignedAssetsService.getAssignedAssetsById(assignedId);
     }
@@ -49,7 +49,7 @@ public class AssignedAssetsController {
         return assignedAssetsService.getAssignedAssetsByAssetsId(assetId);
     }
 
-    @GetMapping("getall/assigend/assets")
+    @GetMapping("getall/assigned/assets")
     public ResponseEntity<List<AssignedAssetDtoList>> getAllAssignedAssets() {
         List<AssignedAssetDtoList> assignedAssets = assignedAssetsService.getAllassignedAssets();
         return ResponseEntity.ok(assignedAssets); // Returns HTTP 200 with the list of assigned assets

@@ -1,14 +1,15 @@
 package com.verinite.assetmangementtool.entity;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 
-@Getter
-@Setter
+
 @Entity
 @Table(name = "tbl_location")
+@Data
 public class LocationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,46 +33,5 @@ public class LocationEntity {
 //	@NotBlank(message = "Country name should not be null")
     @Column(name = "country", nullable = false)
     private String country;
-
-
-    public int getLocCode() {
-        return locCode;
-    }
-
-
-    public void setLocCode(int locCode) {
-        this.locCode = locCode;
-    }
-
-
-    public String getLocName() {
-        return locName;
-    }
-
-
-    public void setLocName(String locName) {
-        this.locName = locName;
-    }
-
-
-    public String getState() {
-        return state;
-    }
-
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-
-    public String getCountry() {
-        return country;
-    }
-
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
 
 }

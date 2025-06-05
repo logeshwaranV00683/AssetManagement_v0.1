@@ -28,18 +28,4 @@ public class WarrantyMailTest {
     }
 
 
-//    private AssetsEntity dummyAssetsEntity() {
-//        AssetsEntity assetEntity = new AssetsEntity();
-//        assetEntity.setAssetName("Laptop");
-//        assetEntity.setAddedBy("Ahalya");
-//        assetEntity.setStatus("UnAssigned");
-//        assetEntity.setModelName("Dell");
-//        assetEntity.setOperatingSystem("Linux");
-//        assetEntity.setPurchaseDate("06-09-2022");
-//        assetEntity.setWarrantyDate("30-09-2022");
-//        assetEntity.setSerialNumber("Dell1222");
-//        assetEntity.setLocation("Chennai");
-//        return assetEntity;
-//    }
-
 }

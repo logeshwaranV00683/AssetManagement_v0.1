@@ -516,7 +516,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
     @Override
     public Object saveHistory(String serialNo, String empId) {
         try {
-            AssignedAssetsEntity asset = assignedAssetsRepository.findBySerialNumberAndEmpId(serialNo, empId);
+            AssetsEntity asset = assetRepo.findBySerialNumber(serialNo);
             AssetsHistoryEntity assetsHistoryEntity = new AssetsHistoryEntity();
             List<AssetsHistoryEntity> assetsHistoryEntities = assetsHistoryRepository.findAll();
             List<CountOfAssets> countOfAssets = assetCountRepository.findAll();
@@ -596,7 +596,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                 assetCopy.setStatus("unassigned");
                 assetCopy.setEmpId(null);
                 assetRepo.save(assetCopy);
-                assignedAssetsRepository.save(asset);
+                assetRepo.save(asset);
                 assetsHistoryEntities.add(assetsHistoryEntity);
                 assetsHistoryRepository.saveAll(assetsHistoryEntities);
             }

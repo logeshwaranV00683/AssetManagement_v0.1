@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface AssignedAssetsRepository extends JpaRepository<AssignedAssetsEntity, Integer> {
 
-    //	@Query(value = "select from tbl_assined_assets where assigned_assets_id =?", nativeQuery = true)
+    //	@Query(value = "select from tbl_assigned_assets where assigned_assets_id =?", nativeQuery = true)
 //	AssignedAssetsEntity getAssignedAssetsById(int assignedId);
     List<AssignedAssetsEntity> findAllByOrderByAssignedAssetsIdDesc();
 
@@ -20,13 +20,13 @@ public interface AssignedAssetsRepository extends JpaRepository<AssignedAssetsEn
 
     @Transactional
     @Modifying
-    @Query(value = "UPDATE tbl_assined_assets SET status = :status WHERE assigned_assets_id = :assetId", nativeQuery = true)
+    @Query(value = "UPDATE tbl_assigned_assets SET status = :status WHERE assigned_assets_id IN :assetId", nativeQuery = true)
     int updateUnassignStatus(@Param("status") String status, @Param("assetId") int assetId);
 
-    @Query(value = "select from tbl_assined_assets where assets_id =?", nativeQuery = true)
+    @Query(value = "select from tbl_assigned_assets where assets_id =?", nativeQuery = true)
     AssignedAssetsEntity getAssignedAssetsByAssetsId(int assetId);
 
-    @Query(value = "select * from tbl_assined_assets where serial_number=?", nativeQuery = true)
+    @Query(value = "select * from tbl_assigned_assets where serial_number=?", nativeQuery = true)
     AssignedAssetsEntity findBySerialNumber(String serialNumber);
 
     AssignedAssetsEntity findBySerialNumberAndEmpId(String serialNo, String empId);

@@ -9,7 +9,6 @@ import java.util.List;
 
 public interface AssignedAssetsService {
 
-    AssignedAssetsEntity saveAssignedAssets(AssignedAssetsEntity assignedAssetsEntity);
 
     AssignedAssetsEntity getAssignedAssetsById(int assignedId);
 
@@ -24,5 +23,7 @@ public interface AssignedAssetsService {
 
     ResponseEntity<?> getRecentAssigned();
 
-    String unAssignAsset(String serialNumber);
+    public ResponseEntity<String> save(List<AssignableAssetDto> assignableAssetDtos);
+
+    String unAssignAsset(List<String> serialNumber);
 }

@@ -58,9 +58,6 @@ public class AssetsHistoryServiceImpl implements AssetsHistoryServices {
 
         assetHistory.setAssignedDate(assignedAssetsEntity.getAssignedDate());
         assetHistory.setAssignedBy(assignedAssetsEntity.getAssignedBy());
-        assetHistory.setReturnDate(assignedAssetsEntity.getReturnDate());
-
-
         assetsHistoryRepository.save(assetHistory);
     }
 
