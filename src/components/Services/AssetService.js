@@ -88,3 +88,36 @@ export const scrapAsset = async (assetId) => {
     throw error;
   }
 };
+
+export const assignAsset = async (assetData) => {
+  console.log("Assign Asset API Request Body:", assetData);
+
+  try {
+    const response = await fetch(`${apiUrl}/assetManager/v1/admin/Asset/assign`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(assetData),
+    });
+
+    const contentType = response.headers.get("Content-Type");
+
+    let result;
+    if (contentType && contentType.includes("application/json")) {
+      result = await response.json();
+    } else {
+      result = await response.text();
+    }
+
+    if (!response.ok) {
+      throw new Error(result || 'Failed to assign asset');
+    }
+
+    return result;
+  } catch (error) {
+    console.error('Assign Asset Exception:', error);
+    throw error;
+  }
+};

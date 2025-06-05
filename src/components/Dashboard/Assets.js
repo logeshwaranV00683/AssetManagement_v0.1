@@ -19,10 +19,10 @@ import  EditAssetModal  from './EditAssetModal';
 import { toast } from 'react-hot-toast';
 import { showConfirmAlert } from '../Utils/alerts';
 import ImportExcel from  "../Utils/ImportExcel";
-
-
 import AssetHistoryPopup from './AssetHistoryPop.js'; 
 import { fetchAssetHistory } from '../Services/HistoryServices.js'; 
+import AssignAsset from './AssignAsset';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 const useStyles = makeStyles((theme) => ({
     content: {
         flexGrow: 1,
@@ -48,10 +48,12 @@ function Assets() {
     const [filteredRows, setFilteredRows] = useState(assets);
     const [showImportModal, setShowImportModal] = useState(false);
 
+
 //sakthi
 const [openHistoryModal, setOpenHistoryModule] = useState(false);
 const [historyData, setHistoryData] = useState([]);
 //sakthi
+const [openAssignModal, setOpenAssignModal] = useState(false);
     const fetchAssets = async () => {
             try {
                 const data = await getAssetList();
@@ -131,6 +133,7 @@ const handleDelete = async (asset) => {
         setSelectedAsset(null);
         setViewOnly(false);
         setOpenHistoryModule(false);
+        setOpenAssignModal(false)
     };
     const handleOpenEditModal = (asset, isViewOnly = false) => {
         setSelectedAsset(asset);
@@ -142,7 +145,10 @@ const handleDelete = async (asset) => {
     setExportType(status);
     setFilteredRows(assets.filter(a => a.status?.toLowerCase() === status.toLowerCase()));
 };
-
+const handleAssign = async (asset) => {
+ setOpenAssignModal(true);
+setSelectedAsset(asset);
+}
 
     const columns = [
         { field: 'serialNumber', headerName: 'Serial Number', width: 150, sortable: true},
@@ -176,6 +182,21 @@ const handleDelete = async (asset) => {
                             <VisibilityIcon />
                         </IconButton>
                     </Tooltip>
+                    <Tooltip title="Assign">
+                    <IconButton
+                        color="inherit"
+                        sx={{ transition: 'transform 0.2s',
+                                '&:hover': {
+                                     transform: 'scale(1.3)',
+                                     color: 'error.main',
+                                     filter: 'drop-shadow(0 0 4px rgb(10, 227, 50))',
+                                },
+                            }}
+                            onClick={() => handleAssign(params.row)}                                        
+                    >
+                       <PersonAddIcon />
+                    </IconButton>
+                </Tooltip>
                     <Tooltip title="History">
                         <IconButton
                             color="inherit"
@@ -387,6 +408,13 @@ const handleDelete = async (asset) => {
                 asset={selectedAsset}
                 history={historyData}
                 />
+               <AssignAsset
+                open={openAssignModal}
+                handleClose={handleClose }
+                asset={selectedAsset} 
+                fetchAssets={fetchAssets}
+                />
+
             </main>
         </div>
         
