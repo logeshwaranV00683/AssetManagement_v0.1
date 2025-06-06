@@ -112,7 +112,9 @@ export const assignAsset = async (assetData) => {
     }
 
     if (!response.ok) {
-      throw new Error(result || 'Failed to assign asset');
+        const error = new Error(result || 'Failed to assign asset');
+        error.status = response.status;
+        throw error;
     }
 
     return result;

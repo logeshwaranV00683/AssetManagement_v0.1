@@ -18,7 +18,8 @@ import { showConfirmAlert } from '../Utils/alerts';
 import UploadFileIcon from '@mui/icons-material/UploadFile'; 
 import '../Style/ImportButton.css';
 import ImportExcel from  "../Utils/ImportExcel";
-
+import AssignmentIndIcon from '@mui/icons-material/AssignmentInd'; 
+import AssignAssetToEmployee from './AssignAssetToEmployee'; 
 const useStyles = makeStyles((theme) => ({
     content: {
         flexGrow: 1,
@@ -121,6 +122,13 @@ function Employee() {
         }
         console.log(`Delete employee with ID: ${employee.empId}`);
     };
+    const [openAssignAssetDialog, setOpenAssignAssetDialog] = useState(false);
+    const [selectedAssignEmployee, setSelectedAssignEmployee] = useState(null);
+        
+    const handleOpenAssignAssets = (employee) => {
+        setSelectedAssignEmployee(employee);
+        setOpenAssignAssetDialog(true);
+        };
 
     const columns = [
         { field: 'name', headerName: 'Name', width: 200, sortable: true },
@@ -153,7 +161,22 @@ function Employee() {
                                         <VisibilityIcon />
                                     </IconButton>
                                 </Tooltip>
-                                
+                                <Tooltip title="Assign Asset">
+                                    <IconButton
+                                        color="inherit"
+                                        sx={{
+                                            transition: 'transform 0.2s',
+                                            '&:hover': {
+                                                transform: 'scale(1.3)',
+                                                color: 'success.main',
+                                                filter: 'drop-shadow(0 0 4px rgba(76, 175, 80, 0.8))',
+                                            },
+                                        }}
+                                        onClick={() => handleOpenAssignAssets(params.row)}
+                                    >
+                                        <AssignmentIndIcon />
+                                    </IconButton>
+                                </Tooltip>
                                 <Tooltip title="Edit">
                                     <IconButton
                                         color="inherit"
@@ -342,6 +365,16 @@ function Employee() {
                         viewOnly={viewOnly}
                     />
                 )}
+                {selectedAssignEmployee && (
+                    <AssignAssetToEmployee
+                        open={openAssignAssetDialog}
+                        onClose={() => setOpenAssignAssetDialog(false)}
+                        employee={selectedAssignEmployee}
+                        refresh={fetchEmployees}
+                    />
+                    )}
+
+
                 
             </main>
         </div>

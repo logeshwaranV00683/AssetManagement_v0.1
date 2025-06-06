@@ -49,10 +49,8 @@ function Assets() {
     const [showImportModal, setShowImportModal] = useState(false);
 
 
-//sakthi
 const [openHistoryModal, setOpenHistoryModule] = useState(false);
 const [historyData, setHistoryData] = useState([]);
-//sakthi
 const [openAssignModal, setOpenAssignModal] = useState(false);
     const fetchAssets = async () => {
             try {
@@ -63,8 +61,6 @@ const [openAssignModal, setOpenAssignModal] = useState(false);
                 console.error('Error fetching assets:', error);
             }
         };
-
-        //sakthi
 const handleOpenHistoryModal = async (asset) => {
   try {
     const data = await fetchAssetHistory(asset.serialNumber);
@@ -82,8 +78,6 @@ const handleOpenHistoryModal = async (asset) => {
     toast.error("Failed to load asset history.");
   }
 };
-
-//sakthi
 
 const handleDelete = async (asset) => {
   const confirmDelete = await showConfirmAlert('Are you sure?', 'Do you want to Scrap this asset?');
@@ -188,7 +182,7 @@ setSelectedAsset(asset);
                         sx={{ transition: 'transform 0.2s',
                                 '&:hover': {
                                      transform: 'scale(1.3)',
-                                     color: 'error.main',
+                                     color: 'success.main',
                                      filter: 'drop-shadow(0 0 4px rgb(10, 227, 50))',
                                 },
                             }}

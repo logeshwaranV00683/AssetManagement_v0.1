@@ -17,6 +17,20 @@ export const showSuccessAlert = (title, text = '') => {
   });
 };
 
+export const showWarningAlert = (title, text = '') => {
+  MySwal.fire({
+    title: <strong>{title}</strong>,
+    html: text,
+    icon: 'warning',
+    showClass: {
+      popup: 'animate__animated animate__fadeInDown'
+    },
+    hideClass: {
+      popup: 'animate__animated animate__zoomOut'
+    }
+  });
+};
+
 export const showErrorAlert = (title, text = '') => {
   MySwal.fire({
     title: <strong>{title}</strong>,
