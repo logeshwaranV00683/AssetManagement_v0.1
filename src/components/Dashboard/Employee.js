@@ -7,7 +7,7 @@ import AddEmployeeModal from './AddEmployeeModal';
 import EditEmployeeModal from './EditEmployeeModal';
 import "../Style/Employee.css";
 import { getEmployeeList,deleteEmployee } from '../Services/EmployeeService';
-import ExportButton from './ExportButton';
+import ExportButton from '../Utils/ExportButton';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import SidebarEmployee from './SideBarEmployee';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -321,12 +321,13 @@ function Employee() {
         <span><UploadFileIcon /> Import Employee</span>
       </div>
 
-      {showImportModal && (
-        <ImportExcel
-          importType="employee"
-          onClose={() => setShowImportModal(false)}
-        />
-      )}
+                          {showImportModal && (
+                            <ImportExcel
+                              importType="employee"
+                              onClose={() => setShowImportModal(false)}
+                              refreshList = {fetchEmployees}
+                            />
+                          )}
                         </div>
                     </div>
                     

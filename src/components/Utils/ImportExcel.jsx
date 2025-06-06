@@ -3,7 +3,7 @@ import axios from "axios";
 import "../Style/ImportExcel.css";
 import { showSuccessAlert, showErrorAlert } from "./alerts";
 
-function ImportExcel({ importType, onClose }) {
+function ImportExcel({ importType, onClose,refreshList}) {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -42,8 +42,9 @@ function ImportExcel({ importType, onClose }) {
       });
 
       showSuccessAlert("Import Successful", response.data);
+      refreshList();
       setFile(null);
-      onClose(); // Close after successful upload
+      onClose();
     } catch (error) {
       let message = "Something went wrong.";
       if (error.response?.data) {

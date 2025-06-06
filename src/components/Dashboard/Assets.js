@@ -5,7 +5,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import TextField from '@mui/material/TextField';
 import "../Style/Assets.css"
 import AddAssetModal from './AddAssetModal';
-import ExportButton from './ExportButton';
+import ExportButton from '../Utils/ExportButton';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import SidebarAssets  from './SideBarAssets';
 import UploadFileIcon from '@mui/icons-material/UploadFile';  
@@ -271,12 +271,13 @@ setSelectedAsset(asset);
         <span><UploadFileIcon /> Import Assets</span>
       </div>
 
-      {showImportModal && (
-        <ImportExcel
-          importType="asset"
-          onClose={() => setShowImportModal(false)}
-        />
-      )}
+                      {showImportModal && (
+                        <ImportExcel
+                          importType="asset"
+                          onClose={() => setShowImportModal(false)}
+                          refreshList={fetchAssets}
+                        />
+                      )}
 
 
                         <TextField
