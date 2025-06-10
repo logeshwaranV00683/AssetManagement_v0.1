@@ -164,7 +164,7 @@ public class AdminServiceImpl implements AdminService {
         adminRegistrationEntity.setLastName(employee.getLastName());
         adminRegistrationEntity.setStatus(employee.getStatus());
         adminRegistrationEntity.setLocation(employee.getLocation());
-        adminRegistrationEntity.setPassword(password);
+        adminRegistrationEntity.setPassword(new BCryptPasswordEncoder().encode(password));
 
         registerNewAdmin(adminRegistrationEntity);
 

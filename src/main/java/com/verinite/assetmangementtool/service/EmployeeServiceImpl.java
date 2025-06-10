@@ -16,7 +16,9 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,32 +61,26 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     public List<EmployeeDto> saveBulkEmployee(List<EmployeeDto> employeeDTOs) {
-        // Convert the list of DTOs to a list of entities
+
         List<EmployeeEntity> employeeEntities = employeeDTOs.stream().map(this::dtoToEntity)
                 .collect(Collectors.toList());
-
-        // Check for existing employees and separate them
         List<EmployeeEntity> newEmployees = employeeEntities.stream()
                 .filter(employeeEntity -> employeeRepo.findByEmpId(employeeEntity.getEmpId()) == null)
                 .collect(Collectors.toList());
-
-        // Save the new employees
         List<EmployeeEntity> savedEntities = employeeRepo.saveAll(newEmployees);
-
-        // Convert saved entities to DTOs
         return savedEntities.stream().map(this::entityToDto).collect(Collectors.toList());
     }
 
     private EmployeeEntity dtoToEntity(EmployeeDto dto) {
         EmployeeEntity entity = new EmployeeEntity();
-        // entity.setEmpId(dto.getEmpId());
+        entity.setEmpId(dto.getEmpId());
         entity.setFirstName(dto.getFirstName());
         entity.setLastName(dto.getLastName());
-        // entity.setRole(dto.getRole());
+        entity.setRole(dto.getRole());
         entity.setMail(dto.getMail());
         entity.setMobile(dto.getMobile());
         entity.setLocation(dto.getLocation());
-        // entity.setStatus(dto.getStatus());
+        entity.setStatus(dto.getStatus());
         entity.setDepartment(dto.getDepartment());
         entity.setDesignation(dto.getDesignation());
         return entity;
@@ -92,14 +88,14 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private EmployeeDto entityToDto(EmployeeEntity entity) {
         EmployeeDto dto = new EmployeeDto();
-        // dto.setEmpId(entity.getEmpId());
+        dto.setEmpId(entity.getEmpId());
         dto.setFirstName(entity.getFirstName());
         dto.setLastName(entity.getLastName());
-        // dto.setRole(entity.getRole());
+        dto.setRole(entity.getRole());
         dto.setMail(entity.getMail());
         dto.setMobile(entity.getMobile());
         dto.setLocation(entity.getLocation());
-        // dto.setStatus(entity.getStatus());
+        dto.setStatus(entity.getStatus());
         dto.setDepartment(entity.getDepartment());
         dto.setDesignation(entity.getDesignation());
         return dto;
@@ -138,27 +134,38 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void importEmployeeFromExcel(InputStream inputStream) throws IOException {
         Workbook workbook = new XSSFWorkbook(inputStream);
-        Sheet sheet = workbook.getSheet("Active");
-        Iterator<Row> rows = sheet.iterator();
+        importSheet(workbook, "Active");
+        importSheet(workbook, "Inactive");
+        workbook.close();
+    }
 
+    private void importSheet(Workbook workbook, String sheetName) {
+        Sheet sheet = workbook.getSheet(sheetName);
+        if (sheet == null) return;
+
+        Iterator<Row> rows = sheet.iterator();
         if (rows.hasNext()) rows.next();
+
+        HashSet<EmployeeDto> employees= new HashSet<EmployeeDto>();
 
         while (rows.hasNext()) {
             Row row = rows.next();
             EmployeeDto employee = new EmployeeDto();
-
             employee.setEmpId(getCellValue(row, 0));
-            employee.setFirstName(getCellValue(row,1));
-            employee.setLastName(getCellValue(row,2));
-            employee.setMail(getCellValue(row,4));
-            employee.setMobile(getCellValue(row,5));
-            employee.setLocation(getCellValue(row,6));
-            employee.setDepartment(getCellValue(row,8));
-            employee.setDesignation(getCellValue(row,9));
-            saveEmployee(employee);
+            employee.setFirstName(getCellValue(row, 1));
+            employee.setLastName(getCellValue(row, 2));
+            employee.setMail(getCellValue(row, 4));
+            employee.setMobile(getCellValue(row, 5));
+            employee.setLocation(getCellValue(row, 6));
+            employee.setDepartment(getCellValue(row, 8));
+            employee.setDesignation(getCellValue(row, 9));
+            employee.setStatus(sheetName.equalsIgnoreCase("Active") ? "Active" : "Inactive");
+            employee.setRole("User");
+            if (!employees.add(employee)) {
+                System.out.println("Duplicate employee found (ignored): " + employee.getEmpId());
+            }
         }
-        workbook.close();
-
+        saveBulkEmployee(new LinkedList<>(employees));
     }
     private String getCellValue(Row row, int colIndex) {
         Cell cell = row.getCell(colIndex);

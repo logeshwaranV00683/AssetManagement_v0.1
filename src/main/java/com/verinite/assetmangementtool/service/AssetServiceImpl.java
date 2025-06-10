@@ -3,9 +3,11 @@ package com.verinite.assetmangementtool.service;
 import com.verinite.assetmangementtool.dto.AssetCounterDto;
 import com.verinite.assetmangementtool.dto.AssetExportDto;
 import com.verinite.assetmangementtool.dto.AssetsDto;
+import com.verinite.assetmangementtool.dto.AssignableAssetDto;
 import com.verinite.assetmangementtool.entity.*;
 import com.verinite.assetmangementtool.repository.*;
 import com.verinite.assetmangementtool.response.SaveAssetResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
@@ -26,35 +28,32 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class AssetServiceImpl implements AssetService, ApplicationRunner {
-    // private static final Logger logger =
-    // LogManager.getLogger(AssetmanagementtoolApplication.class);
+
 
     @Autowired
     AssetsRepository assetRepo;
     @Autowired
     AssetCountRepository assetCountRepository;
     @Autowired
-    ScarpRepository scrapRepository;
+    EmployeeRepository employeeRepository;
     @Autowired
     AssetsHistoryRepository assetsHistoryRepository;
     @Autowired
     AssignedAssetsRepository assignedAssetsRepository;
     @Autowired
-    private ModelMapper modelMapper;
-
+    AssetsHistoryServices assetsHistoryServices;
     @Autowired
-    private ScarpRepository scarpRepository;
-
+    AssignedAssetsServiceImpl assignedAssetsServiceImp;
     @Autowired
-    private DashboardRepo dashboardRepo;
+    ModelMapper modelMapper;
 
     public AssetsDto saveAsset(AssetsDto assetDto) {
         ModelMapper modelMapper = new ModelMapper();
         AssetsEntity assets = modelMapper.map(assetDto, AssetsEntity.class);
         assets.setStatus("UnAssigned");
-        // assetDto.setStatus("UnAssigned");
 
         int count = 0;
 
@@ -94,7 +93,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                         i.setLaptopChargerCount(i.getLaptopChargerCount() + 1);
                         i.setUnAssignedLaptopChargerCount(i.getUnAssignedLaptopChargerCount() + 1);
                     }
-                    if (assetDto.getAssetName().equalsIgnoreCase("HaedPhone")) {
+                    if (assetDto.getAssetName().equalsIgnoreCase("HeadPhone")) {
                         i.setHeadPhonesCount(i.getHeadPhonesCount() + 1);
                         i.setUnAssignedHeadphonesCount(i.getUnAssignedHeadphonesCount() + 1);
                     }
@@ -145,8 +144,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
         assetRepo.save(assets);
 
         // Map the saved entity back to AssetDto
-        AssetsDto assetsDto = modelMapper.map(assets, AssetsDto.class);
-        return assetsDto;
+        return modelMapper.map(assets, AssetsDto.class);
     }
 
     private void updateCountOfAssets(CountOfAssets countOfAssets, String assetName) {
@@ -274,18 +272,18 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                 existingAsset.setLocation(asset.getLocation());
             if (asset.getLocCode() != null)
                 existingAsset.setLocCode(asset.getLocCode());
-            if(asset.getReturnDate()!=null)
+            if (asset.getReturnDate() != null)
                 existingAsset.setReturnDate(asset.getReturnDate());
-            if(asset.getAssignedDate()!=null)
+            if (asset.getAssignedDate() != null)
                 existingAsset.setAssignedDate(asset.getAssignedDate());
-            if(asset.getAssignedBy()!=null)
+            if (asset.getAssignedBy() != null)
                 existingAsset.setAssignedBy(asset.getAssignedBy());
-            if(asset.getAssertSourcedBy()!=null)
+            if (asset.getAssertSourcedBy() != null)
                 existingAsset.setAssetSourcedBy(asset.getAssertSourcedBy());
 
             return modelMapper.map(assetRepo.save(existingAsset), SaveAssetResponse.class);
         } else {
-           return null;
+            return null;
         }
     }
 
@@ -429,7 +427,6 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
 
     /// //////////////////////////////
     ///
-    ///
     @Override
     public int totalLaptops() {
         List<CountOfAssets> countOfAssets = assetCountRepository.findAll();
@@ -448,19 +445,19 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
 
     @Override
     public List<AssetCounterDto> getUnassignedAndTotalLaptops() {
-        List<AssetCounterDto> assetCounterDtos = new ArrayList<AssetCounterDto>();
+        List<AssetCounterDto> assetCounterDTOs = new ArrayList<AssetCounterDto>();
         AssetCounterDto temp1 = new AssetCounterDto();
         List<CountOfAssets> countOfAssets = assetCountRepository.findAll();
         countOfAssets.forEach(x -> {
             temp1.setLocation(x.getLocation());
             temp1.setTotal(x.getLaptopCount());
             temp1.setUnAssigned(x.getUnAssignedLaptopCount());
-            assetCounterDtos.add(temp1);
+            assetCounterDTOs.add(temp1);
         });
-        for (AssetCounterDto i : assetCounterDtos)
+        for (AssetCounterDto i : assetCounterDTOs)
             System.out.println(i.getLocation());
 
-        return assetCounterDtos;
+        return assetCounterDTOs;
     }
 
     @Override
@@ -491,7 +488,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
     @Override
     public List<AssetsEntity> getLaptopsOverWarenty() {
         List<AssetsEntity> all = assetRepo.findAll();
-        List<AssetsEntity> assetsEntities = new ArrayList<AssetsEntity>();
+        List<AssetsEntity> assetsEntities = new ArrayList<>();
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDateTime now = LocalDateTime.now();
         // System.out.println(dtf.format(now));
@@ -500,8 +497,8 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
         for (AssetsEntity i : all) {
             try {
                 Date date = new SimpleDateFormat("dd/MM/yyyy").parse(i.getWarrantyDate());
-                Date todatDate = new SimpleDateFormat("dd/MM/yyyy").parse(today);
-                if (date.compareTo(todatDate) < 0) {
+                Date todayDate = new SimpleDateFormat("dd/MM/yyyy").parse(today);
+                if (date.compareTo(todayDate) < 0) {
                     assetsEntities.add(i);
                 }
             } catch (ParseException e) {
@@ -623,7 +620,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
     @Override
     public AssetsDto getAssetsDetails(Integer assetId) {
         if (assetId == null) {
-            throw new RuntimeException("Asset id is empty: " + assetId);
+            throw new RuntimeException("Asset id is empty: null");
         }
 
         Optional<AssetsEntity> optionalAssetsEntity = assetRepo.findByAssetId(assetId);
@@ -661,23 +658,19 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
     public void exportAssetsToExcel(List<AssetExportDto> allAssets, OutputStream outputStream) throws IOException {
         Workbook workbook = new XSSFWorkbook();
 
-        // Prepare styles
         CellStyle headerStyle = createHeaderStyle(workbook);
         CellStyle dataStyle = createDataStyle(workbook);
 
-        // Filter and export: Assigned
         List<AssetExportDto> assigned = allAssets.stream()
                 .filter(a -> "Assigned".equalsIgnoreCase(a.getStatus()))
                 .collect(Collectors.toList());
         writeAssignedSheet(workbook, assigned, headerStyle, dataStyle);
 
-        // Unassigned
         List<AssetExportDto> unassigned = allAssets.stream()
                 .filter(a -> "Unassigned".equalsIgnoreCase(a.getStatus()))
                 .collect(Collectors.toList());
         writeUnassignedSheet(workbook, unassigned, headerStyle, dataStyle);
 
-        // Scrap
         List<AssetExportDto> scrap = allAssets.stream()
                 .filter(a -> "Scrap".equalsIgnoreCase(a.getStatus()))
                 .collect(Collectors.toList());
@@ -708,7 +701,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             int col = 0;
             createDataCell(row, col++, dto.getAssetName(), dataStyle);
             createDataCell(row, col++, dto.getSerialNumber(), dataStyle);
-            createDataCell(row, col++, dto.getAssignedTo(), dataStyle); // Assigned To
+            createDataCell(row, col++, dto.getAssignedTo(), dataStyle);
             createDataCell(row, col++, dto.getStatus(), dataStyle);
             createDataCell(row, col++, dto.getType(), dataStyle);
             createDataCell(row, col++, String.valueOf(dto.getPurchaseDate()), dataStyle);
@@ -764,7 +757,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
     }
 
     private void writeScrapSheet(Workbook workbook, List<AssetExportDto> data, CellStyle headerStyle, CellStyle dataStyle) {
-        Sheet sheet = workbook.createSheet("Scrap Assets");
+        Sheet sheet = workbook.createSheet("Scraped Assets");
         String[] headers = {
                 "Asset Name", "Serial Number", "Purchase Date", "Scraped Date", "Scraped By",
                 "Operating System"/*, "Users"*/, "Status", "Type", "Location", "Loc Code",
@@ -785,17 +778,17 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             createDataCell(row, col++, dto.getAssetName(), dataStyle);
             createDataCell(row, col++, dto.getSerialNumber(), dataStyle);
             createDataCell(row, col++, String.valueOf(dto.getPurchaseDate()), dataStyle);
-            createDataCell(row, col++, String.valueOf(dto.getAssignedDate()), dataStyle); // Scraped Date
-            createDataCell(row, col++, dto.getAssignedBy(), dataStyle); // Scraped By
+            createDataCell(row, col++, String.valueOf(dto.getAssignedDate()), dataStyle);
+            createDataCell(row, col++, dto.getAssignedBy(), dataStyle);
             createDataCell(row, col++, dto.getOperatingSystem(), dataStyle);
-        //    createDataCell(row, col++, dto.getAssignedTo(), dataStyle); // Users
+            //    createDataCell(row, col++, dto.getAssignedTo(), dataStyle); // Users
             createDataCell(row, col++, dto.getStatus(), dataStyle);
             createDataCell(row, col++, dto.getType(), dataStyle);
             createDataCell(row, col++, dto.getLocation(), dataStyle);
             createDataCell(row, col++, dto.getLocCode(), dataStyle);
             createDataCell(row, col++, dto.getModelName(), dataStyle);
             createDataCell(row, col++, dto.getAddedBy(), dataStyle);
-            createDataCell(row, col++, dto.getAssetSourcedBy(), dataStyle);
+            createDataCell(row, col, dto.getAssetSourcedBy(), dataStyle);
         }
 
         for (int i = 0; i < headers.length; i++) sheet.autoSizeColumn(i);
@@ -839,13 +832,27 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
         style.setBorderRight(BorderStyle.THIN);
         return style;
     }
+
     @Override
     public void importAssetsFromExcel(InputStream inputStream) throws IOException {
         Workbook workbook = new XSSFWorkbook(inputStream);
-        Sheet sheet = workbook.getSheet("Unassigned Assets");
-        Iterator<Row> rows = sheet.iterator();
 
-        if (rows.hasNext()) rows.next();
+        importUnassignedAssets(workbook.getSheet("Unassigned Assets"));
+        importAssignedAssets(workbook.getSheet("Assigned Assets"));
+        importScrapedAssets(workbook.getSheet("Scraped Assets"));
+
+        workbook.close();
+    }
+
+
+    private void importUnassignedAssets(Sheet sheet) {
+        if (sheet == null) {
+            log.warn("Sheet 'Unassigned Assets' not found.");
+            return;
+        }
+
+        Iterator<Row> rows = sheet.iterator();
+        if (rows.hasNext()) rows.next(); // skip header
 
         while (rows.hasNext()) {
             Row row = rows.next();
@@ -853,12 +860,12 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
 
             asset.setAssetName(getCellValue(row, 0));
             asset.setSerialNumber(getCellValue(row, 1));
-            asset.setStatus(getCellValue(row, 2));
+            asset.setStatus("Unassigned");
             asset.setType(getCellValue(row, 3));
             asset.setPurchaseDate(getCellValue(row, 4));
             asset.setWarrantyDate(getCellValue(row, 5));
             asset.setLocation(getCellValue(row, 6));
-            asset.setLocCode(Integer.valueOf(Objects.requireNonNull(getCellValue(row, 7))));
+            asset.setLocCode(parseIntSafe(getCellValue(row, 7)));
             asset.setModelName(getCellValue(row, 8));
             asset.setOperatingSystem(getCellValue(row, 9));
             asset.setAddedBy(getCellValue(row, 10));
@@ -866,13 +873,122 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
 
             saveAsset(asset);
         }
-
-        workbook.close();
     }
 
-    private String getCellValue(Row row, int colIndex) {
-        Cell cell = row.getCell(colIndex);
-        return (cell != null) ? cell.toString().trim() : null;
+    private void importAssignedAssets(Sheet sheet) {
+        if (sheet == null) {
+            log.warn("Sheet 'Assigned Assets' not found.");
+            return;
+        }
+
+        Iterator<Row> rows = sheet.iterator();
+        if (rows.hasNext()) rows.next();
+
+        while (rows.hasNext()) {
+            Row row = rows.next();
+            AssetsDto asset = new AssetsDto();
+            asset.setEmpId(getCellValue(row, 2));
+
+            if (employeeRepository.existsById(asset.getEmpId())) {
+                asset.setAssetName(getCellValue(row, 0));
+                asset.setSerialNumber(getCellValue(row, 1));
+                asset.setType(getCellValue(row, 4));
+                asset.setPurchaseDate(getCellValue(row, 5));
+                asset.setWarrantyDate(getCellValue(row, 6));
+                asset.setLocation(getCellValue(row, 7));
+                asset.setLocCode(parseIntSafe(getCellValue(row, 8)));
+                asset.setModelName(getCellValue(row, 9));
+                asset.setOperatingSystem(getCellValue(row, 10));
+                asset.setAddedBy(getCellValue(row, 12));
+                asset.setAssignedBy(getCellValue(row, 14));
+                asset.setAssetSourcedBy(getCellValue(row, 15));
+                asset.setStatus("Assigned");
+
+                asset.setAssignedDate(parseDateSafe(getCellValue(row, 13)));
+                asset.setReturnDate(parseDateSafe(getCellValue(row, 11)));
+                assetRepo.save(modelMapper.map(asset,AssetsEntity.class));
+                AssignableAssetDto assignableAssetDto =new AssignableAssetDto();
+                assignableAssetDto.setAssignedBy(asset.getAssignedBy());
+                assignableAssetDto.setAssignedDate(asset.getAssignedDate());
+                AssignedAssetsEntity assignedAssetsEntity = assignedAssetsServiceImp.getAssignedAssetsEntity(assignableAssetDto
+                        , modelMapper.map(asset, AssetsEntity.class));
+
+                for (CountOfAssets count : assetCountRepository.findAll()) {
+                    if (asset.getLocation().equalsIgnoreCase(count.getLocation())) {
+                        assignedAssetsServiceImp.updateUnassignedCount(modelMapper.map(asset, AssetsEntity.class), count);
+                        assetCountRepository.save(count);
+                    }
+                }
+
+                assignedAssetsRepository.save(assignedAssetsEntity);
+                assetsHistoryServices.saveHistory(assignedAssetsEntity);
+            } else {
+                log.warn("No employee found for EmpId: {}", asset.getEmpId());
+            }
+        }
     }
 
+    private void importScrapedAssets(Sheet sheet) {
+        if (sheet == null) {
+            log.warn("Sheet 'Scraped Assets' not found.");
+            return;
+        }
+
+        Iterator<Row> rows = sheet.iterator();
+        if (rows.hasNext()) rows.next();
+
+        while (rows.hasNext()) {
+            Row row = rows.next();
+            AssetsEntity asset = new AssetsEntity();
+
+            asset.setAssetName(getCellValue(row, 0));
+            asset.setSerialNumber(getCellValue(row, 1));
+            asset.setPurchaseDate(getCellValue(row, 2));
+            asset.setAssignedDate(parseDateSafe(getCellValue(row, 3)));
+            asset.setAssignedBy(getCellValue(row, 4));
+            asset.setOperatingSystem(getCellValue(row, 5));
+            asset.setStatus("scrap");
+            asset.setType(getCellValue(row, 7));
+            asset.setWarrantyDate("");
+            asset.setLocation(getCellValue(row, 8));
+            asset.setLocCode(parseIntSafe(getCellValue(row, 9)));
+            asset.setModelName(getCellValue(row, 10));
+            asset.setAddedBy(getCellValue(row, 11));
+            asset.setAssetSourcedBy(getCellValue(row, 12));
+
+            assetRepo.save(asset);
+        }
+    }
+
+    private String getCellValue(Row row, int cellIndex) {
+        Cell cell = row.getCell(cellIndex, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+        if (cell == null) return null;
+
+        return switch (cell.getCellType()) {
+            case STRING -> cell.getStringCellValue().trim();
+            case NUMERIC -> String.valueOf((int) cell.getNumericCellValue());
+            case BOOLEAN -> String.valueOf(cell.getBooleanCellValue());
+            default -> null;
+        };
+    }
+
+    private Integer parseIntSafe(String value) {
+        try {
+            return (value != null && !value.isBlank()) ? Integer.parseInt(value) : null;
+        } catch (NumberFormatException e) {
+            log.warn("Failed to parse integer: {}", value);
+            return null;
+        }
+    }
+
+    private Date parseDateSafe(String dateStr) {
+        try {
+            return (dateStr != null && !dateStr.isBlank())
+                    ? new SimpleDateFormat("dd/MM/yyyy").parse(dateStr)
+                    : null;
+        } catch (ParseException e) {
+            log.warn("Invalid date: {}", dateStr);
+            return null;
+        }
+    }
 }
