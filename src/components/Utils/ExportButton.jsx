@@ -22,7 +22,7 @@ const ExportButton = ({
        Object.entries(row).forEach(([key, value]) => {
          if (key === 'id' || key === 'assetId') return;
          if (key === 'empId') {
-           newRow['Assigned To'] = value;
+           newRow['assignedTo'] = value;
          } else {
            newRow[key] = value;
          }
@@ -65,6 +65,7 @@ const ExportButton = ({
       a.href = url;
       a.download = `${type}_${state || 'data'}_export.xlsx`;
       a.click();
+      console.log(filteredRows);
       window.URL.revokeObjectURL(url);
     } catch (error) {
       showErrorAlert('Export Failed', 'Something went wrong. Please try again.');
