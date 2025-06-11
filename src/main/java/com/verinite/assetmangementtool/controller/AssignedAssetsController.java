@@ -4,6 +4,7 @@ import com.verinite.assetmangementtool.dto.AssignableAssetDto;
 import com.verinite.assetmangementtool.dto.AssignedAssetDtoList;
 import com.verinite.assetmangementtool.entity.AssignedAssetsEntity;
 import com.verinite.assetmangementtool.service.AssetServiceImpl;
+import com.verinite.assetmangementtool.service.AssignedAssetsService;
 import com.verinite.assetmangementtool.service.AssignedAssetsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ import java.util.List;
 public class AssignedAssetsController {
 
     @Autowired
-    private AssignedAssetsServiceImpl assignedAssetsService;
+    private AssignedAssetsService assignedAssetsService;
 
     @Autowired
     private AssetServiceImpl assetService;

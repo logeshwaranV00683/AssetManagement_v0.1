@@ -23,7 +23,9 @@ public interface AssignedAssetsService {
 
     ResponseEntity<?> getRecentAssigned();
 
-    public ResponseEntity<String> save(List<AssignableAssetDto> assignableAssetDtos);
+    ResponseEntity<String> save(List<AssignableAssetDto> assignableAssetDtos);
 
     String unAssignAsset(List<String> serialNumber);
+
+     List<AssignedAssetsEntity> getAllAssetsAssignedToParticularEmployee(String empId);
 }
