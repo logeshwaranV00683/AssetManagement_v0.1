@@ -186,22 +186,21 @@ function Assets() {
 
   <Tooltip title={params.row.empId ? 'Unassign' : 'Assign'}>
     <IconButton
-      sx={{
-        transition: 'transform 0.2s',
-        '&:hover': {
-          transform: 'scale(1.3)',
-          color: params.row.empId ? 'error.main' : 'success.main',
-          filter: 'drop-shadow(0 0 4px rgb(212, 249, 219))',
-        },
-      }}
-      onClick={() => handleAssign(params.row)}
-    >
-      {params.row.empId ? (
-        <PersonRemoveIcon />
-      ) : (
-        <PersonAddIcon />
-      )}
-    </IconButton>
+  sx={{
+    transition: 'transform 0.2s',
+    '&:hover': {
+      transform: 'scale(1.3)',
+      color: params.row.empId ? 'error.main' : 'success.main',
+      filter: params.row.empId
+        ? 'drop-shadow(0 0 4px rgb(246, 102, 59))'
+        : 'drop-shadow(0 0 4px rgb(30, 237, 68))',
+    },
+  }}
+  onClick={() => handleAssign(params.row)}
+>
+  {params.row.empId ? <PersonRemoveIcon /> : <PersonAddIcon />}
+</IconButton>
+
   </Tooltip>
 
   <Tooltip title="History">

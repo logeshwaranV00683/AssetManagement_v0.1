@@ -148,3 +148,15 @@ export const unassignAsset = async (serialNumbers) => {
     throw error;
   }
 };
+
+export const getAssignedAssetsByEmployee = async (empId) => {
+  const response = await fetch(`${apiUrl}/assetManager/v1/admin/get/all/assigned/assets/by/${empId}`, {
+    headers: {
+    'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) throw new Error("Failed to fetch assigned assets");
+  return await response.json();
+};
+

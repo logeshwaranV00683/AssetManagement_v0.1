@@ -10,3 +10,45 @@ body{
     text-decoration: white;
 }
 
+.unassign-button {
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 8px;
+}
+
+.unassign-button:hover {
+  background-color: #d9363e;
+}
+
+
+.assigned-assets-box {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border: 1px solid #ffa726;
+  border-radius: 8px;
+  background-color: #fff3e0;
+  color: #6a1b09;
+  box-shadow: 0 2px 6px rgba(255, 152, 0, 0.2);
+  font-size: 14px;
+}
+
+.assigned-assets-box ul {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 8px;
+}
+
+.assigned-assets-box li {
+  margin: 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
