@@ -685,7 +685,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
         String[] headers = {
                 "Asset Name", "Serial Number", "Assigned To (Emp ID)", "Status", "Type", "Purchase Date",
                 "Warranty Date", "Location", "Loc Code", "Model Name", "Operating System",
-                "Return Date", "Added By", "Assigned Date", "Assigned By", "Sourced By"
+                /*"Return Date",*/ "Added By", "Assigned Date", "Assigned By", "Sourced By"
         };
 
         Row headerRow = sheet.createRow(0);
@@ -707,10 +707,10 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             createDataCell(row, col++, String.valueOf(dto.getPurchaseDate()), dataStyle);
             createDataCell(row, col++, String.valueOf(dto.getWarrantyDate()), dataStyle);
             createDataCell(row, col++, dto.getLocation(), dataStyle);
-            createDataCell(row, col++, dto.getLocCode().toString(), dataStyle);
+            createDataCell(row, col++, dto.getLocCode(), dataStyle);
             createDataCell(row, col++, dto.getModelName(), dataStyle);
             createDataCell(row, col++, dto.getOperatingSystem(), dataStyle);
-            createDataCell(row, col++, String.valueOf(dto.getReturnDate()), dataStyle);
+//            createDataCell(row, col++, String.valueOf(dto.getReturnDate()), dataStyle);
             createDataCell(row, col++, dto.getAddedBy(), dataStyle);
             createDataCell(row, col++, String.valueOf(dto.getAssignedDate()), dataStyle);
             createDataCell(row, col++, dto.getAssignedBy(), dataStyle);
@@ -900,13 +900,13 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                 asset.setLocCode(parseIntSafe(getCellValue(row, 8)));
                 asset.setModelName(getCellValue(row, 9));
                 asset.setOperatingSystem(getCellValue(row, 10));
-                asset.setAddedBy(getCellValue(row, 12));
-                asset.setAssignedBy(getCellValue(row, 14));
-                asset.setAssetSourcedBy(getCellValue(row, 15));
+                asset.setAddedBy(getCellValue(row, 11));
+                asset.setAssignedBy(getCellValue(row, 13));
+                asset.setAssetSourcedBy(getCellValue(row, 14));
                 asset.setStatus("Assigned");
 
-                asset.setAssignedDate(parseDateSafe(getCellValue(row, 13)));
-                asset.setReturnDate(parseDateSafe(getCellValue(row, 11)));
+                asset.setAssignedDate(parseDateSafe(getCellValue(row, 12)));
+           //     asset.setReturnDate(parseDateSafe(getCellValue(row, )));
                 assetRepo.save(modelMapper.map(asset,AssetsEntity.class));
                 AssignableAssetDto assignableAssetDto =new AssignableAssetDto();
                 assignableAssetDto.setAssignedBy(asset.getAssignedBy());
