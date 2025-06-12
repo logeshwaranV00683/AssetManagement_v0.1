@@ -1,11 +1,10 @@
 package com.verinite.assetmangementtool.entity;
 
+
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @Entity
@@ -21,6 +20,6 @@ public class AssignedAssetsEntity {
     private String empId;
     private String status;
     //private Date returnDate;
-    private Date assignedDate;
+    private LocalDate assignedDate;
     private String assignedBy;
 }

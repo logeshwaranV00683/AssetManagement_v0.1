@@ -1,10 +1,11 @@
 package com.verinite.assetmangementtool.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -23,9 +24,11 @@ public class AssetsDto {
     private Integer locCode;
     private String modelName;
     private String operatingSystem;
-    private Date returnDate;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate returnDate;
     private String addedBy;
-    private Date assignedDate;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate assignedDate;
     private String assignedBy;
     private String assetSourcedBy;
 

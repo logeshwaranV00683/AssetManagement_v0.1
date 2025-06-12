@@ -1,8 +1,9 @@
 package com.verinite.assetmangementtool.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 public class SaveAssetResponse {
@@ -19,9 +20,11 @@ public class SaveAssetResponse {
     private Integer locCode;
     private String modelName;
     private String operatingSystem;
-    private Date returnDate;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate returnDate;
     private String addedBy;
-    private Date assignedDate;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate assignedDate;
     private String assignedBy;
     private String assertSourcedBy;
 

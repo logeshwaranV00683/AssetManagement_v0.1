@@ -3,7 +3,7 @@ package com.verinite.assetmangementtool.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -16,9 +16,9 @@ public class AssetsHistoryEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long historyId;
     private String serialNumber;
-    private Date returnDate;
+    private LocalDate returnDate;
     private String empId;
-    private Date assignedDate;
+    private LocalDate assignedDate;
     private String assignedBy;
 
 

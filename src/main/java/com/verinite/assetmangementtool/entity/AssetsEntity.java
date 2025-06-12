@@ -3,7 +3,7 @@ package com.verinite.assetmangementtool.entity;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 
 
 @Entity
@@ -26,9 +26,9 @@ public class AssetsEntity {
     private Integer locCode;
     private String modelName;
     private String operatingSystem;
-    private Date returnDate;
+    private LocalDate returnDate;
     private String addedBy;
-    private Date assignedDate;
+    private LocalDate assignedDate;
     private String assignedBy;
     private String assetSourcedBy;
 }

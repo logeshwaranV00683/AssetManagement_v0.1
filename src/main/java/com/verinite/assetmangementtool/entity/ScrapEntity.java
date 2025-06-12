@@ -1,5 +1,6 @@
 package com.verinite.assetmangementtool.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -14,7 +15,9 @@ public class ScrapEntity {
     private int scrapId;
     private String Assetname;
     private String SerialNo;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date purchaseDate;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date warrantyDate;
     private String users;
     private String status;

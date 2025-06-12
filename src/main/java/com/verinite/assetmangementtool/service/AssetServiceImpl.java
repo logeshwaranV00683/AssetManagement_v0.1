@@ -23,7 +23,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -520,7 +522,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             if (!asset.getStatus().equalsIgnoreCase("scrap")) {
 
                 assetsHistoryEntity.setEmpId(asset.getEmpId());
-                assetsHistoryEntity.setReturnDate(new Date());
+                assetsHistoryEntity.setReturnDate(LocalDate.now());
                 assetsHistoryEntity.setEmpId(asset.getEmpId());
                 assetsHistoryEntity.setSerialNumber(asset.getSerialNumber());
                 assetsHistoryEntity.setAssignedBy(asset.getAssignedBy());
@@ -982,14 +984,23 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
         }
     }
 
-    private Date parseDateSafe(String dateStr) {
+    private LocalDate parseDateSafe(String dateStr) {
+        if (dateStr == null || dateStr.isBlank()) return null;
+
         try {
-            return (dateStr != null && !dateStr.isBlank())
-                    ? new SimpleDateFormat("dd/MM/yyyy").parse(dateStr)
-                    : null;
+            Date parsed = new SimpleDateFormat("yyyy-MM-dd").parse(dateStr);
+            return parsed.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         } catch (ParseException e) {
-            log.warn("Invalid date: {}", dateStr);
-            return null;
+            try {
+                double excelDate = Double.parseDouble(dateStr);
+                Date parsed = DateUtil.getJavaDate(excelDate);
+                return parsed.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            } catch (NumberFormatException ne) {
+                log.warn("Invalid date: {}", dateStr);
+                return null;
+            }
         }
     }
+
+
 }
