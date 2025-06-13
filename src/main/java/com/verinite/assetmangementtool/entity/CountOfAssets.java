@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -15,6 +16,7 @@ import javax.persistence.Table;
 public class CountOfAssets {
 
     @Id
+    @Column(name = "location")
     private String location;
 
     private int laptopCount;
@@ -44,4 +46,19 @@ public class CountOfAssets {
     private int unAssignedSwitchCount;
     private int unAssignedDvrCount;
     private int unAssignedSpeakerCount;
+
+    private int assignedLaptopCount;
+    private int assignedBagCount;
+    private int assignedMouseCount;
+    private int assignedHeadphonesCount;
+    private int assignedLaptopChargerCount;
+    private int assignedDataCardCount;
+    private int assignedMobileCount;
+    private int assignedCameraCount;
+    private int assignedProjectorCount;
+    private int assignedFireWallCount;
+    private int assignedSwitchCount;
+    private int assignedDvrCount;
+    private int assignedSpeakerCount;
+
 }

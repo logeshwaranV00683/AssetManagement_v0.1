@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RequestMapping("/assetManager/v1/")
 @RestController
@@ -23,12 +24,27 @@ public class CountOfAssetsController {
 
     @PostMapping("save/count")
     public CountOfAssets saveCount(@RequestBody CountOfAssets countOfAssets) {
-        return countOFAssetsService.postAssestCount(countOfAssets);
+        return countOFAssetsService.postAssetCount(countOfAssets);
     }
 
     @GetMapping("Assetcount/allLocationCount")
     public List<CountOfAssets> getAll() {
         return countOFAssetsService.getAll();
+    }
+
+    @GetMapping("AssetCount/location")
+    public Map<String, Integer> getByLoc(@RequestParam String location){
+        return countOFAssetsService.getByLoc(location);
+    }
+
+    @GetMapping("AssetCount/unAssigned")
+    public Map<String, Integer> getUnassignedAssets(@RequestParam String location){
+        return countOFAssetsService.getUnassignedAssets(location);
+    }
+
+    @GetMapping("AssetCount/assigned")
+    public Map<String, Integer> getAssignedAssets(@RequestParam String location){
+        return countOFAssetsService.getAssignedAssets(location);
     }
 
     @PutMapping("update/count/{location}")
@@ -40,6 +56,7 @@ public class CountOfAssetsController {
     public int getAllLaptopCount() {
         return countOFAssetsService.totalLaptops();
     }
+
 
     @GetMapping("/unassignedCount")
     public ResponseEntity<Integer> getCountOfUnassigned() {
