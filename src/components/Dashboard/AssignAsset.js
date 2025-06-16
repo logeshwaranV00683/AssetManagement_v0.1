@@ -39,7 +39,7 @@ function AssignAsset({ open, handleClose, asset, fetchAssets }) {
     const assetData = {
       empId: foundEmp.empId,
       serialNumber: asset?.assetSerialNumber || asset?.serialNumber,
-      assignedDate: new Date().toISOString(),
+      assignedDate: new Date().toISOString().split('T', 1)[0],
       assetName: asset?.assetName || "",
       assignedBy: user?.empId || "admin",
     };
@@ -53,7 +53,9 @@ function AssignAsset({ open, handleClose, asset, fetchAssets }) {
   if (error.status === 406) {
     return showWarningAlert("Already Assigned", "This asset has already been assigned.");
   } else if (error.status === 400) {
-    return showWarningAlert("Asset Was In Scrap", "Please check the asset data and try again.");
+    return showWarningAlert("Asset Was In Scrap", "Please check the asset data and try again.");}
+    else if (error.status === 404){
+      return showWarningAlert("Employee Status Was In InActive")
   } else {
     return showErrorAlert("Assigning Failed", "An error occurred.");
   }

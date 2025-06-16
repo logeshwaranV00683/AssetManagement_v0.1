@@ -80,7 +80,7 @@ function AssignAssetToEmployee({ open, onClose, employee, refresh }) {
         empId: employee.empId,
         serialNumber,
         assetName: asset?.assetName || "",
-        assignedDate: new Date().toISOString(),
+        assignedDate: new Date().toISOString().split('T', 1)[0],
         assignedBy: user?.empId || "admin",
       };
     });
@@ -92,8 +92,11 @@ function AssignAssetToEmployee({ open, onClose, employee, refresh }) {
     } catch (error) {
       if (error.status === 406) {
         showWarningAlert("Asset Already Assigned", "Some assets are already assigned.");
-      } else {
-        showErrorAlert("Assignment Failed", "Could not assign assets.");
+      } else if(error.status===404){
+            return showWarningAlert("Employee Status Was In InActive")
+        } 
+      else {
+        showErrorAlert("Assigning Asset  Failed", "Could not assign assets.");
       }
     }
   };
