@@ -45,7 +45,6 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
     @Autowired
     private AckMailer ackMailer;
 
-   static List<AssetsEntity> assetsEntityList;
 
     @Override
     public AssignedAssetsEntity getAssignedAssetsById(int assignedId) {
@@ -116,6 +115,7 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
     public ResponseEntity<String> save(List<AssignableAssetDto> assignableAssetDtos) {
         String empId = assignableAssetDtos.get(0).getEmpId();
         EmployeeEntity employeeEntity = employeeRepository.findByEmpId(empId);
+        List<AssetsEntity> assetsEntityList = List.of();
         if (employeeEntity != null) {
             try {
                 List<CountOfAssets> countOfAssets = assetCountRepository.findAll();
@@ -125,7 +125,7 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
                         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Asset not found");
                     }
 
-                    if (asset.getStatus().equalsIgnoreCase("UnAssigned")) {
+                    if (asset.getStatus().equalsIgnoreCase("UnAssigned") && employeeEntity.getStatus().equalsIgnoreCase("Active")) {
                         asset.setEmpId(empId);
                         asset.setStatus("Assigned");
                         AssignedAssetsEntity assignedAssetsEntity = getAssignedAssetsEntity(assignableAssetDto, asset);
@@ -155,13 +155,16 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
                     } else if (asset.getStatus().equalsIgnoreCase("Scrap")) {
 
                         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Asset was in Scrap");
-                    }
-                    else
+                    } else if (employeeEntity.getStatus().equalsIgnoreCase("InActive"))
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Employee Was In InActive");
+
+                     else
                         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Asset Already In Assigned");
                 }
+                List<AssetsEntity> finalAssetsEntityList = assetsEntityList;
                 new Thread(()->{
                     try {
-                        ackMailer.sendAckMail(empId,assetsEntityList);
+                        ackMailer.sendAckMail(empId, finalAssetsEntityList);
                     } catch (MessagingException | UnsupportedEncodingException e) {
                         throw new RuntimeException(e);
                     }
@@ -260,16 +263,15 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
         for(String serialNo :serialNumber) {
             assignedAssets = assignedAssetsRepository.findBySerialNumber(serialNo);
             if (assignedAssets == null) return "assert Not found";
-            assetsHistoryService.updateHistory(assignedAssets, serialNo);
-
             deleteAssignedAssets(assignedAssets.getAssignedAssetsId());
-            int i = assetsRepo.updateUnassignStatus("unAssigned", null, null, null, serialNumber);
+            int i = assetsRepo.updateUnassignStatus("UnAssigned", null, null, null, serialNumber);
 
             Optional<AssetsEntity> assets = assetsRepo.findByAssetId(i);
             if (assets.isPresent()) {
                 assetsRepo.save(assets.get());
                 return " asset Unassigned";
             }
+            assetsHistoryService.updateHistory(assignedAssets, serialNo);
         }
         return " Asset is UnAssigned for " + assignedAssets.getEmpId();
     }

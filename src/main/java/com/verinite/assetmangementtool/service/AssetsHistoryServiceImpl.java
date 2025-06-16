@@ -63,10 +63,15 @@ public class AssetsHistoryServiceImpl implements AssetsHistoryServices {
 
 
     public void updateHistory(AssignedAssetsEntity assignedAssets, String serialNumber) {
-        AssetsHistoryEntity assets = assetsHistoryRepository.findBySerialNumberAndAssignedDate(serialNumber, assignedAssets.getAssignedDate());
-        LocalDate localDate = LocalDate.now();
-        assets.setReturnDate(localDate);
-        assetsHistoryServices.saveHistory(assets);
+        List<AssetsHistoryEntity> assets = assetsHistoryRepository.findBySerialNumberAndAssignedDate(serialNumber, assignedAssets.getAssignedDate());
+        if (assets != null && !assets.isEmpty()) {
+            for (AssetsHistoryEntity history : assets) {
+                if (history.getReturnDate() == null) {
+                    history.setReturnDate(LocalDate.now());
+                    assetsHistoryRepository.save(history);
+                }
+            }
+        }
     }
 
     @Override

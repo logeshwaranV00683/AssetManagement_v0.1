@@ -27,7 +27,7 @@ public class AckMailer {
     @Autowired
     private EmployeeRepository empRepo;
 
-    public ResponseEntity<?> sendAckMail(String empId, List<AssetsEntity> assetsEntityList) throws MessagingException, UnsupportedEncodingException {
+    public void sendAckMail(String empId, List<AssetsEntity> assetsEntityList) throws MessagingException, UnsupportedEncodingException {
 
         EmployeeEntity empData = empRepo.findByEmpId(empId);
         MimeMessage message = javaMailSender.createMimeMessage();
@@ -35,18 +35,10 @@ public class AckMailer {
         helper.setTo(empData.getMail());
         String subject = "Assets Acknowledgement";
         helper.setSubject(subject);
-        String tableRow = "";
+        StringBuilder tableRow = new StringBuilder();
         int i = 1;
-        SimpleDateFormat sf = new SimpleDateFormat("dd-MM-yyyy");
         for (AssetsEntity item : assetsEntityList) {
-            tableRow = tableRow + "  <tr class=\"list-item\" style=\"margin: 0; box-sizing: border-box; -webkit-print-color-adjust: exact;\">\n" +
-                    "              <td data-label=\"Type\" class=\"tableitem\" style=\"margin: 0; box-sizing: border-box; -webkit-print-color-adjust: exact; padding: 10px; border-bottom: 1px solid #cccaca; font-size: 0.85em; text-align: right;\" align=\"right\">" + i + "</td>\n" +
-                    "              <td data-label=\"Type\" class=\"tableitem\" style=\"margin: 0; box-sizing: border-box; -webkit-print-color-adjust: exact; padding: 10px; border-bottom: 1px solid #cccaca; font-size: 0.85em; text-align: left;\" align=\"left\">" + item.getAssetName() + "</td>\n" +
-                    "              <td data-label=\"Unit Price\" class=\"tableitem\" style=\"margin: 0; box-sizing: border-box; -webkit-print-color-adjust: exact; padding: 10px; border-bottom: 1px solid #cccaca; font-size: 0.85em; text-align: right;\" align=\"right\">" + item.getSerialNumber() + "</td>\n" +
-                    "              <td data-label=\"Taxable Amount\" class=\"tableitem\" style=\"margin: 0; box-sizing: border-box; -webkit-print-color-adjust: exact; padding: 10px; border-bottom: 1px solid #cccaca; font-size: 0.85em; text-align: right;\" align=\"right\">" + item.getAssignedBy() + "</td>\n" +
-                    "              <td data-label=\"Tax Code\" class=\"tableitem\" style=\"margin: 0; box-sizing: border-box; -webkit-print-color-adjust: exact; padding: 10px; border-bottom: 1px solid #cccaca; font-size: 0.85em; text-align: right;\" align=\"right\">" + sf.format(item.getAssignedDate()) + "</td>\n" +
-                    "             \n" +
-                    "            </tr> ";
+            tableRow.append("  <tr class=\"list-item\" style=\"margin: 0; box-sizing: border-box; -webkit-print-color-adjust: exact;\">\n").append("              <td data-label=\"Type\" class=\"tableitem\" style=\"margin: 0; box-sizing: border-box; -webkit-print-color-adjust: exact; padding: 10px; border-bottom: 1px solid #cccaca; font-size: 0.85em; text-align: right;\" align=\"right\">").append(i).append("</td>\n").append("              <td data-label=\"Type\" class=\"tableitem\" style=\"margin: 0; box-sizing: border-box; -webkit-print-color-adjust: exact; padding: 10px; border-bottom: 1px solid #cccaca; font-size: 0.85em; text-align: left;\" align=\"left\">").append(item.getAssetName()).append("</td>\n").append("              <td data-label=\"Unit Price\" class=\"tableitem\" style=\"margin: 0; box-sizing: border-box; -webkit-print-color-adjust: exact; padding: 10px; border-bottom: 1px solid #cccaca; font-size: 0.85em; text-align: right;\" align=\"right\">").append(item.getSerialNumber()).append("</td>\n").append("              <td data-label=\"Taxable Amount\" class=\"tableitem\" style=\"margin: 0; box-sizing: border-box; -webkit-print-color-adjust: exact; padding: 10px; border-bottom: 1px solid #cccaca; font-size: 0.85em; text-align: right;\" align=\"right\">").append(item.getAssignedBy()).append("</td>\n").append("              <td data-label=\"Tax Code\" class=\"tableitem\" style=\"margin: 0; box-sizing: border-box; -webkit-print-color-adjust: exact; padding: 10px; border-bottom: 1px solid #cccaca; font-size: 0.85em; text-align: right;\" align=\"right\">").append(item.getAssignedDate()).append("</td>\n").append("             \n").append("            </tr> ");
             i++;
         }
 //
@@ -247,6 +239,6 @@ public class AckMailer {
 
         javaMailSender.send(message);
 
-        return ResponseEntity.ok(HttpStatus.OK);
+        ResponseEntity.ok(HttpStatus.OK);
     }
 }

@@ -26,7 +26,7 @@ public interface AssignedAssetsRepository extends JpaRepository<AssignedAssetsEn
     @Query(value = "select from tbl_assigned_assets where assets_id =?", nativeQuery = true)
     AssignedAssetsEntity getAssignedAssetsByAssetsId(int assetId);
 
-    @Query(value = "select * from tbl_assigned_assets where serial_number=?", nativeQuery = true)
+    @Query(value = "select * from tbl_assigned_assets where serial_number IN (?1)", nativeQuery = true)
     AssignedAssetsEntity findBySerialNumber(String serialNumber);
 
     AssignedAssetsEntity findBySerialNumberAndEmpId(String serialNo, String empId);

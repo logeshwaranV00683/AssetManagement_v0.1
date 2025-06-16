@@ -48,7 +48,7 @@ public interface AssetsRepository extends JpaRepository<AssetsEntity, Number> {
     //List<String> findDistinctLocations();
     @Transactional
     @Modifying
-    @Query(value = "update tbl_assets set status =:status,emp_Id =:empId,assigned_By=:assignedBy,assigned_date =:assignedDate where serial_number IN(:serialNumber)", nativeQuery = true)
+    @Query(value = "update tbl_assets set status =:status,emp_Id =:empId,assigned_By=:assignedBy,assigned_date = :assignedDate where serial_number IN (:serialNumber)", nativeQuery = true)
     int updateUnassignStatus(@Param("status") String status, @Param("empId")String emp_Id, @Param("assignedBy")String assigned_By, @Param("assignedDate")Date assigned_Date, @Param("serialNumber") List<String> serialNumber);
     @Query(value = "SELECT LOWER(location) AS location," +
             "SUM(CASE WHEN LOWER(status) = 'unassigned' THEN 1 ELSE 0 END) AS unassignedCount, " +
