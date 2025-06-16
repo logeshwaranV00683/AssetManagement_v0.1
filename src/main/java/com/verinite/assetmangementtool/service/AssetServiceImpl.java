@@ -921,15 +921,19 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                     AssetsEntity assetsEntity = assetRepo.findBySerialNumber(asset.getSerialNumber());
                     if(assetsEntity.getAssetName().equalsIgnoreCase(asset.getAssetName())&&assetsEntity.getPurchaseDate().equalsIgnoreCase(asset.getPurchaseDate()))
                     {
-                        if(asset.getStatus().equalsIgnoreCase("unassigned"))
-                            asset = modelMapper.map(assetsEntity,AssetsDto.class);
+                        if(asset.getStatus().equalsIgnoreCase("unassigned")) {
+                            assetsEntity.setAssignedBy(asset.getAssignedBy());
+                            assetsEntity.setAssignedDate(asset.getAssignedDate());
+                            assetsEntity.setEmpId(asset.getEmpId());
+                            asset = modelMapper.map(assetsEntity, AssetsDto.class);
+                        }
                         else {
                             log.warn("Skipping the Asset Assigning Because Asset Already Present and it status is {} [Serial Number: {}]", asset.getStatus(),asset.getSerialNumber());
                             continue;
                         }
                     }
                     else {
-                        log.warn("Skipping Asset Assigning due to already exist serial number while Importing Assigned Asset, is differ from the DB asset [Serial Number: {}]",asset.getSerialNumber());
+                        log.warn("Skipping Asset Assigning due to already exist serial number while Importing Assigned Asset, Importing asset differ from the DB asset [Serial Number: {}]",asset.getSerialNumber());
                         continue;
                     }
                 };
