@@ -45,6 +45,9 @@ const Login = () => {
   const [otpSentTime, setOtpSentTime] = useState(null);
   const [timeLeft, setTimeLeft] = useState(90);
   const [otpExpired, setOtpExpired] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState({ level: '', color: '' });
+  const [isTypingConfirmPassword, setIsTypingConfirmPassword] = useState(false);
+
 
   useEffect(() => {
     localStorage.removeItem('isLogin');
@@ -127,6 +130,32 @@ const Login = () => {
     setShowResetPassword(false);
   }
   };
+
+  const handlePasswordChange = (e) => {
+  const value = e.target.value;
+  setNewPassword(value);
+  setPasswordStrength(checkPasswordStrength(value));
+  setIsTypingConfirmPassword(false);
+};
+
+ const checkPasswordStrength = (password) => {
+  if (password.length < 8) {
+    return { level: 'WeakPassword: Enter at least 8 characters', color: 'red', valid: false };
+  }
+
+  let strength = 0;
+
+  if (/[A-Z]/.test(password)) strength++;
+  if (/[a-z]/.test(password)) strength++;
+  if (/[0-9]/.test(password)) strength++;
+  if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+  if (strength < 3) {
+    return { level: 'WeakPassword', color: 'red' };
+  } else {
+    return { level: 'StrongPassword', color: 'green' };
+  }
+};
   return (
     <motion.div className="login-page" initial="hidden" animate="visible" exit="exit" variants={fadeVariant}>
       <div className="container">
@@ -222,24 +251,38 @@ const Login = () => {
                     name="newPassword"
                     placeholder="Enter New Password"
                     value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
+                    onChange={handlePasswordChange}
                     icon={newPasswordIcon}
-                  />
+                   />
+                  {newPassword && !isTypingConfirmPassword && passwordStrength.level && (
+                  <div style={{ color: passwordStrength.color,  marginBottom: '5px', textAlign: 'center',fontSize:'14px' }}>
+                  {passwordStrength.level}
+                  </div>
+                  )}
+
                   <CustomInput
                     type={showConfirmPassword ? 'text' : 'password'}
                     name="confirmPassword"
                     placeholder="Confirm Password"
                     value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    onChange={(e) => {
+                      setConfirmPassword(e.target.value);
+                      setIsTypingConfirmPassword(true);
+                    }}
                     icon={confirmPasswordIcon}
                   />
                 <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px', marginTop: '15px' }}>
                 <button
                   type="button"
                   className="submit-btn"
-                  onClick={() =>
-                  handleResetPassword(mail, otp, newPassword, confirmPassword, setShowLogin, setShowResetPassword)
-                  }
+                  onClick={() => {
+                    const strength = checkPasswordStrength(newPassword);
+                    if (passwordStrength.level.startsWith('WeakPassword')) {
+                       toast.error('The password is weak.It cannot be resetted.');
+                       return;
+                    }
+                  handleResetPassword(mail, otp, newPassword, confirmPassword, setShowLogin, setShowResetPassword);
+                  }}
                   style={{ flex: 1 }}
                 >
                 Reset Password
