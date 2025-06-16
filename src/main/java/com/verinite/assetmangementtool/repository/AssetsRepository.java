@@ -62,4 +62,6 @@ public interface AssetsRepository extends JpaRepository<AssetsEntity, Number> {
 
     @Query(value = "SELECT DISTINCT LOWER(a.asset_name) FROM tbl_assets a", nativeQuery = true)
     List<String> findDistinctAssetTypes();
+
+    boolean existsBySerialNumber(String serialNumber);
 }

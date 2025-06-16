@@ -33,6 +33,21 @@ public class AssetsDto {
     private String assetSourcedBy;
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AssetsDto e)) return false;
+        if (this.serialNumber != null && e.serialNumber != null && this.serialNumber.equals(e.serialNumber) && this.assetId != 0 && e.assetId != 0) {
+            return this.assetId==(e.assetId);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return serialNumber != null ? serialNumber.hashCode()+ assetId : 0;
+    }
+
+    @Override
     public String toString() {
         return "AssetsDto{" +
                 "assetId=" + assetId +

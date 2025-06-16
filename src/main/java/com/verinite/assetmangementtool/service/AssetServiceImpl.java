@@ -1,9 +1,6 @@
 package com.verinite.assetmangementtool.service;
 
-import com.verinite.assetmangementtool.dto.AssetCounterDto;
-import com.verinite.assetmangementtool.dto.AssetExportDto;
-import com.verinite.assetmangementtool.dto.AssetsDto;
-import com.verinite.assetmangementtool.dto.AssignableAssetDto;
+import com.verinite.assetmangementtool.dto.*;
 import com.verinite.assetmangementtool.entity.*;
 import com.verinite.assetmangementtool.repository.*;
 import com.verinite.assetmangementtool.response.SaveAssetResponse;
@@ -21,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -872,6 +870,10 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             asset.setOperatingSystem(getCellValue(row, 9));
             asset.setAddedBy(getCellValue(row, 10));
             asset.setAssetSourcedBy(getCellValue(row, 11));
+            if (asset.getSerialNumber() == null || asset.getSerialNumber().isEmpty()) {
+                log.warn("Skipping row due to missing serial number.");continue;
+            }
+            if(assetRepo.existsBySerialNumber(asset.getSerialNumber())){ log.warn("Skipping row due to already exist serial number.");continue;}
 
             saveAsset(asset);
         }
@@ -891,7 +893,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             AssetsDto asset = new AssetsDto();
             asset.setEmpId(getCellValue(row, 2));
 
-            if (employeeRepository.existsById(asset.getEmpId())) {
+            if (asset.getEmpId()!=null&&employeeRepository.existsById(asset.getEmpId())) {
                 asset.setAssetName(getCellValue(row, 0));
                 asset.setSerialNumber(getCellValue(row, 1));
                 asset.setType(getCellValue(row, 4));
@@ -904,10 +906,35 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                 asset.setAddedBy(getCellValue(row, 11));
                 asset.setAssignedBy(getCellValue(row, 13));
                 asset.setAssetSourcedBy(getCellValue(row, 14));
-                asset.setStatus("Assigned");
-
                 asset.setAssignedDate(parseDateSafe(getCellValue(row, 12)));
            //     asset.setReturnDate(parseDateSafe(getCellValue(row, )));
+                if (asset.getSerialNumber() == null || asset.getSerialNumber().isEmpty()) {
+                    log.warn("Skipping row due to missing serial number while Importing Assigned Asset.");continue;
+                }
+                if(!assetRepo.existsBySerialNumber(asset.getSerialNumber()))
+                {
+                    asset = saveAsset(asset);
+                }
+                else{
+                    log.warn("Skipping save the row due to already exist serial number while Importing Assigned Asset.");
+
+                    AssetsEntity assetsEntity = assetRepo.findBySerialNumber(asset.getSerialNumber());
+                    if(assetsEntity.getAssetName().equalsIgnoreCase(asset.getAssetName())&&assetsEntity.getPurchaseDate().equalsIgnoreCase(asset.getPurchaseDate()))
+                    {
+                        if(asset.getStatus().equalsIgnoreCase("unassigned"))
+                            asset = modelMapper.map(assetsEntity,AssetsDto.class);
+                        else {
+                            log.warn("Skipping the Asset Assigning Because Asset Already Present and it status is {} [Serial Number: {}]", asset.getStatus(),asset.getSerialNumber());
+                            continue;
+                        }
+                    }
+                    else {
+                        log.warn("Skipping Asset Assigning due to already exist serial number while Importing Assigned Asset, is differ from the DB asset [Serial Number: {}]",asset.getSerialNumber());
+                        continue;
+                    }
+                };
+
+                asset.setStatus("Assigned");
                 assetRepo.save(modelMapper.map(asset,AssetsEntity.class));
                 AssignableAssetDto assignableAssetDto =new AssignableAssetDto();
                 assignableAssetDto.setAssignedBy(asset.getAssignedBy());
@@ -921,7 +948,6 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                         assetCountRepository.save(count);
                     }
                 }
-
                 assignedAssetsRepository.save(assignedAssetsEntity);
                 assetsHistoryServices.saveHistory(assignedAssetsEntity);
             } else {
@@ -941,24 +967,34 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
 
         while (rows.hasNext()) {
             Row row = rows.next();
-            AssetsEntity asset = new AssetsEntity();
+            AssetsDto asset = new AssetsDto();
 
             asset.setAssetName(getCellValue(row, 0));
             asset.setSerialNumber(getCellValue(row, 1));
             asset.setPurchaseDate(getCellValue(row, 2));
+
+            if (asset.getSerialNumber() == null || asset.getSerialNumber().isEmpty()) {
+                log.warn("Skipping row due to missing serial number while importing Scrap Asset.");continue;
+            }
+           AssetsEntity assetsEntity = assetRepo.findBySerialNumber(asset.getSerialNumber());
+            if(assetsEntity!=null)
+            {
+                if(assetsEntity.getAssetName().equalsIgnoreCase(asset.getAssetName())&&assetsEntity.getPurchaseDate().equalsIgnoreCase(asset.getPurchaseDate()))
+                 deleteAsset(assetsEntity.getAssetId());
+                continue;
+            }
             asset.setAssignedDate(parseDateSafe(getCellValue(row, 3)));
             asset.setAssignedBy(getCellValue(row, 4));
             asset.setOperatingSystem(getCellValue(row, 5));
-            asset.setStatus("scrap");
             asset.setType(getCellValue(row, 7));
-            asset.setWarrantyDate("");
+            asset.setWarrantyDate("00-00-0000");
             asset.setLocation(getCellValue(row, 8));
             asset.setLocCode(parseIntSafe(getCellValue(row, 9)));
             asset.setModelName(getCellValue(row, 10));
             asset.setAddedBy(getCellValue(row, 11));
             asset.setAssetSourcedBy(getCellValue(row, 12));
 
-            assetRepo.save(asset);
+            deleteAsset(saveAsset(asset).getAssetId());
         }
     }
 
@@ -1000,6 +1036,4 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             }
         }
     }
-
-
 }

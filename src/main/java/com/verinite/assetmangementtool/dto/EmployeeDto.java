@@ -22,9 +22,8 @@ public class EmployeeDto {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof EmployeeDto)) return false;
-        EmployeeDto e = (EmployeeDto) o;
-        return empId != null && empId.equals(e.empId);
+        if (!(o instanceof EmployeeDto e)) return false;
+        return this.empId != null && e.empId!=null&&this.empId.equals(e.empId);
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.verinite.assetmangementtool.dto.EmployeeExportDto;
 import com.verinite.assetmangementtool.entity.EmployeeEntity;
 import com.verinite.assetmangementtool.repository.AdminRegistrationRepository;
 import com.verinite.assetmangementtool.repository.EmployeeRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
@@ -63,9 +65,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     public List<EmployeeDto> saveBulkEmployee(List<EmployeeDto> employeeDTOs) {
 
         List<EmployeeEntity> employeeEntities = employeeDTOs.stream().map(this::dtoToEntity)
-                .collect(Collectors.toList());
+                .toList();
         List<EmployeeEntity> newEmployees = employeeEntities.stream()
-                .filter(employeeEntity -> employeeRepo.findByEmpId(employeeEntity.getEmpId()) == null)
+                .filter(employeeEntity -> employeeEntity.getEmpId()!=null&&!employeeEntity.getEmpId().isEmpty()&&employeeRepo.findByEmpId(employeeEntity.getEmpId()) == null)
                 .collect(Collectors.toList());
         List<EmployeeEntity> savedEntities = employeeRepo.saveAll(newEmployees);
         return savedEntities.stream().map(this::entityToDto).collect(Collectors.toList());
@@ -119,7 +121,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Object deleteEmpByID(String empId) {
-        EmployeeEntity employee1 = (EmployeeEntity) employeeRepo.findByEmpId(empId);
+        EmployeeEntity employee1 = employeeRepo.findByEmpId(empId);
         employee1.setStatus("inactive");
         employeeRepo.save(employee1);
         return new EmployeeEntity();
@@ -134,13 +136,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void importEmployeeFromExcel(InputStream inputStream) throws IOException {
         Workbook workbook = new XSSFWorkbook(inputStream);
-        importSheet(workbook, "Active");
-        importSheet(workbook, "Inactive");
+        importSheet(workbook);
         workbook.close();
     }
 
-    private void importSheet(Workbook workbook, String sheetName) {
-        Sheet sheet = workbook.getSheet(sheetName);
+    private void importSheet(Workbook workbook) {
+        Sheet sheet = workbook.getSheet("Employees");
         if (sheet == null) return;
 
         Iterator<Row> rows = sheet.iterator();
@@ -159,10 +160,10 @@ public class EmployeeServiceImpl implements EmployeeService {
             employee.setLocation(getCellValue(row, 6));
             employee.setDepartment(getCellValue(row, 8));
             employee.setDesignation(getCellValue(row, 9));
-            employee.setStatus(sheetName.equalsIgnoreCase("Active") ? "Active" : "Inactive");
+            employee.setStatus(getCellValue(row,7));
             employee.setRole("User");
             if (!employees.add(employee)) {
-                System.out.println("Duplicate employee found (ignored): " + employee.getEmpId());
+                log.warn("Duplicate employee found (ignored): {}", employee.getEmpId());
             }
         }
         saveBulkEmployee(new LinkedList<>(employees));
@@ -261,30 +262,22 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void exportEmployeesToExcel(List<EmployeeExportDto> data, OutputStream outputStream) throws IOException {
 
-        List<EmployeeExportDto> activeEmployees = data.stream()
-                .filter(e -> "Active".equalsIgnoreCase(e.getStatus()))
-                .collect(Collectors.toList());
-
-        List<EmployeeExportDto> inactiveEmployees = data.stream()
-                .filter(e -> "Inactive".equalsIgnoreCase(e.getStatus()))
-                .collect(Collectors.toList());
 
         Workbook workbook = new XSSFWorkbook();
 
         CellStyle headerStyle = createHeaderStyle(workbook);
         CellStyle dataStyle = createDataStyle(workbook);
 
-        createEmployeeSheet(workbook, "Active", activeEmployees, headerStyle, dataStyle);
-        createEmployeeSheet(workbook, "Inactive", inactiveEmployees, headerStyle, dataStyle);
+        createEmployeeSheet(workbook, data, headerStyle, dataStyle);
 
         workbook.write(outputStream);
         workbook.close();
     }
 
-    private void createEmployeeSheet(Workbook workbook, String sheetName, List<EmployeeExportDto> employees,
+    private void createEmployeeSheet(Workbook workbook, List<EmployeeExportDto> employees,
                                      CellStyle headerStyle, CellStyle dataStyle) {
 
-        Sheet sheet = workbook.createSheet(sheetName);
+        Sheet sheet = workbook.createSheet("Employees");
         String[] headers = {"Employee ID", "First Name", "Last Name", "Role", "Mail", "Mobile", "Location", "Status", "Department", "Designation"};
 
         Row headerRow = sheet.createRow(0);
