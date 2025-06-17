@@ -87,7 +87,7 @@ const Sidebar = () => {
             }}
           >
             <ListItem
-              button
+              
               onClick={() => handleItemClick(key)}
               sx={{
                 justifyContent: 'center',

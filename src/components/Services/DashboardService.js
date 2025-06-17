@@ -85,32 +85,33 @@ export const getAssignedAssetsByLocation = async (location) => {
 };
 
 
-export const getAssignedCountByLocation = async (location) => {
+
+
+export const getAssetNames = async () => {
+  const url = `${apiUrl}/assetManager/v1/AssetCount/GetAssetName`;
+
   try {
-    const response = await axios.get(`/assetManager/v1/Assetcount/assigned/${location}`);
-    return response.data;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+    console.log("Asset name API response:", data);
+
+    if (!data || typeof data !== 'object' || !Array.isArray(data.assetNames)) {
+      console.error('Invalid response structure:', data);
+      return [];
+    }
+
+    return data.assetNames; // ✅ Return the actual array
+
   } catch (error) {
-    console.error('Error fetching assigned count:', error);
-    throw error;
+    console.error('Error fetching assets:', error);
+    return [];
   }
 };
 
-export const getUnassignedCountByLocation = async (loc) => {
-  try {
-    const res = await axios.get(`/assetManager/v1/unassignedCount?location=${loc}`);
-    return res.data;
-  } catch (error) {
-    console.error('Error fetching unassigned count:', error);
-    return 0;
-  }
-};
-
-export const getCountsByLocation = async (location) => {
-  try {
-    const response = await axios.get(`/assetManager/v1/Assetcount/location/${location}`);
-    return response.data; // Map<String, Integer>
-  } catch (error) {
-    console.error('Error fetching counts by location:', error);
-    return {};
-  }
-};

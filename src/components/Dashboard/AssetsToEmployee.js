@@ -69,19 +69,43 @@ function AssetsToEmployee() {
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
               sx={{
-                width: '300px',
-                backgroundColor: '#ffffff',
-                borderRadius: '10px',
-                boxShadow: '0 0 6px rgba(109, 224, 255, 0.6)',
-                '& .MuiOutlinedInput-root': {
-                  fontFamily: "'Racing Sans One', sans-serif",
-                  color: '#083A40',
-                },
-                '& .MuiInputLabel-root': {
-                  fontFamily: "'Racing Sans One', sans-serif",
-                  color: '#083A40',
-                },
-              }}
+                  width: { xs: '100%', md: '85vw' },
+                  maxWidth: '1000px',
+                  '& .MuiOutlinedInput-root': {
+                    background: '#ffffff',
+                    borderRadius: '15px',
+                    color: '#083A40',
+                    fontWeight: 500,
+                    boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)',
+                    '& fieldset': { border: '0.5px solid transparent' },
+                    '&:hover fieldset': { border: '0.5px solid #1FCBEA' },
+                    '&.Mui-focused fieldset': {
+                      boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)',
+                      fontSize: '20px',
+                    },
+                    '& input': {
+                      background: 'transparent',
+                      color: '#083A40',
+                      fontFamily: "'Racing Sans One', sans-serif",
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: '#083A40',
+                    fontFamily: "'Racing Sans One', sans-serif",
+                    letterSpacing: '1.0px',
+                    
+                  },
+                  '& .Mui-focused .MuiInputLabel-root': {
+                    color: '#083A40',
+                  },
+                  '& .MuiInputLabel-shrink': {
+                      transform: 'translate(18px, -30px) scale(1.0)',
+                      background: 'transparent',
+                      color: '#fff',
+                      padding: '0 6px',
+                    },
+    
+                }}
             />
             <Button
               variant="contained"

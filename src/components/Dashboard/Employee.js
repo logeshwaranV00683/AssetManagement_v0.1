@@ -240,39 +240,43 @@ function Employee() {
                             onChange={handleSearch}
                             value={filterValue}
                             sx={{
-                                width: { xs: '100%', md: '85vw' },
-                                maxWidth: '1000px',
-                                '& .MuiOutlinedInput-root': {
+                            width: { xs: '100%', md: '85vw' },
+                            maxWidth: '1000px',
+                            marginTop: 3,
+                            '& .MuiOutlinedInput-root': {
                                 background: '#ffffff',
                                 borderRadius: '15px',
                                 color: '#083A40',
                                 fontWeight: 500,
                                 boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)',
-                                '& fieldset': {
-                                    border: '0.5px solid transparent',
-                                },
-                                '&:hover fieldset': {
-                                    border: '0.5px solid #1FCBEA',
-                                },
+                                '& fieldset': { border: '0.5px solid transparent' },
+                                '&:hover fieldset': { border: '0.5px solid #1FCBEA' },
                                 '&.Mui-focused fieldset': {
-                                     boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)',
-                                     fontSize: '20px'
-
+                                boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)',
+                                fontSize: '20px',
                                 },
                                 '& input': {
-                                    background: 'transparent',
-                                    color: '#083A40',
-                                    fontFamily: "'Racing Sans One', sans-serif",
-                                },
-                                },
-                                '& .MuiInputLabel-root': {
+                                background: 'transparent',
                                 color: '#083A40',
                                 fontFamily: "'Racing Sans One', sans-serif",
-                                letterSpacing: '2.0px',
                                 },
-                                '& .Mui-focused .MuiInputLabel-root': {
+                            },
+                            '& .MuiInputLabel-root': {
                                 color: '#083A40',
-                                },
+                                fontFamily: "'Racing Sans One', sans-serif",
+                                letterSpacing: '3.0px',
+                                
+                            },
+                            '& .Mui-focused .MuiInputLabel-root': {
+                                color: '#083A40',
+                            },
+                            '& .MuiInputLabel-shrink': {
+                                transform: 'translate(18px, -30px) scale(1.0)',
+                                background: 'transparent',
+                                color: '#fff',
+                                padding: '0 6px',
+                            },
+                
                             }}
                         />
 

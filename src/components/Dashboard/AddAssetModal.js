@@ -130,8 +130,20 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
               label="Asset Name"
               onChange={(e) => setAssetName(e.target.value)}
             >
+              <MenuItem value="bag">Bag</MenuItem>
+              <MenuItem value="camera">Camera</MenuItem>
+              <MenuItem value="data_card">Data card</MenuItem>
+              <MenuItem value="dvr">DVR</MenuItem>
+              <MenuItem value="fire_wall">Fire wall</MenuItem>
+              <MenuItem value="head_phones">Head phones</MenuItem>
+              <MenuItem value="laptop_charger">Laptop charger</MenuItem>
               <MenuItem value="Laptop">Laptop</MenuItem>
-              <MenuItem value="Desktop">Desktop</MenuItem>
+              <MenuItem value="mobile">Mobile</MenuItem>
+              <MenuItem value="mouse">Mouse</MenuItem>
+              <MenuItem value="projector">Projector</MenuItem>
+              <MenuItem value="speaker">Speaker</MenuItem>
+              <MenuItem value="switch">Switch</MenuItem>
+
             </Select>
           </FormControl>
 
@@ -141,19 +153,27 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
               onChange={(e) => setSerialNumber(e.target.value)}
               fullWidth
           />
-          <TextField
-              label="Location"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              fullWidth
-          />
+          <FormControl fullWidth>
+            <InputLabel id="location">Location</InputLabel>
+            <Select
+              labelId="location"
+              id="location-name"
+              value={locCode}
+              label="Location Code"
+              onChange={(e) => setLocCode(e.target.value)}
+            >
+              <MenuItem value="Chennai">Chennai</MenuItem>
+              <MenuItem value="Pune">Pune</MenuItem>
 
-          <TextField
+            </Select>
+          </FormControl>
+
+         {/* <TextField
               label="Location Code"
               value={locCode}
               onChange={(e) => setLocCode(e.target.value)}
               fullWidth
-          />
+          />*/}
           <TextField
               label="Operating System"
               value={operatingSystem}

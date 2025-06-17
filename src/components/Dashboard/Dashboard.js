@@ -4,7 +4,7 @@ import {  PieChart,  Pie,  Cell,  ResponsiveContainer,  Tooltip,  Legend,} from 
 import {  Container,  Card,  CardContent,  Typography,  Box,  TextField,  MenuItem,  Select,  FormControl,  InputLabel,} from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import '../Style/font.css';
-import { getAssetsByLocation, getUnassignedAssetsByLocation ,getAssignedAssetsByLocation, getCountsByLocation, getAssignedCountByLocation, getUnassignedCountByLocation } from '../Services/DashboardService'; // adjust path if needed
+import { getAssetsByLocation, getUnassignedAssetsByLocation ,getAssignedAssetsByLocation,} from '../Services/DashboardService'; // adjust path if needed
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -36,87 +36,84 @@ const useStyles = makeStyles((theme) => ({
 function Dashboard() {
   const classes = useStyles();
   const COLORS = ['#00e0ff', '#f72585'];
-
-
-  const locationOptions = ['chennai', 'pune']; // or whatever locations you want
+  const locationOptions = ['chennai', 'pune'];
   const [selectedLocation, setSelectedLocation] = useState('chennai');
 
   const [selectedDevice, setSelectedDevice] = useState('Laptop');
   const [filterValue, setFilterValue] = useState('');
-
-  {/* New Update */}
   
   const [allAssetRows, setAllAssetRows] = useState([]);
   const [assignedAssetRows, setAssignedAssetRows] = useState([]);
   const [unassignedAssetRows, setUnassignedAssetRows] = useState([]);
 
+  const [deviceOptions, setDeviceOptions] = useState([]);
+
+
+  const filteredAllAssets = allAssetRows.filter((row) =>
+  row.assetName.toLowerCase().includes(filterValue.toLowerCase())
+);
+
+const filteredAssignedAssets = assignedAssetRows.filter((row) =>
+  row.assignedAsset.toLowerCase().includes(filterValue.toLowerCase())
+);
+
+const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
+  row.unassignedAsset.toLowerCase().includes(filterValue.toLowerCase())
+);
+
 
     useEffect(() => {
-      const fetchCounts = async () => {
-        const data = await getAssetsByLocation(selectedLocation);
-        const formatted = Object.entries(data).map(([key, val], i) => ({
-          id: i + 1,
-          assetName: key.replace(/_/g, ' ').toUpperCase(),
-          quantity: val
-        }));
-        setAllAssetRows(formatted);
-      };
-      fetchCounts();
-    }, [selectedLocation]);
+        const fetchAllAssetData = async () => {
+          try {
+            const [all, assigned, unassigned] = await Promise.all([
+              getAssetsByLocation(selectedLocation),
+              getAssignedAssetsByLocation(selectedLocation),
+              getUnassignedAssetsByLocation(selectedLocation)
+            ]);
 
-    useEffect(() => {
-      const fetchCounts = async () => {
-        const data = await getUnassignedAssetsByLocation(selectedLocation);
-        const formatted = Object.entries(data).map(([key, val], i) => ({
-          id: i + 1,
-          unassignedAsset: key.replace(/_/g, ' ').toUpperCase(),
-          unassignedQuantity: val
-        }));
-        setUnassignedAssetRows(formatted);
-      };
-      fetchCounts();
-    }, [selectedLocation]);
+            // Extract device options dynamically from keys
+            const dynamicDevices = Object.keys(all).map((key) =>
+              key.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())
+            );
 
-    useEffect(() => {
-      const fetchCounts = async () => {
-        const data = await getAssignedAssetsByLocation(selectedLocation);
-        const formatted = Object.entries(data).map(([key, val], i) => ({
-          id: i + 1,
-          assignedAsset: key.replace(/_/g, ' ').toUpperCase(),
-          assignedQuantity: val
-        }));
-        setAssignedAssetRows(formatted);
-      };
-      fetchCounts();
-    }, [selectedLocation]);
+            setDeviceOptions(dynamicDevices); // 👈 sets dropdown options
 
 
-  {/* New Update */}
+            setAllAssetRows(
+              Object.entries(all).map(([key, val], i) => ({
+                id: i + 1,
+                assetName: key.replace(/_/g, ' ').toUpperCase(),
+                quantity: val,
+              }))
+            );
+
+            setAssignedAssetRows(
+              Object.entries(assigned).map(([key, val], i) => ({
+                id: i + 1,
+                assignedAsset: key.replace(/_/g, ' ').toUpperCase(),
+                assignedQuantity: val,
+              }))
+            );
+
+            setUnassignedAssetRows(
+              Object.entries(unassigned).map(([key, val], i) => ({
+                id: i + 1,
+                unassignedAsset: key.replace(/_/g, ' ').toUpperCase(),
+                unassignedQuantity: val,
+              }))
+            );
+          } catch (error) {
+            console.error('Error fetching asset data:', error);
+          }
+        };
+
+        fetchAllAssetData();
+      }, [selectedLocation]);
 
 
- 
+    const selectedKey = selectedDevice.toLowerCase().replace(/\s/g, '_');
 
-  const deviceData = {
-    Laptop: {
-      chennai: [{ name: 'Stock', value: 23 }, { name: 'Assigned', value: 104 }],
-      pune: [{ name: 'Stock', value: 26 }, { name: 'Assigned', value: 146 }],
-    },
-    Mouse: {
-      chennai: [{ name: 'Stock', value: 45 }, { name: 'Assigned', value: 80 }],
-      pune: [{ name: 'Stock', value: 30 }, { name: 'Assigned', value: 110 }],
-    },
-    Keyboard: {
-      chennai: [{ name: 'Stock', value: 40 }, { name: 'Assigned', value: 90 }],
-      pune: [{ name: 'Stock', value: 35 }, { name: 'Assigned', value: 100 }],
-    },
-    Headset: {
-      chennai: [{ name: 'Stock', value: 20 }, { name: 'Assigned', value: 70 }],
-      pune: [{ name: 'Stock', value: 25 }, { name: 'Assigned', value: 95 }],
-    },
-  };
 
-  const data = deviceData[selectedDevice].chennai;
-  const data2 = deviceData[selectedDevice].pune;
   
 
   const countTableColumns = [
@@ -133,44 +130,43 @@ function Dashboard() {
 ];
 
 
-const assignedTableColumns = [
-  { field: 'id', headerName: 'ID', width: 50 },
-  { field: 'assignedAsset', headerName: 'Assigned Asset', width: 200 },
-  { field: 'assignedQuantity', headerName: 'Count', width: 130 },
-];
-
-{/*
-  const assignUnassignColumns = [
-  { field: 'id', headerName: 'ID', width: 90 },
-  { field: 'assigned', headerName: 'Assigned', width: 150 },
-  { field: 'unassigned', headerName: 'Unassigned', width: 150 },
-];
-
-const [assignUnassignData, setAssignUnassignData] = useState([]);
-
-useEffect(() => {
-  const fetchCounts = async () => {
-    const assigned = await getAssignedCountByLocation(selectedLocation);
-    const unassigned = await getUnassignedCountByLocation(selectedLocation);
-    setAssignedCount(assigned);
-    setUnassignedCount(unassigned);
-  };
-
-  fetchCounts();
-}, [selectedLocation]);
-
- */}
-
-  
-
-
-  const [countRows, setCountRows] = useState([]);
-
-  const columns = [
-    { field: 'id', headerName: 'ID', width: 80 },
-    { field: 'assetType', headerName: 'Asset Type', width: 200 },
-    { field: 'count', headerName: 'Count', width: 130 },
+  const assignedTableColumns = [
+    { field: 'id', headerName: 'ID', width: 50 },
+    { field: 'assignedAsset', headerName: 'Assigned Asset', width: 200 },
+    { field: 'assignedQuantity', headerName: 'Count', width: 130 },
   ];
+
+
+    const [pieDataChennai, setPieDataChennai] = useState([]);
+    const [pieDataPune, setPieDataPune] = useState([]);
+
+    
+    
+    useEffect(() => {
+      const fetchPieDataForLocation = async (location, setDataFn) => {
+        try {
+          const assignedData = await getAssignedAssetsByLocation(location);
+          const unassignedData = await getUnassignedAssetsByLocation(location);
+
+          const key = selectedDevice.toLowerCase().replace(/\s/g, '_'); // 👈 dynamic key
+
+          const assignedCount = Number(assignedData?.[key] ?? 0);
+          const unassignedCount = Number(unassignedData?.[key] ?? 0);
+
+          setDataFn([
+            { name: 'Assigned', value: assignedCount },
+            { name: 'Unassigned', value: unassignedCount },
+          ]);
+        } catch (err) {
+          console.error(`Error fetching pie data for ${location}:`, err);
+          setDataFn([]);
+        }
+      };
+
+      fetchPieDataForLocation('chennai', setPieDataChennai);
+      fetchPieDataForLocation('pune', setPieDataPune);
+    }, [selectedDevice]); // ✅ fix here
+
 
 
   return (
@@ -186,7 +182,7 @@ useEffect(() => {
                 <CardContent>
                   <div className={classes.label} style={{margin: '20px',  }}>
                     <Typography variant="h6" style={{ color: '#00f0ff', textShadow: '0 0 6px #2BC4F3', letterSpacing: '1.5px' }}>
-                      {selectedDevice}: {data2[0].value}/{data2[1].value}
+                      {selectedDevice}: {pieDataChennai?.[0]?.value ?? 0}/{pieDataChennai?.[1]?.value ?? 0}
                     </Typography>
                     <Typography variant="h6" style={{ color: '#00f0ff', textShadow: '0 0 6px #2BC4F3', letterSpacing: '1.5px' }}>
                       CHENNAI
@@ -195,9 +191,9 @@ useEffect(() => {
                   <div style={{ height: 250, width: '100%' }}>
                     <ResponsiveContainer width="100%" height={260}>
                       <PieChart>
-                        <Pie dataKey="value" data={data} cx="50%" cy="50%" outerRadius={90} label>
-                          {data.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} style={{ filter: 'drop-shadow(0 0 10px rgba(0, 240, 255, 0.8))' }} />
+                        <Pie dataKey="value" data={pieDataChennai} cx="50%" cy="50%" outerRadius={90} label>
+                          {pieDataChennai.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                           ))}
                         </Pie>
                         <Tooltip contentStyle={{ backgroundColor: '#0d1b2a', border: '1px solid #00f0ff', color: '#ffffff' }} itemStyle={{ color: '#00f0ff' }} />
@@ -224,7 +220,7 @@ useEffect(() => {
                       color: '#083A40',
                     }}
                   >
-                    {Object.keys(deviceData).map((device) => (
+                    {deviceOptions.map((device) => (
                       <MenuItem key={device} value={device}>
                         {device}
                       </MenuItem>
@@ -239,7 +235,7 @@ useEffect(() => {
                 <CardContent>
                   <div className={classes.label} style={{margin: '20px', }}>
                     <Typography variant="h6" style={{ color: '#00f0ff', textShadow: '0 0 6px #2BC4F3', letterSpacing: '1.5px' }}>
-                      {selectedDevice}: {data[0].value}/{data[1].value}
+                      {selectedDevice}: {pieDataPune?.[0]?.value ?? 0}/{pieDataPune?.[1]?.value ?? 0}
                     </Typography>
                     <Typography variant="h6" style={{ color: '#00f0ff', textShadow: '0 0 6px #2BC4F3', letterSpacing: '1.5px' }}>
                       PUNE
@@ -248,11 +244,12 @@ useEffect(() => {
                   <div style={{ height: 250, width: '100%' }}>
                     <ResponsiveContainer width="100%" height={260}>
                       <PieChart>
-                        <Pie dataKey="value" data={data2} cx="50%" cy="50%" outerRadius={90} label>
-                          {data2.map((entry, index) => (
-                            <Cell key={`cell2-${index}`} fill={COLORS[index % COLORS.length]} style={{ filter: 'drop-shadow(0 0 5px rgba(0, 240, 255, 0.9))' }} />
+                        <Pie dataKey="value" data={pieDataPune} cx="50%" cy="50%" outerRadius={90} label>
+                          {pieDataPune.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                           ))}
                         </Pie>
+
                         <Tooltip contentStyle={{ backgroundColor: '#0d1b2a', border: '1px solid #00f0ff', color: '#ffffff' }} itemStyle={{ color: '#00f0ff' }} />
                         <Legend wrapperStyle={{ color: '#00f0ff', textShadow: '0 0 1px #00f0ff' }} />
                       </PieChart>
@@ -265,12 +262,14 @@ useEffect(() => {
           </div>
 
           {/* Search & DataGrid */}
-          <div style={{ height: 400, width: '100%', display: 'flex', marginTop: '50px', flexDirection: 'column', alignItems: 'center' }}>
+          <div style={{ height: 400, width: '100%', display: 'flex', marginTop: '50px', flexDirection: 'column', alignItems: 'center', marginBottom: 350 }}>
             <Box mb={1}>
               <TextField
                 label="Search"
                 variant="outlined"
                 value={filterValue}
+                onChange={(e) => setFilterValue(e.target.value)}
+               
                 sx={{
                   width: { xs: '100%', md: '85vw' },
                   maxWidth: '1000px',
@@ -295,11 +294,19 @@ useEffect(() => {
                   '& .MuiInputLabel-root': {
                     color: '#083A40',
                     fontFamily: "'Racing Sans One', sans-serif",
-                    letterSpacing: '2.0px',
+                    letterSpacing: '3.0px',
+                    
                   },
                   '& .Mui-focused .MuiInputLabel-root': {
                     color: '#083A40',
                   },
+                  '& .MuiInputLabel-shrink': {
+                      transform: 'translate(18px, -30px) scale(1.0)',
+                      background: 'transparent',
+                      color: '#fff',
+                      padding: '0 6px',
+                    },
+    
                 }}
               />
             </Box>
@@ -357,18 +364,18 @@ useEffect(() => {
                 flexDirection: 'row', // 👈 Important for side-by-side
                 alignItems: 'flex-start',
                 justifyContent: 'center',
-                gap: 50,
+                gap: 30,
                 marginTop: '50px',
                 width: '110%',
               }}
             >
               {/* First Table */}
               <div style={{ height: 450, width: '32%' }}>
-                <button 
+                <div 
                   style={{
                       width: 150 ,
                       height: 40,
-                      border: 'none',
+                      color: '#083A40',
                       display: 'flex',
                       backgroundColor: '#fff',
                       borderRadius: '10px',
@@ -384,10 +391,10 @@ useEffect(() => {
                         }}>
                     Total Assets
 
-                </button>
+                </div>
 
                 <DataGrid
-                  rows={allAssetRows}
+                  rows={filteredAllAssets}
                   columns={countTableColumns}
                   pageSize={5}
                   rowsPerPageOptions={[5, 10, 20]}
@@ -430,11 +437,11 @@ useEffect(() => {
 
               {/* Second Table */}
               <div style={{ height: 450, width: '33%' }}>
-                <button 
-                style={{
-                      width: 240 ,
+                <div 
+                  style={{
+                      width: 200 ,
                       height: 40,
-                      border: 'none',
+                      color: '#083A40',
                       display: 'flex',
                       backgroundColor: '#fff',
                       borderRadius: '10px',
@@ -443,17 +450,16 @@ useEffect(() => {
                       justifyContent: 'center',
                       alignItems: 'center',
                       fontFamily: "'Racing Sans One', sans-serif",
+                      fontWeight: 50,
                       fontSize: 16,
-                      fontWeight: 100,
                       letterSpacing: '1.2px',
                       boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)',
-
-                      }}>
+                        }}>
 
                    Unassigned Assets
-                </button>
+                </div>
                 <DataGrid
-                  rows={unassignedAssetRows}
+                  rows={filteredUnassignedAssets}
                   columns={unassignedTableColumns}
                   pageSize={5}
                   rowsPerPageOptions={[5, 10, 20]}
@@ -496,11 +502,11 @@ useEffect(() => {
 
               {/* Third Table */}
               <div style={{ height: 450, width: '32%' }}>
-                <button 
-                style={{
-                      width: 280 ,
+                <div 
+                  style={{
+                      width: 180 ,
                       height: 40,
-                      border: 'none',
+                      color: '#083A40',
                       display: 'flex',
                       backgroundColor: '#fff',
                       borderRadius: '10px',
@@ -509,17 +515,16 @@ useEffect(() => {
                       justifyContent: 'center',
                       alignItems: 'center',
                       fontFamily: "'Racing Sans One', sans-serif",
+                      fontWeight: 50,
                       fontSize: 16,
-                      fontWeight: 100,
                       letterSpacing: '1.2px',
                       boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)',
-
-                      }}>
+                        }}>
 
                       Assigned Assets
-                </button>
+                </div>
                 <DataGrid
-                  rows={assignedAssetRows}
+                  rows={filteredAssignedAssets}
                   columns={assignedTableColumns}
                   pageSize={5}
                   rowsPerPageOptions={[5, 10, 20]}
