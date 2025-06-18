@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -371,7 +370,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
     @Override
     public List<AssetsEntity> getThroughStatus(String str) {
         List<AssetsEntity> assets = get();
-        List<AssetsEntity> assets2 = new ArrayList<AssetsEntity>();
+        List<AssetsEntity> assets2 = new ArrayList<>();
         for (AssetsEntity i : assets) {
             if (i.getStatus().equalsIgnoreCase(str))
                 assets2.add(i);
@@ -445,7 +444,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
 
     @Override
     public List<AssetCounterDto> getUnassignedAndTotalLaptops() {
-        List<AssetCounterDto> assetCounterDTOs = new ArrayList<AssetCounterDto>();
+        List<AssetCounterDto> assetCounterDTOs = new ArrayList<>();
         AssetCounterDto temp1 = new AssetCounterDto();
         List<CountOfAssets> countOfAssets = assetCountRepository.findAll();
         countOfAssets.forEach(x -> {
@@ -463,7 +462,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
     @Override
     public List<AssetsEntity> getLaptopsUnderWarenty() {
         List<AssetsEntity> all = assetRepo.findAll();
-        List<AssetsEntity> assetsEntities = new ArrayList<AssetsEntity>();
+        List<AssetsEntity> assetsEntities = new ArrayList<>();
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDateTime now = LocalDateTime.now();
         // System.out.println(dtf.format(now));
@@ -936,7 +935,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                         log.warn("Skipping Asset Assigning due to already exist serial number while Importing Assigned Asset, Importing asset differ from the DB asset [Serial Number: {}]",asset.getSerialNumber());
                         continue;
                     }
-                };
+                }
 
                 asset.setStatus("Assigned");
                 assetRepo.save(modelMapper.map(asset,AssetsEntity.class));

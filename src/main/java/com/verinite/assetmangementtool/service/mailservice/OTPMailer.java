@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.io.UnsupportedEncodingException;
 import java.util.Random;
 
 @Service
@@ -49,7 +48,7 @@ public class OTPMailer {
         }).start();
         sendOtpMail(adminRegistrationDto.getFirstName(), adminRegistrationDto.getMail(), otp);
     }
-    public String sendOtpMail(String name, String email, String otp) throws MessagingException {
+    public void sendOtpMail(String name, String email, String otp) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
@@ -87,7 +86,6 @@ public class OTPMailer {
         helper.setText(content, true);
         mailSender.send(message);
 
-        return "OTP Email Sent Successfully";
     }
 
 }

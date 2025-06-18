@@ -40,10 +40,10 @@ public class AdminServiceImpl implements AdminService {
     ModelMapper modelMapper;
 
     @Autowired
-    BCryptPasswordEncoder encoder;
+    private AdminPromotionMailer adminPromotionService;
 
     @Autowired
-    private AdminPromotionMailer adminPromotionService;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -63,7 +63,7 @@ public class AdminServiceImpl implements AdminService {
     public ResponseEntity<String> registerNewAdmin(AdminRegistrationEntity registration) {
         // Set admin role, encode password, and other default properties
         registration.setRole("Admin");
-        String encodedPassword = encoder.encode(registration.getPassword());
+        String encodedPassword = bCryptPasswordEncoder.encode(registration.getPassword());
         registration.setPassword(encodedPassword);
         registration.setStatus("Active");
         registration.setEmpId(registration.getEmpId().toUpperCase());
@@ -102,16 +102,16 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public ResponseEntity<?> checkLogin(AdminLoginDto login) throws Exception {
-        AdminRegistrationEntity adminData = (AdminRegistrationEntity) registerRepo.findByEmpId(login.getEmpId());
+        AdminRegistrationEntity adminData = registerRepo.findByEmpId(login.getEmpId());
         authenticate(login.getEmpId(), login.getPassword());
         final UserDetails userDetails = jwtUserDetailsServie.loadUserByUsername(adminData.getEmpId());
         final String token = jwtTokenUtil.generateToken(userDetails);
-        return new ResponseEntity(new JwtResponse<AdminRegistrationDto>(token, modelMapper.map(adminData, AdminRegistrationDto.class)), HttpStatus.OK);
+        return new ResponseEntity<>(new JwtResponse<>(token, modelMapper.map(adminData, AdminRegistrationDto.class)), HttpStatus.OK);
 
     }
 
     @Override
-    public ResponseEntity updateAdminEntity(EmployeeEntity employee) {
+    public ResponseEntity<?> updateAdminEntity(EmployeeEntity employee) {
         AdminRegistrationEntity adminRegistrationEntity = registerRepo.findByEmpId(employee.getEmpId());
         adminRegistrationEntity.setMail(employee.getMail());
         adminRegistrationEntity.setFirstName(employee.getFirstName());
@@ -164,7 +164,7 @@ public class AdminServiceImpl implements AdminService {
         adminRegistrationEntity.setLastName(employee.getLastName());
         adminRegistrationEntity.setStatus(employee.getStatus());
         adminRegistrationEntity.setLocation(employee.getLocation());
-        adminRegistrationEntity.setPassword(new BCryptPasswordEncoder().encode(password));
+        adminRegistrationEntity.setPassword(password);
 
         registerNewAdmin(adminRegistrationEntity);
 
@@ -179,33 +179,30 @@ public class AdminServiceImpl implements AdminService {
         String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String lower = "abcdefghijklmnopqrstuvwxyz";
         String digits = "0123456789";
-        String special = "!@#$%^&*()-_=+[]{}|;:,.<>?";
+        String special = "!@#%^&*()-_=+[]{}|;:,.<>?";
         String all = upper + lower + digits + special;
 
         SecureRandom rand = new SecureRandom();
         StringBuilder password = new StringBuilder();
 
-        // Ensure one character from each category
         password.append(upper.charAt(rand.nextInt(upper.length())));
         password.append(lower.charAt(rand.nextInt(lower.length())));
         password.append(digits.charAt(rand.nextInt(digits.length())));
         password.append(special.charAt(rand.nextInt(special.length())));
 
-        // Fill remaining characters
         for (int i = 4; i < length; i++) {
             password.append(all.charAt(rand.nextInt(all.length())));
         }
 
-        // Shuffle result
         return shuffleString(password.toString(), rand);
     }
 
     @Transactional
-    public ResponseEntity deleteAdmin(String empId) {
+    public ResponseEntity<String> deleteAdmin(String empId) {
         EmployeeEntity employee = employeeRepository.findByEmpId(empId);
         registerRepo.deleteByEmpId(empId);
         employee.setRole("User");
         employeeRepository.save(employee);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Admin Deleted successfully.");
+        return ResponseEntity.status(HttpStatus.OK).body("Admin Deleted successfully.");
     }
 }

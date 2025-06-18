@@ -32,10 +32,9 @@ public class ForgotPasswordService implements ForgotPasswordInterface {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
-    public ResponseEntity<?> sendOTPMail(String empId) throws MessagingException, UnsupportedEncodingException {
+    public ResponseEntity<?> sendOTPMail(String empId) throws MessagingException {
         AdminRegistrationDto adminRegistrationDto = modelMapper.map(adminRegistrationRepository.findByEmpId(empId),AdminRegistrationDto.class);
         if(adminRegistrationDto != null) {
-            //otpService.sendOTP(adminRegistrationDto);
             otpMailer.sendOTP(adminRegistrationDto);
             return new ResponseEntity<>(HttpStatus.OK);
         }
