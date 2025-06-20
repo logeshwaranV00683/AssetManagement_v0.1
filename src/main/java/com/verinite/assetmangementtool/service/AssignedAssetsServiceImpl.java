@@ -280,4 +280,5 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
         return assignedAssetsRepository.findByEmpId(empId);
     }
 
+
 }

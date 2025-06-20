@@ -9,6 +9,7 @@ CREATE TABLE `tbl_employee` (
   `mobile` varchar(255) DEFAULT NULL,
   `role` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
+  `picture` LONGBLOB DEFAULT NULL,
   PRIMARY KEY (`emp_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
