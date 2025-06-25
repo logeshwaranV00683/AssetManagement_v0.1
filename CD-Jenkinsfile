@@ -1,0 +1,77 @@
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'DOCKER_TAG', defaultValue: 'latest', description: 'Docker Image Tag')
+    }
+
+    environment {
+        IMAGE_NAME = "23logesh/assettool:${params.DOCKER_TAG}"
+        NETWORK_NAME = "assettool"
+    }
+
+    stages {
+        stage('Docker Pull') {
+            steps {
+                script {
+                    sh """
+                        docker images -q ${IMAGE_NAME} | xargs -r docker rmi || echo 'No old image to remove'
+                    """
+                    sh "docker pull ${IMAGE_NAME}"
+                }
+            }
+        }
+
+        stage('Create Docker Network') {
+            steps {
+                script {
+                    sh """
+                        if ! docker network ls | grep -q ${NETWORK_NAME}; then
+                            docker network create ${NETWORK_NAME}
+                        fi
+                    """
+                }
+            }
+        }
+
+        stage('Remove Old Container') {
+            steps {
+                script {
+                    sh """
+                        if [ \$(docker ps -q -f name=assettool) ]; then
+                            docker stop assettool
+                            docker rm assettool
+                        fi
+                    """
+                }
+            }
+        }
+
+        stage('Run Docker Container') {
+            steps {
+                script {
+                    sh """
+                        docker run -d --name assettool \
+                        --network ${NETWORK_NAME} \
+                        -p 8081:8081 \
+                        ${IMAGE_NAME}
+                    """
+                }
+            }
+        }
+
+        stage('Check Container') {
+            steps {
+                script {
+                    sh 'docker ps -f name=assettool'
+                }
+            }
+        }
+
+        stage('Clean Up') {
+            steps {
+                echo 'Pipeline completed successfully.'
+            }
+        }
+    }
+}
