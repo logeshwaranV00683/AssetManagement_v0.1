@@ -29,7 +29,9 @@ CREATE TABLE `tbl_admin` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO `tbl_admin` (`emp_id`, `first_name`, `last_name`, `location`, `mail`, `password`, `role`, `status`)
-VALUES ('V00000', 'admin', '', 'Pune', 'logeshwaran.s@verinite.com', '$2a$10$.KSwveJZ.bG2f4FsPfWe7eavi9cEjj305v6RzDyh/yAEfCbd46cfS', 'admin', 'Active');
+VALUES 
+('V00155', 'Gauri', 'Khalate', 'Pune', 'gauri.khalate@verinite.com', '$2a$10$WoCEnk6ZBoSW3FrjBTaKT.LIg/1T57USmRZYQPA.Okfc6Mizpqi1C', 'admin', 'Active'),
+('V00557', 'Soundararajan', 'S', 'Pune', 'soundararajan.s@verinite.com', '$2a$10$DMdRMpQ4KpF400DSngiHfu/SaOusIS2OyiDMQJfzZgqyHVK4JGmMu', 'admin', 'Active');
 
 
 CREATE TABLE `asset_types` (

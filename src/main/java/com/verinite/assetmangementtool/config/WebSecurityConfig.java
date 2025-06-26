@@ -67,29 +67,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity
-                .csrf(csrf -> csrf.disable())
+        httpSecurity.csrf(csrf -> csrf.disable())
                 .authorizeRequests(auth -> auth
-                        .antMatchers(
-                                "/login",
-                                "/swagger-ui/**",
-                                "/v2/api-docs",
-                                "/v3/api-docs/**",
-                                "/custom-api-docs/**",
-                                "/swagger-resources/**",
-                                "/configuration/**",
-                                "/webjars/**",
-                                "/generate/bcrypt",
-                                "/reset-password/send-otp",
-                                "/reset-password/verify-otp",
-                                "/h2-console/**"
-                        ).permitAll()
-                        .anyRequest().authenticated()
-                )
+                        .antMatchers("/login", "/swagger-ui/**", "/v2/api-docs",
+                                "/v3/api-docs/**", "/custom-api-docs/**", "/swagger-resources/**", "/configuration/**", "/webjars/**",
+                                "/generate/bcrypt","/reset-password/send-otp","/reset-password/verify-otp")
+                        .permitAll() // Permit all the listed endpoints, including Swagger
+                        .anyRequest().authenticated()) // All other endpoints require authentication
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .headers(headers -> headers.frameOptions().disable()); // Enable H2 console frames
-
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         // Add JWT filter
         httpSecurity.addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class);
