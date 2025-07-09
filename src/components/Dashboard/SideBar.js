@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -32,7 +32,6 @@ const Sidebar = () => {
     { key: 'dashboard', icon: <DashboardIcon fontSize="large" />, label: 'Dashboard' },
     { key: 'assets', icon: <MonitorIcon fontSize="large" />, label: 'Assets' },
     { key: 'employee', icon: <PeopleIcon fontSize="large" />, label: 'Employees' },
-    { key: 'assethistory', icon: <HistoryIcon fontSize="large" />, label: 'Asset History' },
     { key: 'AssetsToEmployee', icon: <AppsIcon fontSize="large" />, label: 'AssetsToEmployee' },
     { key: 'report', icon: <HistoryIcon fontSize="large" />, label: 'Report' },
   ];
@@ -125,4 +124,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default memo(Sidebar);

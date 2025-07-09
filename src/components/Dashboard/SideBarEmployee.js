@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -112,4 +112,4 @@ const SidebarEmployee = ({ onAddEmployee, filterByStatus, resetFilters }) => {
 };
 
 
-export default SidebarEmployee;
+export default memo(SidebarEmployee);

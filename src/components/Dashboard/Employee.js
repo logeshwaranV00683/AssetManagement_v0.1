@@ -346,7 +346,7 @@ function Employee() {
 
                            <div className="import-button" onClick={() => setShowImportModal(true)}>
         <span><UploadFileIcon /> Import Employee</span>
-      </div>
+                            </div>
 
                           {showImportModal && (
                             <ImportExcel

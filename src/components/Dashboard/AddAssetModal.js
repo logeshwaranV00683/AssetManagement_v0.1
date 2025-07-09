@@ -21,7 +21,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
   const [assetName, setAssetName] = useState('');
   const [serialNumber, setSerialNumber] = useState('');
   const [location, setLocation] = useState('');
-  const [locCode, setLocCode] = useState('');
+  const [locCode, setLocCode] = useState('0');
   const [operatingSystem, setOperatingSystem] = useState('');
   const [modelName, setModelName] = useState('');
   const [purchaseDate, setPurchaseDate] = useState('');
@@ -121,14 +121,64 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
             gap: 2,
           }}
         >
-          <FormControl fullWidth>
-            <InputLabel id="asset-name-label">Asset Name</InputLabel>
-            <Select
+          <TextField
               labelId="asset-name-label"
               id="asset-name"
               value={assetName}
               label="Asset Name"
               onChange={(e) => setAssetName(e.target.value)}
+              fullWidth
+          />
+
+          <TextField
+              label="Serial Number"
+              value={serialNumber}
+              onChange={(e) => setSerialNumber(e.target.value)}
+              fullWidth
+          />
+          <FormControl fullWidth>
+            <InputLabel id="location">Location</InputLabel>
+            <Select
+              labelId="location"
+              id="location-name"
+              value={location}
+              label="Location Code"
+              onChange={(e) => setLocation(e.target.value)}
+            >
+              <MenuItem value="Chennai">Chennai</MenuItem>
+              <MenuItem value="Pune">Pune</MenuItem>
+
+            </Select>
+          </FormControl>
+
+         {/* <TextField
+              label="Location Code"
+              value={locCode}
+              onChange={(e) => setLocCode(e.target.value)}
+              fullWidth
+          /> */}
+          <TextField
+              label="Operating System"
+              value={operatingSystem}
+              onChange={(e) => setOperatingSystem(e.target.value)}
+              fullWidth
+          />
+          <TextField
+              label="Variant"
+              value={modelName}
+              onChange={(e) => setModelName(e.target.value)}
+              fullWidth
+          />
+          
+          
+          <FormControl fullWidth>
+            <InputLabel id="Type">Type</InputLabel>
+            <Select
+              labelId="Type"
+              id="Type"
+              label="Type"
+              value={type}
+              onChange={(e) => setType(e.target.value)}
             >
               <MenuItem value="bag">Bag</MenuItem>
               <MenuItem value="camera">Camera</MenuItem>
@@ -146,52 +196,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
 
             </Select>
           </FormControl>
-
-          <TextField
-              label="Serial Number"
-              value={serialNumber}
-              onChange={(e) => setSerialNumber(e.target.value)}
-              fullWidth
-          />
-          <FormControl fullWidth>
-            <InputLabel id="location">Location</InputLabel>
-            <Select
-              labelId="location"
-              id="location-name"
-              value={locCode}
-              label="Location Code"
-              onChange={(e) => setLocCode(e.target.value)}
-            >
-              <MenuItem value="Chennai">Chennai</MenuItem>
-              <MenuItem value="Pune">Pune</MenuItem>
-
-            </Select>
-          </FormControl>
-
-         {/* <TextField
-              label="Location Code"
-              value={locCode}
-              onChange={(e) => setLocCode(e.target.value)}
-              fullWidth
-          />*/}
-          <TextField
-              label="Operating System"
-              value={operatingSystem}
-              onChange={(e) => setOperatingSystem(e.target.value)}
-              fullWidth
-          />
-          <TextField
-              label="Variant"
-              value={modelName}
-              onChange={(e) => setModelName(e.target.value)}
-              fullWidth
-          />
-          <TextField
-              label="Type"
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-              fullWidth
-          />
+          
           <TextField
               label="Purchase Date"
               type="date"
