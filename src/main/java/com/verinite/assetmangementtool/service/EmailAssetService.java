@@ -39,7 +39,7 @@
 //    @Autowired
 //    private AckMailer ackMailer;
 //
-//    private void updateUnassignedAssetCounts(AssetsEntity asset, CountOfAssets countOfAssets) {
+//    private void updateUnassignedAssetCounts(AssetsEntity asset, CountOfAssetsRepository countOfAssets) {
 //        String assetName = asset.getAssetName();
 //
 //        switch (assetName.toLowerCase()) {
@@ -143,8 +143,8 @@
 //                        asset.setEmpId(assignableAssetDto.getEmpId());
 //
 //                        // Update unassigned asset counts
-//                        List<CountOfAssets> countOfAssets = assetCountRepository.findAll();
-//                        for (CountOfAssets count : countOfAssets) {
+//                        List<CountOfAssetsRepository> countOfAssets = assetCountRepository.findAll();
+//                        for (CountOfAssetsRepository count : countOfAssets) {
 //                            if (asset.getLocation().equalsIgnoreCase(count.getLocation())) {
 //                                updateUnassignedAssetCounts(asset, count);
 //                            }

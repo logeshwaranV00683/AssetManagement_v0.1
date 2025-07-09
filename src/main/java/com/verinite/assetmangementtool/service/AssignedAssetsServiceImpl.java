@@ -2,16 +2,15 @@ package com.verinite.assetmangementtool.service;
 
 import com.verinite.assetmangementtool.dto.AssignableAssetDto;
 import com.verinite.assetmangementtool.dto.AssignedAssetDtoList;
+import com.verinite.assetmangementtool.dto.CountOfAssetsDTO;
 import com.verinite.assetmangementtool.dto.RecentAssignedEmp;
 import com.verinite.assetmangementtool.entity.AssetsEntity;
 import com.verinite.assetmangementtool.entity.AssignedAssetsEntity;
-import com.verinite.assetmangementtool.entity.CountOfAssets;
+import com.verinite.assetmangementtool.entity.CountOfAssetsEntity;
 import com.verinite.assetmangementtool.entity.EmployeeEntity;
-import com.verinite.assetmangementtool.repository.AssetCountRepository;
-import com.verinite.assetmangementtool.repository.AssetsRepository;
-import com.verinite.assetmangementtool.repository.AssignedAssetsRepository;
-import com.verinite.assetmangementtool.repository.EmployeeRepository;
+import com.verinite.assetmangementtool.repository.*;
 import com.verinite.assetmangementtool.service.mailservice.AckMailer;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +43,12 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
     private AssignedAssetsRepository assignedAssetsRepository;
     @Autowired
     private AckMailer ackMailer;
+
+    @Autowired
+    CountOfAssetsRepository countOfAssetsRepository;
+
+    @Autowired
+    ModelMapper modelMapper;
 
 
     @Override
@@ -85,12 +90,13 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
     @Override
     public AssignedAssetsEntity updateAssignedAssets(int assignedId, AssignedAssetsEntity assignedAssetsEntity) {
         AssignedAssetsEntity assignedAssetsEntitys = new AssignedAssetsEntity();
+        String assetName = assignedAssetsEntitys.getAssetName();
         try {
             assignedAssetsEntitys = assignedAssetsRepository.findByAssignedAssetsId(assignedId);
         } catch (Exception e) {
             System.out.println("Given id not found");
         }
-
+        assignedCount(assetName);
         assignedAssetsEntitys.setEmpId(assignedAssetsEntity.getEmpId());
 
         return assignedAssetsRepository.save(assignedAssetsEntitys);
@@ -113,12 +119,13 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
     }
 
     public ResponseEntity<String> save(List<AssignableAssetDto> assignableAssetDtos) {
+
         String empId = assignableAssetDtos.get(0).getEmpId();
         EmployeeEntity employeeEntity = employeeRepository.findByEmpId(empId);
         List<AssetsEntity> assetsEntityList = List.of();
-        if (employeeEntity != null) {
+        if (employeeEntity != null ) {
             try {
-                List<CountOfAssets> countOfAssets = assetCountRepository.findAll();
+                List<CountOfAssetsEntity> countOfAssetEntities = assetCountRepository.findAll();
                 for (AssignableAssetDto assignableAssetDto : assignableAssetDtos) {
                     AssetsEntity asset = assetsRepo.findBySerialNumber(assignableAssetDto.getSerialNumber());
                     if (asset == null) {
@@ -128,12 +135,13 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
                     if (asset.getStatus().equalsIgnoreCase("UnAssigned") && employeeEntity.getStatus().equalsIgnoreCase("Active")) {
                         asset.setEmpId(empId);
                         asset.setStatus("Assigned");
+
                         AssignedAssetsEntity assignedAssetsEntity = getAssignedAssetsEntity(assignableAssetDto, asset);
                         asset.setAssignedDate(assignableAssetDto.getAssignedDate());
                         asset.setAssignedBy(assignableAssetDto.getAssignedBy());
 
 
-                        for (CountOfAssets i : countOfAssets) {
+                        for (CountOfAssetsEntity i : countOfAssetEntities) {
                             if (asset.getLocation().equalsIgnoreCase(i.getLocation())) {
                                 updateUnassignedCount(asset, i);
                                 assetCountRepository.save(i);
@@ -190,7 +198,7 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
         return assignedAssetsEntity;
     }
 
-    void updateUnassignedCount(AssetsEntity asset, CountOfAssets i) {
+    void updateUnassignedCount(AssetsEntity asset, CountOfAssetsEntity i) {
         String assetName = asset.getAssetName().toLowerCase();
         switch (assetName) {
             case "laptop":
@@ -278,6 +286,259 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
 
     public List<AssignedAssetsEntity> getAllAssetsAssignedToParticularEmployee(String empId) {
         return assignedAssetsRepository.findByEmpId(empId);
+    }
+
+
+    public void assignedCount(String assetName){
+        CountOfAssetsEntity countOfAssetsEntity = new CountOfAssetsEntity();
+
+        switch (assetName.toLowerCase()) {
+            case "laptop":
+                countOfAssetsEntity.setUnAssignedLaptopCount(countOfAssetsEntity.getUnAssignedLaptopCount() - 1);
+                countOfAssetsEntity.setAssignedLaptopCount(countOfAssetsEntity.getAssignedLaptopCount() + 1);
+                break;
+            case "mouse":
+                countOfAssetsEntity.setUnAssignedMouseCount(countOfAssetsEntity.getUnAssignedMouseCount() - 1);
+                countOfAssetsEntity.setAssignedMouseCount(countOfAssetsEntity.getAssignedMouseCount() + 1);
+                break;
+            case "laptopcharger":
+                countOfAssetsEntity.setUnAssignedLaptopChargerCount(countOfAssetsEntity.getUnAssignedLaptopChargerCount() - 1);
+                countOfAssetsEntity.setAssignedLaptopChargerCount(countOfAssetsEntity.getAssignedLaptopChargerCount() + 1);
+                break;
+            case "headphone":
+                countOfAssetsEntity.setUnAssignedHeadphonesCount(countOfAssetsEntity.getUnAssignedHeadphonesCount() - 1);
+                countOfAssetsEntity.setAssignedHeadphonesCount(countOfAssetsEntity.getAssignedHeadphonesCount() + 1);
+                break;
+            case "bag":
+                countOfAssetsEntity.setUnAssignedBagCount(countOfAssetsEntity.getUnAssignedBagCount() - 1);
+                countOfAssetsEntity.setAssignedBagCount(countOfAssetsEntity.getAssignedBagCount() + 1);
+                break;
+            case "datacard":
+                countOfAssetsEntity.setUnAssignedDataCardCount(countOfAssetsEntity.getUnAssignedDataCardCount() - 1);
+                countOfAssetsEntity.setAssignedDataCardCount(countOfAssetsEntity.getAssignedDataCardCount() + 1);
+                break;
+            case "mobile":
+                countOfAssetsEntity.setUnAssignedMobileCount(countOfAssetsEntity.getUnAssignedMobileCount() - 1);
+                countOfAssetsEntity.setAssignedMobileCount(countOfAssetsEntity.getAssignedMobileCount() + 1);
+                break;
+            case "camera":
+                countOfAssetsEntity.setUnAssignedCameraCount(countOfAssetsEntity.getUnAssignedCameraCount() - 1);
+                countOfAssetsEntity.setAssignedCameraCount(countOfAssetsEntity.getAssignedCameraCount() + 1);
+                break;
+            case "projector":
+                countOfAssetsEntity.setUnAssignedProjectorCount(countOfAssetsEntity.getUnAssignedProjectorCount() - 1);
+                countOfAssetsEntity.setAssignedProjectorCount(countOfAssetsEntity.getAssignedProjectorCount() + 1);
+                break;
+            case "firewall":
+                countOfAssetsEntity.setUnAssignedFireWallCount(countOfAssetsEntity.getUnAssignedFireWallCount() - 1);
+                countOfAssetsEntity.setAssignedFireWallCount(countOfAssetsEntity.getAssignedFireWallCount() + 1);
+                break;
+            case "switch":
+                countOfAssetsEntity.setUnAssignedSwitchCount(countOfAssetsEntity.getUnAssignedSwitchCount() - 1);
+                countOfAssetsEntity.setAssignedSwitchCount(countOfAssetsEntity.getAssignedSwitchCount() + 1);
+                break;
+            case "dvr":
+                countOfAssetsEntity.setUnAssignedDvrCount(countOfAssetsEntity.getUnAssignedDvrCount() - 1);
+                countOfAssetsEntity.setAssignedDvrCount(countOfAssetsEntity.getAssignedDvrCount() + 1);
+                break;
+            case "speaker":
+                countOfAssetsEntity.setUnAssignedSpeakerCount(countOfAssetsEntity.getUnAssignedSpeakerCount() - 1);
+                countOfAssetsEntity.setAssignedSpeakerCount(countOfAssetsEntity.getAssignedSpeakerCount() + 1);
+                break;
+            default:
+                // Handle unknown asset types
+                break;
+        }
+    }
+
+    public void totalCountImport(String assetName, String location) {
+        Optional<CountOfAssetsEntity> optionalEntity = assetCountRepository.findById(location);
+
+        if (!optionalEntity.isPresent()) {
+            // log.warn("Location not found: {}", location);
+            return;
+        }
+
+        CountOfAssetsEntity entity = optionalEntity.get();
+
+        switch (assetName.toLowerCase()) {
+            case "laptop":
+                entity.setLaptopCount(entity.getLaptopCount() + 1);
+                break;
+            case "mouse":
+                entity.setMouseCount(entity.getMouseCount() + 1);
+                break;
+            case "laptop charger":
+                entity.setLaptopChargerCount(entity.getLaptopChargerCount() + 1);
+                break;
+            case "head phone":
+                entity.setHeadPhonesCount(entity.getHeadPhonesCount() + 1);
+                break;
+            case "bag":
+                entity.setBagCount(entity.getBagCount() + 1);
+                break;
+            case "data card":
+                entity.setDataCardCount(entity.getDataCardCount() + 1);
+                break;
+            case "mobile":
+                entity.setMobileCount(entity.getMobileCount() + 1);
+                break;
+            case "camera":
+                entity.setCameraCount(entity.getCameraCount() + 1);
+                break;
+            case "projector":
+                entity.setProjectorCount(entity.getProjectorCount() + 1);
+                break;
+            case "fire wall":
+                entity.setFireWallCount(entity.getFireWallCount() + 1);
+                break;
+            case "switch":
+                entity.setSwitchCount(entity.getSwitchCount() + 1);
+                break;
+            case "dvr":
+                entity.setDvrCount(entity.getDvrCount() + 1);
+                break;
+            case "speaker":
+                entity.setSpeakerCount(entity.getSpeakerCount() + 1);
+                break;
+            default:
+                // log.warn("Unknown asset type: {}", assetName);
+                return;
+        }
+        assetCountRepository.save(entity);
+    }
+
+
+    public void unAssignedCountImport(String assetName, String location) {
+        Optional<CountOfAssetsEntity> optionalEntity = assetCountRepository.findById(location);
+
+        if (!optionalEntity.isPresent()) {
+            // log.warn("Location not found: {}", location);
+            return;
+        }
+
+        CountOfAssetsEntity entity = optionalEntity.get();
+
+        switch (assetName.toLowerCase()) {
+            case "laptop":
+                entity.setUnAssignedLaptopCount(entity.getUnAssignedLaptopCount() + 1);
+                break;
+            case "mouse":
+                entity.setUnAssignedMouseCount(entity.getUnAssignedMouseCount() + 1);
+                break;
+            case "laptop charger":
+                entity.setUnAssignedLaptopChargerCount(entity.getUnAssignedLaptopChargerCount() + 1);
+                break;
+            case "head phone":
+                entity.setUnAssignedHeadphonesCount(entity.getUnAssignedHeadphonesCount() + 1);
+                break;
+            case "bag":
+                entity.setUnAssignedBagCount(entity.getUnAssignedBagCount() + 1);
+                break;
+            case "data card":
+                entity.setUnAssignedDataCardCount(entity.getUnAssignedDataCardCount() + 1);
+                break;
+            case "mobile":
+                entity.setUnAssignedMobileCount(entity.getUnAssignedMobileCount() + 1);
+                break;
+            case "camera":
+                entity.setUnAssignedCameraCount(entity.getUnAssignedCameraCount() + 1);
+                break;
+            case "projector":
+                entity.setUnAssignedProjectorCount(entity.getUnAssignedProjectorCount() + 1);
+                break;
+            case "firewall":
+                entity.setUnAssignedFireWallCount(entity.getUnAssignedFireWallCount() + 1);
+                break;
+            case "switch":
+                entity.setUnAssignedSwitchCount(entity.getUnAssignedSwitchCount() + 1);
+                break;
+            case "dvr":
+                entity.setUnAssignedDvrCount(entity.getUnAssignedDvrCount() + 1);
+                break;
+            case "speaker":
+                entity.setUnAssignedSpeakerCount(entity.getUnAssignedSpeakerCount() + 1);
+                break;
+            default:
+                // log.warn("Unknown asset type: {}", assetName);
+                return;
+        }
+        assetCountRepository.save(entity);
+    }
+
+
+    public void assignedCountImport(String assetName, String location) {
+        Optional<CountOfAssetsEntity> optionalEntity = assetCountRepository.findById(location);
+
+        if (optionalEntity.isEmpty()) {
+            // log.warn("Location not found: {}", location);
+            return;
+        }
+
+        CountOfAssetsEntity entity = optionalEntity.get();
+
+        switch (assetName.toLowerCase()) {
+            case "laptop":
+                entity.setAssignedLaptopCount(entity.getAssignedLaptopCount() + 1);
+                break;
+            case "mouse":
+                entity.setAssignedMouseCount(entity.getAssignedMouseCount() + 1);
+                break;
+            case "laptop charger":
+                entity.setAssignedLaptopChargerCount(entity.getAssignedLaptopChargerCount() + 1);
+                break;
+            case "head phone":
+                entity.setAssignedHeadphonesCount(entity.getAssignedHeadphonesCount() + 1);
+                break;
+            case "bag":
+                entity.setAssignedBagCount(entity.getAssignedBagCount() + 1);
+                break;
+            case "data card":
+                entity.setAssignedDataCardCount(entity.getAssignedDataCardCount() + 1);
+                break;
+            case "mobile":
+                entity.setAssignedMobileCount(entity.getAssignedMobileCount() + 1);
+                break;
+            case "camera":
+                entity.setAssignedCameraCount(entity.getAssignedCameraCount() + 1);
+                break;
+            case "projector":
+                entity.setAssignedProjectorCount(entity.getAssignedProjectorCount() + 1);
+                break;
+            case "fire wall":
+                entity.setAssignedFireWallCount(entity.getAssignedFireWallCount() + 1);
+                break;
+            case "switch":
+                entity.setAssignedSwitchCount(entity.getAssignedSwitchCount() + 1);
+                break;
+            case "dvr":
+                entity.setAssignedDvrCount(entity.getAssignedDvrCount() + 1);
+                break;
+            case "speaker":
+                entity.setAssignedSpeakerCount(entity.getAssignedSpeakerCount() + 1);
+                break;
+            default:
+                // log.warn("Unknown asset type: {}", assetName);
+                return;
+        }
+        assetCountRepository.save(entity);
+    }
+
+
+
+
+    public CountOfAssetsDTO convertToDTO(CountOfAssetsEntity entity) {
+        return modelMapper.map(entity, CountOfAssetsDTO.class);
+    }
+
+    public CountOfAssetsEntity convertToEntity(CountOfAssetsDTO dto) {
+        return modelMapper.map(dto, CountOfAssetsEntity.class);
+    }
+
+    public List<CountOfAssetsDTO> convertEntityListToDTOList(List<CountOfAssetsEntity> entityList) {
+        return entityList.stream()
+                .map(entity -> modelMapper.map(entity, CountOfAssetsDTO.class))
+                .collect(Collectors.toList());
     }
 
 }

@@ -1,6 +1,6 @@
 package com.verinite.assetmangementtool.service;
 
-import com.verinite.assetmangementtool.entity.CountOfAssets;
+import com.verinite.assetmangementtool.entity.CountOfAssetsEntity;
 
 import java.util.List;
 import java.util.Map;
@@ -12,11 +12,11 @@ public interface CountOFAssetsService {
 //	public int getBagCount();
 //	public int getChargerCount();
 //	public int getHeadPhonesCount();
-    public CountOfAssets postAssetCount(CountOfAssets countOfAssets);
+    public CountOfAssetsEntity postAssetCount(CountOfAssetsEntity countOfAssetsEntity);
 
-    public Object updateAssetCount(String location, CountOfAssets countOfAssets);
+    public Object updateAssetCount(String location, CountOfAssetsEntity countOfAssetsEntity);
 
-    public List<CountOfAssets> getAll();
+    public List<CountOfAssetsEntity> getAll();
 
     public Map<String, Integer> getByLoc(String location);
 

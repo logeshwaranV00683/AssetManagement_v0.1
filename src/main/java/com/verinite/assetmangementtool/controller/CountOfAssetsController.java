@@ -1,7 +1,7 @@
 package com.verinite.assetmangementtool.controller;
 
 import com.verinite.assetmangementtool.entity.AssetsEntity;
-import com.verinite.assetmangementtool.entity.CountOfAssets;
+import com.verinite.assetmangementtool.entity.CountOfAssetsEntity;
 import com.verinite.assetmangementtool.service.AssetService;
 import com.verinite.assetmangementtool.service.CountOFAssetsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +23,12 @@ public class CountOfAssetsController {
     private AssetService assetService;
 
     @PostMapping("save/count")
-    public CountOfAssets saveCount(@RequestBody CountOfAssets countOfAssets) {
-        return countOFAssetsService.postAssetCount(countOfAssets);
+    public CountOfAssetsEntity saveCount(@RequestBody CountOfAssetsEntity countOfAssetsEntity) {
+        return countOFAssetsService.postAssetCount(countOfAssetsEntity);
     }
 
     @GetMapping("Assetcount/allLocationCount")
-    public List<CountOfAssets> getAll() {
+    public List<CountOfAssetsEntity> getAll() {
         return countOFAssetsService.getAll();
     }
 
@@ -48,8 +48,8 @@ public class CountOfAssetsController {
     }
 
     @PutMapping("update/count/{location}")
-    public Object updateCount(@PathVariable String location, @RequestBody CountOfAssets countOfAssets) {
-        return countOFAssetsService.updateAssetCount(location, countOfAssets);
+    public Object updateCount(@PathVariable String location, @RequestBody CountOfAssetsEntity countOfAssetsEntity) {
+        return countOFAssetsService.updateAssetCount(location, countOfAssetsEntity);
     }
 
     @GetMapping("count/totallaptops")

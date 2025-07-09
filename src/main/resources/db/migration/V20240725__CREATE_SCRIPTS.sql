@@ -108,6 +108,7 @@ CREATE TABLE `tbl_count` (
   `projector_count` int NOT NULL,
   `speaker_count` int NOT NULL,
   `switch_count` int NOT NULL,
+
   `un_assigned_bag_count` int NOT NULL,
   `un_assigned_camera_count` int NOT NULL,
   `un_assigned_data_card_count` int NOT NULL,
@@ -121,6 +122,20 @@ CREATE TABLE `tbl_count` (
   `un_assigned_projector_count` int NOT NULL,
   `un_assigned_speaker_count` int NOT NULL,
   `un_assigned_switch_count` int NOT NULL,
+
+    `assigned_bag_count` int NOT NULL,
+    `assigned_camera_count` int NOT NULL,
+    `assigned_data_card_count` int NOT NULL,
+    `assigned_dvr_count` int NOT NULL,
+    `assigned_fire_wall_count` int NOT NULL,
+    `assigned_headphones_count` int NOT NULL,
+    `assigned_laptop_charger_count` int NOT NULL,
+    `assigned_laptop_count` int NOT NULL,
+    `assigned_mobile_count` int NOT NULL,
+    `assigned_mouse_count` int NOT NULL,
+    `assigned_projector_count` int NOT NULL,
+    `assigned_speaker_count` int NOT NULL,
+    `assigned_switch_count` int NOT NULL,
   PRIMARY KEY (`location`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 

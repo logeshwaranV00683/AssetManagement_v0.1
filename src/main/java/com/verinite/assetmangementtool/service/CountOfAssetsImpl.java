@@ -1,7 +1,9 @@
 package com.verinite.assetmangementtool.service;
 
-import com.verinite.assetmangementtool.entity.CountOfAssets;
+import com.verinite.assetmangementtool.dto.CountOfAssetsDTO;
+import com.verinite.assetmangementtool.entity.CountOfAssetsEntity;
 import com.verinite.assetmangementtool.repository.AssetCountRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +13,10 @@ import java.util.*;
 public class CountOfAssetsImpl implements CountOFAssetsService {
     @Autowired
     AssetCountRepository assetCountRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
+
 
     @Override
     public int getLaptopCount(String id) {
@@ -24,25 +30,25 @@ public class CountOfAssetsImpl implements CountOFAssetsService {
 
 
     @Override
-    public CountOfAssets postAssetCount(CountOfAssets countOfAssets) {
-        return assetCountRepository.save(countOfAssets);
+    public CountOfAssetsEntity postAssetCount(CountOfAssetsEntity countOfAssetsEntity) {
+        return assetCountRepository.save(countOfAssetsEntity);
     }
 
     @Override
-    public Object updateAssetCount(String location, CountOfAssets countOfAssets) {
+    public Object updateAssetCount(String location, CountOfAssetsEntity countOfAssetsEntity) {
         try {
-            CountOfAssets countOfAssets2 = assetCountRepository.findByLocation(location);
-            if (countOfAssets.getLaptopCount() != 0)
-                countOfAssets2.setLaptopCount(countOfAssets.getLaptopCount());
-            if (countOfAssets.getBagCount() != 0)
-                countOfAssets2.setBagCount(countOfAssets.getBagCount());
-            if (countOfAssets.getLaptopChargerCount() != 0)
-                countOfAssets2.setLaptopChargerCount(countOfAssets.getLaptopChargerCount());
-            if (countOfAssets.getHeadPhonesCount() != 0)
-                countOfAssets2.setHeadPhonesCount(countOfAssets.getHeadPhonesCount());
-            if (countOfAssets.getMouseCount() != 0)
-                countOfAssets2.setMouseCount(countOfAssets.getMouseCount());
-            assetCountRepository.save(countOfAssets2);
+            CountOfAssetsEntity countOfAssetsEntity2 = assetCountRepository.findByLocation(location);
+            if (countOfAssetsEntity.getLaptopCount() != 0)
+                countOfAssetsEntity2.setLaptopCount(countOfAssetsEntity.getLaptopCount());
+            if (countOfAssetsEntity.getBagCount() != 0)
+                countOfAssetsEntity2.setBagCount(countOfAssetsEntity.getBagCount());
+            if (countOfAssetsEntity.getLaptopChargerCount() != 0)
+                countOfAssetsEntity2.setLaptopChargerCount(countOfAssetsEntity.getLaptopChargerCount());
+            if (countOfAssetsEntity.getHeadPhonesCount() != 0)
+                countOfAssetsEntity2.setHeadPhonesCount(countOfAssetsEntity.getHeadPhonesCount());
+            if (countOfAssetsEntity.getMouseCount() != 0)
+                countOfAssetsEntity2.setMouseCount(countOfAssetsEntity.getMouseCount());
+            assetCountRepository.save(countOfAssetsEntity2);
             return "Updated Successfully";
         } catch (Exception e) {
             return "No Location is found";
@@ -50,7 +56,7 @@ public class CountOfAssetsImpl implements CountOFAssetsService {
     }
 
     @Override
-    public List<CountOfAssets> getAll() {
+    public List<CountOfAssetsEntity> getAll() {
         return assetCountRepository.findAll();
     }
 
@@ -129,11 +135,13 @@ public class CountOfAssetsImpl implements CountOFAssetsService {
 
     @Override
     public int totalLaptops() {
-        List<CountOfAssets> countOfAssets = assetCountRepository.findAll();
+        List<CountOfAssetsEntity> countOfAssetEntities = assetCountRepository.findAll();
         int total = 0;
-        for (CountOfAssets i : countOfAssets) {
+        for (CountOfAssetsEntity i : countOfAssetEntities) {
             total += i.getLaptopCount();
         }
         return total;
     }
+
+
 }
