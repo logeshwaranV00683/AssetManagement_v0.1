@@ -1,12 +1,8 @@
 package com.verinite.assetmangementtool.dto;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.sql.Blob;
 
 @Data
 @NoArgsConstructor
@@ -22,8 +18,6 @@ public class EmployeeDto {
     private String status;
     private String department;
     private String designation;
-    @Schema(type = "string", format = "binary")
-    private MultipartFile picture;
 
     @Override
     public boolean equals(Object o) {

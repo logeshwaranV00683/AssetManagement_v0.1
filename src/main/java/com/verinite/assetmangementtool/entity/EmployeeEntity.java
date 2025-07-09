@@ -1,11 +1,11 @@
 package com.verinite.assetmangementtool.entity;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.*;
-import java.sql.Blob;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "tbl_employee")
@@ -32,9 +32,6 @@ public class EmployeeEntity {
     private String department;
 
     private String designation;
-    @Lob
-    @Column(name = "picture", columnDefinition = "LONGBLOB")
-    private Blob picture;
 
 
 }

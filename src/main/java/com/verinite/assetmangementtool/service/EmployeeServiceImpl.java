@@ -2,7 +2,6 @@ package com.verinite.assetmangementtool.service;
 
 import com.verinite.assetmangementtool.dto.EmployeeDto;
 import com.verinite.assetmangementtool.dto.EmployeeExportDto;
-import com.verinite.assetmangementtool.entity.CountOfAssets;
 import com.verinite.assetmangementtool.entity.EmployeeEntity;
 import com.verinite.assetmangementtool.repository.AdminRegistrationRepository;
 import com.verinite.assetmangementtool.repository.EmployeeRepository;
@@ -10,20 +9,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.sql.Blob;
-import java.sql.SQLException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -37,7 +34,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     AdminServiceImpl adminServiceImpl;
 
 
-    public EmployeeDto saveEmployee(EmployeeDto employeeDTO) throws IOException {
+    public EmployeeDto saveEmployee(EmployeeDto employeeDTO) {
         EmployeeEntity employeeEntity = dtoToEntity(employeeDTO);
 
         // Set default values
@@ -50,17 +47,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         String newEmpId = generateNewEmpId(lastEmpId);
         employeeEntity.setEmpId(newEmpId);
 
-
-        if (employeeDTO.getPicture() != null && !employeeDTO.getPicture().isEmpty()) {
-            Blob blob = null;
-            try {
-                blob = new javax.sql.rowset.serial.SerialBlob(employeeDTO.getPicture().getBytes());
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-            employeeEntity.setPicture(blob);
-        }
-
         // Check if the employee ID already exists
         if (employeeRepo.findByEmpId(employeeEntity.getEmpId()) == null) {
             EmployeeEntity savedEntity = employeeRepo.save(employeeEntity);
@@ -69,8 +55,6 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Employee already exists");
         }
     }
-
-
 
     // Example of generateNewEmpId method
     private String generateNewEmpId(String lastEmpId) {
@@ -360,18 +344,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         style.setBorderLeft(BorderStyle.THIN);
         style.setBorderRight(BorderStyle.THIN);
         return style;
-    }
-    @Override
-    public byte[] getEmployeePicture(String empId) throws Exception {
-        EmployeeEntity employee = employeeRepo.findById(empId)
-                .orElseThrow(() -> new Exception("Employee not found"));
-
-        Blob pictureBlob = employee.getPicture();
-        if (pictureBlob == null) return null;
-
-        try (InputStream inputStream = pictureBlob.getBinaryStream()) {
-            return inputStream.readAllBytes();
-        }
     }
 
 }

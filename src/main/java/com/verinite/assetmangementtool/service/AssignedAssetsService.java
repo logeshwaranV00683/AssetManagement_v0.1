@@ -28,6 +28,4 @@ public interface AssignedAssetsService {
     String unAssignAsset(List<String> serialNumber);
 
      List<AssignedAssetsEntity> getAllAssetsAssignedToParticularEmployee(String empId);
-
-
 }

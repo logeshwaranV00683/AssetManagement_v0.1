@@ -17,10 +17,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.sql.Blob;
 import java.util.List;
 
 @RestController
@@ -37,13 +35,13 @@ public class EmployeeController {
 //
 //		return employeeService.saveEmployee(null);
 //	}
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> saveEmployee(@ModelAttribute EmployeeDto employeeDto) {
+    @PostMapping("employee/saveemployee")
+    public ResponseEntity<EmployeeDto> saveEmployee(@RequestBody EmployeeDto employeeDTO) {
         try {
-            employeeService.saveEmployee(employeeDto);
-            return ResponseEntity.ok("Employee saved successfully");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
+            EmployeeDto savedEmployee = employeeService.saveEmployee(employeeDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedEmployee);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatus()).body(null);
         }
     }
 
@@ -150,22 +148,4 @@ public class EmployeeController {
     public ResponseEntity<?> getUserForAdmin(@PathVariable String empId) {
         return employeeService.getByIdForAdmin(empId);
     }
-
-    @GetMapping("/{empId}/picture")
-    public ResponseEntity<byte[]> getEmployeePicture(@PathVariable String empId) {
-        try {
-            byte[] imageBytes = employeeService.getEmployeePicture(empId);
-
-            if (imageBytes == null || imageBytes.length == 0) {
-                return ResponseEntity.noContent().build();
-            }
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.IMAGE_JPEG); // Change if needed
-            return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-    }
-
 }
