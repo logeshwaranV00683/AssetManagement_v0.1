@@ -1,4 +1,4 @@
-package com.verinite.assetmangementtool.service;
+package com.verinite.assetmangementtool.service.serviceImpl;
 
 import com.verinite.assetmangementtool.dto.AssignableAssetDto;
 import com.verinite.assetmangementtool.dto.AssignedAssetDtoList;
@@ -9,6 +9,8 @@ import com.verinite.assetmangementtool.entity.AssignedAssetsEntity;
 import com.verinite.assetmangementtool.entity.CountOfAssetsEntity;
 import com.verinite.assetmangementtool.entity.EmployeeEntity;
 import com.verinite.assetmangementtool.repository.*;
+import com.verinite.assetmangementtool.service.AssetsHistoryServices;
+import com.verinite.assetmangementtool.service.AssignedAssetsService;
 import com.verinite.assetmangementtool.service.mailservice.AckMailer;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

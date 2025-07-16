@@ -3,7 +3,7 @@ package com.verinite.assetmangementtool.controller;
 import com.verinite.assetmangementtool.dto.EmployeeDto;
 import com.verinite.assetmangementtool.dto.EmployeeExportDto;
 import com.verinite.assetmangementtool.entity.EmployeeEntity;
-import com.verinite.assetmangementtool.service.EmployeeServiceImpl;
+import com.verinite.assetmangementtool.service.serviceImpl.EmployeeServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

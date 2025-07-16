@@ -3,7 +3,7 @@ package com.verinite.assetmangementtool.service.mailservice;
 import com.verinite.assetmangementtool.dto.AdminRegistrationDto;
 import com.verinite.assetmangementtool.entity.AdminRegistrationEntity;
 import com.verinite.assetmangementtool.repository.AdminRegistrationRepository;
-import com.verinite.assetmangementtool.service.AdminServiceImpl;
+import com.verinite.assetmangementtool.service.serviceImpl.AdminServiceImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;

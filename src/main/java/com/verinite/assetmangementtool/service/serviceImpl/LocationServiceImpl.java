@@ -1,7 +1,8 @@
-package com.verinite.assetmangementtool.service;
+package com.verinite.assetmangementtool.service.serviceImpl;
 
 import com.verinite.assetmangementtool.entity.LocationEntity;
 import com.verinite.assetmangementtool.repository.LocationRepository;
+import com.verinite.assetmangementtool.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

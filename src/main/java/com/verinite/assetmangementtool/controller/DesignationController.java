@@ -4,7 +4,7 @@
  * import com.verinite.assetmangementtool.entity.AssetTypes; import
  * com.verinite.assetmangementtool.entity.DesignationEntity; import
  * com.verinite.assetmangementtool.service.DashboardService; import
- * com.verinite.assetmangementtool.service.DesignationServiceImpl; import
+ * com.verinite.assetmangementtool.service.serviceImpl.DesignationServiceImpl; import
  * org.springframework.beans.factory.annotation.Autowired; import
  * org.springframework.web.bind.annotation.*;
  *

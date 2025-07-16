@@ -1,9 +1,10 @@
-package com.verinite.assetmangementtool.service;
+package com.verinite.assetmangementtool.service.serviceImpl;
 
 import com.verinite.assetmangementtool.dto.AdminRegistrationDto;
 import com.verinite.assetmangementtool.dto.ResetPasswordDTO;
 import com.verinite.assetmangementtool.entity.AdminRegistrationEntity;
 import com.verinite.assetmangementtool.repository.AdminRegistrationRepository;
+import com.verinite.assetmangementtool.service.ForgotPasswordInterface;
 import com.verinite.assetmangementtool.service.mailservice.OTPMailer;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
-import java.io.UnsupportedEncodingException;
 import java.util.Optional;
 
 @Service

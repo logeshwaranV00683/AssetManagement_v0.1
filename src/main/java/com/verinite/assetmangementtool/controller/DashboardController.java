@@ -2,7 +2,7 @@ package com.verinite.assetmangementtool.controller;
 
 import com.verinite.assetmangementtool.entity.AssetsEntity;
 import com.verinite.assetmangementtool.service.AssetService;
-import com.verinite.assetmangementtool.service.DashboardServiceImpl;
+import com.verinite.assetmangementtool.service.serviceImpl.DashboardServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

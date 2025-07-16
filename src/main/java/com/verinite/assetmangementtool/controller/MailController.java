@@ -15,7 +15,7 @@
  * org.springframework.web.bind.annotation.RestController;
  *
  * import com.verinite.assetmangementtool.entity.AssetsEntity; import
- * com.verinite.assetmangementtool.service.AssignedAssetsServiceImpl; import
+ * com.verinite.assetmangementtool.service.serviceImpl.AssignedAssetsServiceImpl; import
  * com.verinite.assetmangementtool.service.mailservice.AckMail;
  *
  * @RestController

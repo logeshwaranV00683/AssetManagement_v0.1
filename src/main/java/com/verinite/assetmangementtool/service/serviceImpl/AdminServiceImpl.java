@@ -1,4 +1,4 @@
-package com.verinite.assetmangementtool.service;
+package com.verinite.assetmangementtool.service.serviceImpl;
 
 import com.verinite.assetmangementtool.config.JwtTokenUtil;
 import com.verinite.assetmangementtool.dto.AdminLoginDto;
@@ -8,6 +8,8 @@ import com.verinite.assetmangementtool.entity.EmployeeEntity;
 import com.verinite.assetmangementtool.model.JwtResponse;
 import com.verinite.assetmangementtool.repository.AdminRegistrationRepository;
 import com.verinite.assetmangementtool.repository.EmployeeRepository;
+import com.verinite.assetmangementtool.service.AdminService;
+import com.verinite.assetmangementtool.service.JwtUserDetailsServie;
 import com.verinite.assetmangementtool.service.mailservice.AdminPromotionMailer;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

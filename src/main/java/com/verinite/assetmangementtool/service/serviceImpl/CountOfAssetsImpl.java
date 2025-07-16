@@ -1,8 +1,8 @@
-package com.verinite.assetmangementtool.service;
+package com.verinite.assetmangementtool.service.serviceImpl;
 
-import com.verinite.assetmangementtool.dto.CountOfAssetsDTO;
 import com.verinite.assetmangementtool.entity.CountOfAssetsEntity;
 import com.verinite.assetmangementtool.repository.AssetCountRepository;
+import com.verinite.assetmangementtool.service.CountOFAssetsService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

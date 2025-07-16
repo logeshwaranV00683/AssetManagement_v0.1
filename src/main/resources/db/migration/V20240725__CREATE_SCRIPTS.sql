@@ -18,7 +18,7 @@ CREATE TABLE `tbl_admin` (
   `first_name` varchar(255) DEFAULT NULL,
   `last_name` varchar(255) DEFAULT NULL,
   `location` varchar(255) DEFAULT NULL,
-  `mail` varchar(255) DEFAULT NULL,
+  `mail` varchar(255) DEFAULT NULL UNIQUE,
   `password` varchar(255) NOT NULL,
   `role` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
@@ -71,7 +71,7 @@ CREATE TABLE `tbl_assets` (
   `warranty_date` varchar(255) DEFAULT NULL,
   `asset_sourced_by` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`asset_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `tbl_assets_history` (
   `history_id` bigint NOT NULL AUTO_INCREMENT,
@@ -85,6 +85,7 @@ CREATE TABLE `tbl_assets_history` (
 
 CREATE TABLE `tbl_assigned_assets` (
   `assigned_assets_id` int NOT NULL AUTO_INCREMENT,
+  `asset_name` varchar(255) DEFAULT NULL,
   `assigned_by` varchar(255) DEFAULT NULL,
   `assigned_date` datetime(6) DEFAULT NULL,
   `emp_id` varchar(255) DEFAULT NULL,

@@ -1,7 +1,7 @@
 package com.verinite.assetmangementtool.controller;
 
 import com.verinite.assetmangementtool.entity.AdminRegistrationEntity;
-import com.verinite.assetmangementtool.service.AdminServiceImpl;
+import com.verinite.assetmangementtool.service.serviceImpl.AdminServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

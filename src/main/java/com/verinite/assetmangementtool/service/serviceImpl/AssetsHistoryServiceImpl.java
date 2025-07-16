@@ -1,16 +1,15 @@
-package com.verinite.assetmangementtool.service;
+package com.verinite.assetmangementtool.service.serviceImpl;
 
 import com.verinite.assetmangementtool.entity.AssetsHistoryEntity;
 import com.verinite.assetmangementtool.entity.AssignedAssetsEntity;
 import com.verinite.assetmangementtool.repository.AssetsHistoryRepository;
 import com.verinite.assetmangementtool.repository.AssignedAssetsRepository;
+import com.verinite.assetmangementtool.service.AssetsHistoryServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.List;
 
 @Service

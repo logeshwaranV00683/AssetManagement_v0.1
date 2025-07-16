@@ -1,8 +1,9 @@
-package com.verinite.assetmangementtool.service;
+package com.verinite.assetmangementtool.service.serviceImpl;
 
 
 import com.verinite.assetmangementtool.entity.DesignationEntity;
 import com.verinite.assetmangementtool.repository.DesignationRepository;
+import com.verinite.assetmangementtool.service.DesignationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

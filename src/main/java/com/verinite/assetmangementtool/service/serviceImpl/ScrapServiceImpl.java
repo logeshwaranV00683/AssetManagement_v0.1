@@ -1,8 +1,9 @@
-package com.verinite.assetmangementtool.service;
+package com.verinite.assetmangementtool.service.serviceImpl;
 
 
 import com.verinite.assetmangementtool.entity.ScrapEntity;
 import com.verinite.assetmangementtool.repository.ScarpRepository;
+import com.verinite.assetmangementtool.service.ScrapService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
