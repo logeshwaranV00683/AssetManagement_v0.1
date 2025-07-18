@@ -20,8 +20,8 @@ public class AssetsEntity {
     private String empId;
     private String status;
     private String type;
-    private String purchaseDate;
-    private String warrantyDate;
+    private LocalDate purchaseDate;
+    private LocalDate warrantyDate;
     private String location;
     private Integer locCode;
     private String modelName;

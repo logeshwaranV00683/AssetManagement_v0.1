@@ -15,9 +15,9 @@ public class EmployeeDto {
 
     @Pattern(regexp = "^(V\\d{5})?$", message = "Must be V followed by 5 digits or empty")
     private String empId;
-    @Pattern(regexp = "^(?i)[a-z]+([ '-][a-z]+)+$", message = "First Name must contain only letters, spaces, or hyphens")
+    @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "First Name must contain only letters, spaces, or hyphens")
     private String firstName;
-    @Pattern(regexp = "^(?i)[a-z]+([ '-][a-z]+)+$", message = "Last Name must contain only letters, spaces, or hyphens")
+    @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "Last Name must contain only letters, spaces, or hyphens")
     private String lastName;
     @Pattern(regexp = "^(?i)(User|Admin)?$", message ="Role can be Admin or User" )
     private String role;

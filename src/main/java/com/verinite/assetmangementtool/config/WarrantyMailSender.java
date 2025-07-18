@@ -35,15 +35,14 @@ public class WarrantyMailSender {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         for (AssetsEntity entity : allAssets) {
-            String warrantyDateStr = entity.getWarrantyDate();
+            LocalDate warrantyDate = entity.getWarrantyDate();
 
-            if (warrantyDateStr == null || warrantyDateStr.trim().isEmpty()) {
+            if (warrantyDate == null) {
                 System.out.println("Skipping asset with empty warranty date: " + entity.getAssetName());
                 continue;
             }
 
             try {
-                LocalDate warrantyDate = LocalDate.parse(warrantyDateStr, formatter);
                 long daysLeft = ChronoUnit.DAYS.between(today, warrantyDate);
 
                 if (daysLeft == 90 || daysLeft == 60 || daysLeft == 30 || (daysLeft <= 15 && daysLeft >= 1)) {
@@ -52,7 +51,7 @@ public class WarrantyMailSender {
                 }
 
             } catch (DateTimeParseException e) {
-                System.out.println("Invalid warranty date format for asset: " + entity.getAssetName() + " -> " + warrantyDateStr);
+                System.out.println("Invalid warranty date format for asset: " + entity.getAssetName() + " -> " + warrantyDate);
             }
         }
 

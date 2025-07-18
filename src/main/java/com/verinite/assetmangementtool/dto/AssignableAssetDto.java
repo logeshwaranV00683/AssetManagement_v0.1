@@ -19,7 +19,6 @@ public class AssignableAssetDto {
     private String serialNumber;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate assignedDate;
-    private String assetName;
     @Pattern(regexp = "^(V\\d{5})?$", message = "Must be V followed by 5 digits or empty")
     private String assignedBy;
 }

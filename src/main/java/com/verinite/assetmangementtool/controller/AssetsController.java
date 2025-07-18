@@ -64,8 +64,8 @@ public class AssetsController implements ApplicationRunner {
 
     @PostMapping("asset/saveAsset")
     public ResponseEntity<AssetsDto> saveAsset(@RequestBody @Valid AssetsDto assetDto) {
-        AssetsDto savedAsset = assetService.saveAsset(assetDto);
-        return new ResponseEntity<>(savedAsset, HttpStatus.CREATED);
+        return assetService.saveAsset(assetDto);
+
     }
 
     @GetMapping("asset/id/{serialNumber}")

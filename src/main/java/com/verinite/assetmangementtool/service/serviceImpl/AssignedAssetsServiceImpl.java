@@ -124,7 +124,7 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
 
         String empId = assignableAssetDtos.get(0).getEmpId();
         EmployeeEntity employeeEntity = employeeRepository.findByEmpId(empId);
-        List<AssetsEntity> assetsEntityList = List.of();
+        List<AssetsEntity> assetsEntityList = new LinkedList<>();
         if (employeeEntity != null ) {
             try {
                 List<CountOfAssetsEntity> countOfAssetEntities = assetCountRepository.findAll();
@@ -152,15 +152,7 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
 
                         assignedAssetsRepository.save(assignedAssetsEntity);
                         assetsRepo.save(asset);
-                        assetsEntityList= assignableAssetDtos.stream().map((data)->{
-                            AssetsEntity assetsEntity= new AssetsEntity();
-                            assetsEntity.setEmpId(data.getEmpId());
-                            assetsEntity.setAssetName(data.getAssetName());
-                            assetsEntity.setSerialNumber(data.getSerialNumber());
-                            assetsEntity.setAssignedBy(data.getAssignedBy());
-                            assetsEntity.setAssignedDate(data.getAssignedDate());
-                            return assetsEntity;
-                        }).collect(Collectors.toList());
+                        assetsEntityList.add(asset);
                         assetsHistoryServices.saveHistory(assignedAssetsEntity);
                     } else if (asset.getStatus().equalsIgnoreCase("Scrap")) {
 

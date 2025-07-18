@@ -26,15 +26,13 @@ public class AssetsDto {
     private String status;
     @NotBlank
     private String type;
-    @NotBlank(message = "Purchase date is required")
-    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "Date must be in format yyyy-MM-dd")
-    private String purchaseDate;
-    @NotBlank(message = "Warranty date is required")
-    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "Date must be in format yyyy-MM-dd")
-    private String warrantyDate;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate purchaseDate;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate warrantyDate;
     @NotBlank
     private String location;
-    @Pattern(regexp = "^(\\d+)?$", message = "locCode Must be a Number")
+    @NotNull
     private Integer locCode;
     @NotBlank
     private String modelName;

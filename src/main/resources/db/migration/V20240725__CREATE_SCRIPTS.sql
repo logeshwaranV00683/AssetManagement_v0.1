@@ -63,12 +63,12 @@ CREATE TABLE `tbl_assets` (
   `location` varchar(255) DEFAULT NULL,
   `model_name` varchar(255) DEFAULT NULL,
   `operating_system` varchar(255) DEFAULT NULL,
-  `purchase_date` varchar(255) DEFAULT NULL,
+  `purchase_date` datetime(6) DEFAULT NULL,
   `return_date` datetime(6) DEFAULT NULL,
   `serial_number` varchar(255)  UNIQUE DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
   `type` varchar(255) DEFAULT NULL,
-  `warranty_date` varchar(255) DEFAULT NULL,
+  `warranty_date` datetime(6) DEFAULT NULL,
   `asset_sourced_by` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`asset_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

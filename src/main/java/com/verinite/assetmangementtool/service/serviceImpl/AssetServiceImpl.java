@@ -55,13 +55,17 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
     AssignedAssetsServiceImpl assignedAssetsService;
 
 
-    public AssetsDto saveAsset(AssetsDto assetDto) {
+    public ResponseEntity<AssetsDto> saveAsset(AssetsDto assetDto) {
         ModelMapper modelMapper = new ModelMapper();
         AssetsEntity assets = modelMapper.map(assetDto, AssetsEntity.class);
-        assets.setStatus("UnAssigned");
+
+        if(assetDto.getPurchaseDate().isAfter(assetDto.getWarrantyDate())) {
+            throw new IllegalArgumentException("Given warranty Date is lesser than Purchase Date or Equals to it");
+        }
+
 
         int count = 0;
-
+        assets.setStatus("UnAssigned");
         List<CountOfAssetsEntity> countOfAssetEntities = assetCountRepository.findAll();
         CountOfAssetsEntity countOfAssetsEntity2 = new CountOfAssetsEntity();
         CountOfAssetsEntity countOfAssetsEntity3 = new CountOfAssetsEntity();
@@ -142,9 +146,8 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                 }
             }
 
-
         assetRepo.save(assets);
-        return modelMapper.map(assets, AssetsDto.class);
+        return ResponseEntity.ok(modelMapper.map(assets, AssetsDto.class));
     }
 
     private void updateCountOfAssets(CountOfAssetsEntity countOfAssetsEntity, String assetName) {
@@ -251,9 +254,9 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             if (asset.getAssetName() != null)
                 existingAsset.setAssetName(asset.getAssetName());
             if (asset.getPurchaseDate() != null)
-                existingAsset.setPurchaseDate(asset.getPurchaseDate());
+                existingAsset.setPurchaseDate(LocalDate.parse(asset.getPurchaseDate()));
             if (asset.getWarrantyDate() != null)
-                existingAsset.setWarrantyDate(asset.getWarrantyDate());
+                existingAsset.setWarrantyDate(LocalDate.parse(asset.getWarrantyDate()));
             if (asset.getSerialNumber() != null)
                 existingAsset.setSerialNumber(asset.getSerialNumber());
             if (asset.getStatus() != null)
@@ -471,7 +474,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
 
         for (AssetsEntity i : all) {
             try {
-                Date date = new SimpleDateFormat("dd/MM/yyyy").parse(i.getWarrantyDate());
+                Date date = new SimpleDateFormat("dd/MM/yyyy").parse(String.valueOf(i.getWarrantyDate()));
                 Date todatDate = new SimpleDateFormat("dd/MM/yyyy").parse(today);
                 if (date.compareTo(todatDate) > 0) {
                     assetsEntities.add(i);
@@ -496,7 +499,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
 
         for (AssetsEntity i : all) {
             try {
-                Date date = new SimpleDateFormat("dd/MM/yyyy").parse(i.getWarrantyDate());
+                Date date = new SimpleDateFormat("dd/MM/yyyy").parse(String.valueOf(i.getWarrantyDate()));
                 Date todayDate = new SimpleDateFormat("dd/MM/yyyy").parse(today);
                 if (date.compareTo(todayDate) < 0) {
                     assetsEntities.add(i);
@@ -861,8 +864,8 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             asset.setSerialNumber(getCellValue(row, 1));
             asset.setStatus("Unassigned");
             asset.setType(getCellValue(row, 3));
-            asset.setPurchaseDate(getCellValue(row, 4));
-            asset.setWarrantyDate(getCellValue(row, 5));
+            asset.setPurchaseDate(parseDateSafe(getCellValue(row, 4)));
+            asset.setWarrantyDate(parseDateSafe(getCellValue(row, 5)));
             asset.setLocation(getCellValue(row, 6));
             asset.setLocCode(parseIntSafe(getCellValue(row, 7)));
             asset.setModelName(getCellValue(row, 8));
@@ -873,7 +876,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                 log.warn("Skipping row due to missing serial number.");continue;
             }
             if(assetRepo.existsBySerialNumber(asset.getSerialNumber())){ log.warn("Skipping row due to already exist serial number.");continue;}
-
+            if(asset.getPurchaseDate().isAfter(asset.getWarrantyDate())){log.warn("Warranty Date is lower than purchase date.");continue;}
             saveAsset(asset);
             assignedAssetsService.unAssignedCountImport((Objects.requireNonNull(getCellValue(row, 3))),(Objects.requireNonNull(getCellValue(row, 6))));
 
@@ -902,8 +905,8 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                 asset.setSerialNumber(getCellValue(row, 1));
                 asset.setStatus("Assigned");
                 asset.setType(getCellValue(row, 4));
-                asset.setPurchaseDate(getCellValue(row, 5));
-                asset.setWarrantyDate(getCellValue(row, 6));
+                asset.setPurchaseDate(parseDateSafe(getCellValue(row, 5)));
+                asset.setWarrantyDate(parseDateSafe(getCellValue(row, 6)));
                 asset.setLocation(getCellValue(row, 7));
                 asset.setLocCode(parseIntSafe(getCellValue(row, 8)));
                 asset.setModelName(getCellValue(row, 9));
@@ -919,15 +922,15 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                 if (asset.getSerialNumber() == null || asset.getSerialNumber().isEmpty()) {
                     log.warn("Skipping row due to missing serial number while Importing Assigned Asset.");continue;
                 }
-                if(!assetRepo.existsBySerialNumber(asset.getSerialNumber()))
+                if(!assetRepo.existsBySerialNumber(asset.getSerialNumber())&&asset.getPurchaseDate().isAfter(asset.getWarrantyDate()))
                 {
-                    asset = saveAsset(asset);
+                    asset = saveAsset(asset).getBody();
                 }
                 else{
                     log.warn("Skipping save the row due to already exist serial number while Importing Assigned Asset.");
 
                     AssetsEntity assetsEntity = assetRepo.findBySerialNumber(asset.getSerialNumber());
-                    if(assetsEntity.getAssetName().equalsIgnoreCase(asset.getAssetName())&&assetsEntity.getPurchaseDate().equalsIgnoreCase(asset.getPurchaseDate()))
+                    if(assetsEntity.getAssetName().equalsIgnoreCase(asset.getAssetName())&&assetsEntity.getPurchaseDate().isEqual(asset.getPurchaseDate()))
                     {
                         if(asset.getStatus().equalsIgnoreCase("unassigned")) {
                             assetsEntity.setAssignedBy(asset.getAssignedBy());
@@ -986,7 +989,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
 
             asset.setAssetName(getCellValue(row, 0));
             asset.setSerialNumber(getCellValue(row, 1));
-            asset.setPurchaseDate(getCellValue(row, 2));
+            asset.setPurchaseDate(parseDateSafe(getCellValue(row, 2)));
 
             if (asset.getSerialNumber() == null || asset.getSerialNumber().isEmpty()) {
                 log.warn("Skipping row due to missing serial number while importing Scrap Asset.");continue;
@@ -994,7 +997,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
            AssetsEntity assetsEntity = assetRepo.findBySerialNumber(asset.getSerialNumber());
             if(assetsEntity!=null)
             {
-                if(assetsEntity.getAssetName().equalsIgnoreCase(asset.getAssetName())&&assetsEntity.getPurchaseDate().equalsIgnoreCase(asset.getPurchaseDate()))
+                if(assetsEntity.getAssetName().equalsIgnoreCase(asset.getAssetName())&&assetsEntity.getPurchaseDate().isEqual(asset.getPurchaseDate()))
                  deleteAsset(assetsEntity.getAssetId());
                 continue;
             }
@@ -1002,14 +1005,13 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             asset.setAssignedBy(getCellValue(row, 4));
             asset.setOperatingSystem(getCellValue(row, 5));
             asset.setType(getCellValue(row, 7));
-            asset.setWarrantyDate("00-00-0000");
             asset.setLocation(getCellValue(row, 8));
             asset.setLocCode(parseIntSafe(getCellValue(row, 9)));
             asset.setModelName(getCellValue(row, 10));
             asset.setAddedBy(getCellValue(row, 11));
             asset.setAssetSourcedBy(getCellValue(row, 12));
-
-            deleteAsset(saveAsset(asset).getAssetId());
+            if(asset.getPurchaseDate().isAfter(asset.getWarrantyDate())){log.warn("Warranty Date is lower than purchase date @ Importing Scrap asset");continue;}
+            deleteAsset(Objects.requireNonNull(saveAsset(asset).getBody()).getAssetId());
         }
     }
 
