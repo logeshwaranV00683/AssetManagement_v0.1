@@ -26,10 +26,12 @@ public class EmployeeDto {
     @Pattern(regexp = "^(0|\\+91)?[6-9]\\d{9}$", message = "Valid Mobile Number Needed")
     private String mobile;
     @NotBlank
+    @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "Location must contain only letters, spaces, or hyphens")
     private String location;
     @Pattern(regexp = "^(?i)(Active|Inactive)?$", message ="status can be Active or Inactive" )
     private String status;
     @NotBlank
+    @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "Department must contain only letters, spaces, or hyphens")
     private String department;
     @NotBlank
     private String designation;

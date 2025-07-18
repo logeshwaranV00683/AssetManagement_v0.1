@@ -47,16 +47,16 @@ public class EmployeeController {
         }
     }
 
-    @PostMapping("employee/save/bulk")
-    public ResponseEntity<List<EmployeeDto>> saveEmployees(@RequestBody  @NotEmpty(message = "Employee list cannot be empty") List<@Valid EmployeeDto> employeeDTOs) {
-        try {
-            List<EmployeeDto> savedEmployees = employeeService.saveBulkEmployee(employeeDTOs);
-            return new ResponseEntity<>(savedEmployees, HttpStatus.CREATED);
-        } catch (Exception e) {
-            // Handle exceptions (like if there is an error with saving the employees)
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+//    @PostMapping("employee/save/bulk")
+//    public ResponseEntity<List<EmployeeDto>> saveEmployees(@RequestBody  @NotEmpty(message = "Employee list cannot be empty") List<@Valid EmployeeDto> employeeDTOs) {
+//        try {
+//            List<EmployeeDto> savedEmployees = employeeService.saveBulkEmployee(employeeDTOs);
+//            return new ResponseEntity<>(savedEmployees, HttpStatus.CREATED);
+//        } catch (Exception e) {
+//            // Handle exceptions (like if there is an error with saving the employees)
+//            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 
     @GetMapping("employee/employeelist")
     public List<EmployeeEntity> allEmployee() {
