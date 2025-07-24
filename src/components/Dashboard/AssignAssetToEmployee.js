@@ -58,6 +58,20 @@ function AssignAssetToEmployee({ open, onClose, employee, refresh }) {
     }
   }, [open, employee]);
 
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (menuOpen && event.key === "Enter") {
+        event.preventDefault();
+        handleOkClick();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [menuOpen, selectedAssets]);
+
   const handleSelectClick = (event) => {
     setAnchorEl(event.currentTarget);
     setMenuOpen(true);
@@ -80,7 +94,7 @@ function AssignAssetToEmployee({ open, onClose, employee, refresh }) {
         empId: employee.empId,
         serialNumber,
         assetName: asset?.assetName || "",
-        assignedDate: new Date().toISOString().split('T', 1)[0],
+        assignedDate: new Date().toISOString().split("T", 1)[0],
         assignedBy: user?.empId || "admin",
       };
     });
@@ -92,11 +106,10 @@ function AssignAssetToEmployee({ open, onClose, employee, refresh }) {
     } catch (error) {
       if (error.status === 406) {
         showWarningAlert("Asset Already Assigned", "Some assets are already assigned.");
-      } else if(error.status===404){
-            return showWarningAlert("Employee Status Was In InActive")
-        } 
-      else {
-        showErrorAlert("Assigning Asset  Failed", "Could not assign assets.");
+      } else if (error.status === 404) {
+        return showWarningAlert("Employee Status Was In InActive");
+      } else {
+        showErrorAlert("Assigning Asset Failed", "Could not assign assets.");
       }
     }
   };
@@ -128,38 +141,37 @@ function AssignAssetToEmployee({ open, onClose, employee, refresh }) {
           </button>
           <div className="import-3d-file-wrapper">
             {alreadyAssignedAssets.length > 0 && (
-             <Box className="assigned-assets-box">
-  <strong>Already Assigned Assets:</strong>
-  <ul>
-    {alreadyAssignedAssets.map((asset) => (
-      <li key={asset.serialNumber}>
-        <Checkbox
-          size="small"
-          checked={selectedUnassignAssets.includes(asset.serialNumber)}
-          onChange={(e) => {
-            const sn = asset.serialNumber;
-            setSelectedUnassignAssets((prev) =>
-              e.target.checked
-                ? [...prev, sn]
-                : prev.filter((v) => v !== sn)
-            );
-          }}
-        />
-        {asset.assetName} ({asset.serialNumber})
-      </li>
-    ))}
-  </ul>
-  {selectedUnassignAssets.length > 0 && (
-    <button className="unassign-button" onClick={handleUnassign}>
-      Unassign
-    </button>
-  )}
-</Box>
-
+              <Box className="assigned-assets-box">
+                <strong>Already Assigned Assets:</strong>
+                <ul>
+                  {alreadyAssignedAssets.map((asset) => (
+                    <li key={asset.serialNumber}>
+                      <Checkbox
+                        size="small"
+                        checked={selectedUnassignAssets.includes(asset.serialNumber)}
+                        onChange={(e) => {
+                          const sn = asset.serialNumber;
+                          setSelectedUnassignAssets((prev) =>
+                            e.target.checked
+                              ? [...prev, sn]
+                              : prev.filter((v) => v !== sn)
+                          );
+                        }}
+                      />
+                      {asset.assetName} ({asset.serialNumber})
+                    </li>
+                  ))}
+                </ul>
+                {selectedUnassignAssets.length > 0 && (
+                  <button className="unassign-button" onClick={handleUnassign}>
+                    Unassign
+                  </button>
+                )}
+              </Box>
             )}
-             <div className="import-3d-title">
-            Assign Assets to {employee?.name}
-          </div>
+            <div className="import-3d-title">
+              Assign Assets to {employee?.name}
+            </div>
             <FormControl fullWidth>
               <InputLabel>Add Assets</InputLabel>
               <OutlinedInput
