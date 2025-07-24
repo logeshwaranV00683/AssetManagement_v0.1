@@ -5,8 +5,8 @@ CREATE TABLE `tbl_employee` (
   `first_name` varchar(255) DEFAULT NULL,
   `last_name` varchar(255) DEFAULT NULL,
   `location` varchar(255) DEFAULT NULL,
-  `mail` varchar(255) DEFAULT NULL,
-  `mobile` varchar(255) DEFAULT NULL,
+  `mail` varchar(255) DEFAULT NULL UNIQUE,
+  `mobile` varchar(255) DEFAULT NULL UNIQUE,
   `role` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`emp_id`)
@@ -28,9 +28,7 @@ CREATE TABLE `tbl_admin` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO `tbl_admin` (`emp_id`, `first_name`, `last_name`, `location`, `mail`, `password`, `role`, `status`)
-VALUES 
-('V00155', 'Gauri', 'Khalate', 'Pune', 'gauri.khalate@verinite.com', '$2a$10$WoCEnk6ZBoSW3FrjBTaKT.LIg/1T57USmRZYQPA.Okfc6Mizpqi1C', 'admin', 'Active'),
-('V00557', 'Soundararajan', 'S', 'Pune', 'soundararajan.s@verinite.com', '$2a$10$DMdRMpQ4KpF400DSngiHfu/SaOusIS2OyiDMQJfzZgqyHVK4JGmMu', 'admin', 'Active');
+VALUES ('V00000', 'admin', '', 'Pune', 'logeshwaran.s@verinite.com', '$2a$10$.KSwveJZ.bG2f4FsPfWe7eavi9cEjj305v6RzDyh/yAEfCbd46cfS', 'admin', 'Active');
 
 
 CREATE TABLE `asset_types` (

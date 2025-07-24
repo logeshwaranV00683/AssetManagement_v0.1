@@ -51,8 +51,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         // Check if the employee ID already exists
         if (employeeRepo.findByEmpId(employeeEntity.getEmpId()) == null) {
-            EmployeeEntity savedEntity = employeeRepo.save(employeeEntity);
-            return entityToDto(savedEntity);
+            if(!(employeeRepo.existsByMail(employeeEntity.getMail()) || employeeRepo.existsByMobile(employeeEntity.getMobile()))){
+                EmployeeEntity savedEntity = employeeRepo.save(employeeEntity);
+                return entityToDto(savedEntity);
+            }
+            else {
+                throw new ResponseStatusException(HttpStatus.CONFLICT,"Employee Mail or Mobile already exists");
+            }
         } else {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Employee already exists");
         }
@@ -64,7 +69,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         return String.format("V%05d", num);
     }
 
-    public List<EmployeeDto> saveBulkEmployee(List<EmployeeDto> employeeDTOs) {
+    public void saveBulkEmployee(List<EmployeeDto> employeeDTOs) {
 
         List<EmployeeEntity> employeeEntities = employeeDTOs.stream().map(this::dtoToEntity)
                 .toList();
@@ -72,7 +77,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .filter(employeeEntity -> employeeEntity.getEmpId()!=null&&!employeeEntity.getEmpId().isEmpty()&&employeeRepo.findByEmpId(employeeEntity.getEmpId()) == null)
                 .collect(Collectors.toList());
         List<EmployeeEntity> savedEntities = employeeRepo.saveAll(newEmployees);
-        return savedEntities.stream().map(this::entityToDto).collect(Collectors.toList());
+//        return savedEntities.stream().map(this::entityToDto).collect(Collectors.toList());
     }
 
     private EmployeeEntity dtoToEntity(EmployeeDto dto) {
@@ -180,6 +185,11 @@ public class EmployeeServiceImpl implements EmployeeService {
                             .append("; ");
                 }
                 skippedData.put(employee.getEmpId(), "Validation Failed: " + sb);
+                continue;
+            }
+            if(employeeRepo.existsByMail(employee.getMail()) || employeeRepo.existsByMobile(employee.getMobile())){
+                log.warn("Duplicate Mail or Mobile found (ignored): {}", employee.getEmpId());
+                skippedData.put(employee.getEmpId(),"Duplicate or Invalid Mail and Mobile found (ignored)");
                 continue;
             }
             if (!employees.add(employee)) {

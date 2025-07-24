@@ -38,12 +38,12 @@ public class EmployeeController {
 //		return employeeService.saveEmployee(null);
 //	}
     @PostMapping("employee/saveemployee")
-    public ResponseEntity<EmployeeDto> saveEmployee(@RequestBody @Valid EmployeeDto employeeDTO) {
+    public ResponseEntity<?> saveEmployee(@RequestBody @Valid EmployeeDto employeeDTO) {
         try {
             EmployeeDto savedEmployee = employeeService.saveEmployee(employeeDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedEmployee);
         } catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatus()).body(null);
+            return ResponseEntity.status(e.getStatus()).body(e.getMessage());
         }
     }
 

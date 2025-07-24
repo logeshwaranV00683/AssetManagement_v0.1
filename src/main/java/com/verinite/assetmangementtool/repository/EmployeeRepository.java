@@ -22,4 +22,7 @@ public interface EmployeeRepository extends JpaRepository<EmployeeEntity, String
 
     EmployeeEntity findTopByOrderByEmpIdDesc();
 
+    boolean existsByMail(String mail);
+
+    boolean existsByMobile(String mobile);
 }
