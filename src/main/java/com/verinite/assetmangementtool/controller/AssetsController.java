@@ -123,12 +123,11 @@ public class AssetsController implements ApplicationRunner {
             @ApiResponse(responseCode = "200", description = "Successful import")
     })
     @PostMapping(value = "asset/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> importExcel(
+    public ResponseEntity<?> importExcel(
             @Parameter(description = "Excel file", content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE))
             @RequestParam("file") MultipartFile file) {
         try {
-            assetService.importAssetsFromExcel(file.getInputStream());
-            return ResponseEntity.ok("Data imported successfully!");
+            return assetService.importAssetsFromExcel(file.getInputStream());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
         }

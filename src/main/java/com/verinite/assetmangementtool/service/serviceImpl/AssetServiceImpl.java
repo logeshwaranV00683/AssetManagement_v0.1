@@ -17,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -53,16 +55,17 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
 
     @Autowired
     AssignedAssetsServiceImpl assignedAssetsService;
+    @Autowired
+    private Validator validator;
 
 
     public ResponseEntity<AssetsDto> saveAsset(AssetsDto assetDto) {
         ModelMapper modelMapper = new ModelMapper();
         AssetsEntity assets = modelMapper.map(assetDto, AssetsEntity.class);
 
-        if(assetDto.getPurchaseDate().isAfter(assetDto.getWarrantyDate())) {
-            throw new IllegalArgumentException("Given warranty Date is lesser than Purchase Date or Equals to it");
+        if (assets.getWarrantyDate().isBefore(assets.getPurchaseDate())) {
+            throw new IllegalArgumentException("Warranty Date must not be before Purchase Date");
         }
-
 
         int count = 0;
         assets.setStatus("UnAssigned");
@@ -86,7 +89,6 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             count += 1;
             System.out.println(countOfAssetEntities.size());
         }
-
             for (CountOfAssetsEntity i : countOfAssetEntities) {
                 if (i.getLocation().equalsIgnoreCase(assetDto.getLocation())) {
                     if (assetDto.getType().equalsIgnoreCase("Laptop")) {
@@ -141,11 +143,9 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                         i.setSpeakerCount(i.getSpeakerCount() + 1);
                         i.setUnAssignedSpeakerCount(i.getUnAssignedSpeakerCount() + 1);
                     }
-
                     assetCountRepository.save(i);
                 }
             }
-
         assetRepo.save(assets);
         return ResponseEntity.ok(modelMapper.map(assets, AssetsDto.class));
     }
@@ -333,40 +333,34 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                     existingAsset.setModelName(asset.getModelName());
                 }
 
-                // Save the updated asset
                 AssetsEntity updatedAsset = assetRepo.save(existingAsset);
                 return ResponseEntity.ok(updatedAsset);
 
             } else {
-                // Asset is marked as 'Scrap', cannot be updated
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("The asset is marked as Scrap and cannot be updated.");
             }
 
         } catch (NoSuchElementException e) {
-            // Asset with the given serial number does not exist
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Asset with the provided serial number not found.");
         } catch (Exception e) {
-            // Handle any other exceptions
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("An error occurred while updating the asset.");
         }
     }
 
     @Override
-    public Object deleteAsset(int id) {
+    public void deleteAsset(int id) {
         try {
             AssetsEntity asset = assetRepo.findById(id).get();
             System.out.println(asset.getAssetId());
             if (!asset.getStatus().equalsIgnoreCase("Scrap")) {
                 asset.setStatus("Scrap");
 
-                return assetRepo.save(asset);
+                assetRepo.save(asset);
                 // return scarpRepository.save(asset);
-            } else
-                return "Already in Scrap";
-        } catch (NoSuchElementException e) {
-            return "Id not Found";
+            }
+        } catch (NoSuchElementException ignored) {
         }
 
     }
@@ -837,26 +831,43 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
     }
 
     @Override
-    public void importAssetsFromExcel(InputStream inputStream) throws IOException {
-        Workbook workbook = new XSSFWorkbook(inputStream);
+    public ResponseEntity<?> importAssetsFromExcel(InputStream inputStream) throws IOException {
+        try (Workbook workbook = new XSSFWorkbook(inputStream)) {
+            Map<String, String> data = new HashMap<>();
 
-        importUnassignedAssets(workbook.getSheet("Unassigned Assets"));
-        importAssignedAssets(workbook.getSheet("Assigned Assets"));
-        importScrapedAssets(workbook.getSheet("Scraped Assets"));
+            Map<String, String> unassigned = importUnassignedAssets(workbook.getSheet("Unassigned Assets"));
+            Map<String, String> assigned = importAssignedAssets(workbook.getSheet("Assigned Assets"));
 
-        workbook.close();
+            if (unassigned != null) {
+                unassigned.entrySet().stream()
+                        .filter(e -> e.getKey() != null && e.getValue() != null)
+                        .forEach(e -> data.put(e.getKey(), e.getValue()));
+            }
+
+            if (assigned != null) {
+                assigned.entrySet().stream()
+                        .filter(e -> e.getKey() != null && e.getValue() != null)
+                        .forEach(e -> data.put(e.getKey(), e.getValue()));
+            }
+            Map<String, String> scrapedAssets=importScrapedAssets(workbook.getSheet("Scraped Assets"));
+            if (scrapedAssets != null) {
+                scrapedAssets.entrySet().stream()
+                        .filter(e -> e.getKey() != null && e.getValue() != null)
+                        .forEach(e -> data.put(e.getKey(), e.getValue()));
+            }
+            return data.isEmpty()?ResponseEntity.ok("All Data Inserted Successfully into Data Base"):ResponseEntity.ok(data);
+        }
     }
 
-
-    private void importUnassignedAssets(Sheet sheet) {
+    private Map<String,String> importUnassignedAssets(Sheet sheet) {
         if (sheet == null) {
             log.warn("Sheet 'Unassigned Assets' not found.");
-            return;
+            return null;
         }
 
         Iterator<Row> rows = sheet.iterator();
         if (rows.hasNext()) rows.next();
-
+        Map<String,String> skippedData = new HashMap<>();
         while (rows.hasNext()) {
             Row row = rows.next();
             AssetsDto asset = new AssetsDto();
@@ -872,37 +883,54 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             asset.setOperatingSystem(getCellValue(row, 9));
             asset.setAddedBy(getCellValue(row, 10));
             asset.setAssetSourcedBy(getCellValue(row, 11));
-            if (asset.getSerialNumber() == null || asset.getSerialNumber().isEmpty()) {
-                log.warn("Skipping row due to missing serial number.");continue;
+            if(assetRepo.existsBySerialNumber(asset.getSerialNumber())){
+                log.warn("Skipping row due to already exist serial number while importing Unassigned Asset.");
+                skippedData.put(asset.getSerialNumber(),"Skipping row due to already exist serial number while importing Unassigned Asset");
+                continue;}
+            Set<ConstraintViolation<AssetsDto>> violations = validator.validate(asset);
+            if (!violations.isEmpty()) {
+                StringBuilder sb = new StringBuilder();
+                for (ConstraintViolation<AssetsDto> v : violations) {
+                    sb.append(v.getPropertyPath())
+                            .append(": ")
+                            .append(v.getMessage())
+                            .append("; ");
+                }
+                skippedData.put(asset.getSerialNumber(), "Validation Failed: " + sb);
+                continue;
             }
-            if(assetRepo.existsBySerialNumber(asset.getSerialNumber())){ log.warn("Skipping row due to already exist serial number.");continue;}
-            if(asset.getPurchaseDate().isAfter(asset.getWarrantyDate())){log.warn("Warranty Date is lower than purchase date.");continue;}
-            saveAsset(asset);
+            try {
+                saveAsset(asset);
+            }catch (IllegalArgumentException e)
+            {
+                skippedData.put(asset.getSerialNumber(), e.getMessage());
+                continue;
+            }
             assignedAssetsService.unAssignedCountImport((Objects.requireNonNull(getCellValue(row, 3))),(Objects.requireNonNull(getCellValue(row, 6))));
 
             assignedAssetsService.totalCountImport((Objects.requireNonNull(getCellValue(row, 3))),(Objects.requireNonNull(getCellValue(row, 6))));
         }
+        return skippedData;
     }
 
-    private void importAssignedAssets(Sheet sheet) {
+    private Map<String,String> importAssignedAssets(Sheet sheet) {
         if (sheet == null) {
             log.warn("Sheet 'Assigned Assets' not found.");
-            return;
+            return null;
         }
 
 
         Iterator<Row> rows = sheet.iterator();
         if (rows.hasNext()) rows.next();
-
+        Map<String,String> skippedData = new HashMap<>();
         while (rows.hasNext()) {
             Row row = rows.next();
             AssetsDto asset = new AssetsDto();
             asset.setEmpId(getCellValue(row, 2));
-
+            asset.setSerialNumber(getCellValue(row, 1));
             if (asset.getEmpId()!=null&&employeeRepository.existsById(asset.getEmpId())) {
                 System.out.println(asset.getEmpId());
                 asset.setAssetName(getCellValue(row, 0));
-                asset.setSerialNumber(getCellValue(row, 1));
                 asset.setStatus("Assigned");
                 asset.setType(getCellValue(row, 4));
                 asset.setPurchaseDate(parseDateSafe(getCellValue(row, 5)));
@@ -919,12 +947,29 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                 assignedAssetsService.assignedCountImport((Objects.requireNonNull(getCellValue(row, 4))),(Objects.requireNonNull(getCellValue(row, 7))));
                 assignedAssetsService.totalCountImport((Objects.requireNonNull(getCellValue(row, 4))),(Objects.requireNonNull(getCellValue(row, 7))));
 
-                if (asset.getSerialNumber() == null || asset.getSerialNumber().isEmpty()) {
-                    log.warn("Skipping row due to missing serial number while Importing Assigned Asset.");continue;
+                Set<ConstraintViolation<AssetsDto>> violations = validator.validate(asset);
+                if (!violations.isEmpty()) {
+                    StringBuilder sb = new StringBuilder();
+                    for (ConstraintViolation<AssetsDto> v : violations) {
+                        sb.append(v.getPropertyPath())
+                                .append(": ")
+                                .append(v.getMessage())
+                                .append("; ");
+                    }
+                    skippedData.put(asset.getSerialNumber(), "Validation Failed: " + sb);
+                    continue;
                 }
-                if(!assetRepo.existsBySerialNumber(asset.getSerialNumber())&&asset.getPurchaseDate().isAfter(asset.getWarrantyDate()))
+
+                if(!assetRepo.existsBySerialNumber(asset.getSerialNumber()))
                 {
-                    asset = saveAsset(asset).getBody();
+                        try {
+                            asset = saveAsset(asset).getBody();
+                        }
+                        catch(IllegalArgumentException e)
+                        {
+                            skippedData.put(asset.getSerialNumber(), e.getMessage());
+                            continue;
+                        }
                 }
                 else{
                     log.warn("Skipping save the row due to already exist serial number while Importing Assigned Asset.");
@@ -940,11 +985,13 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                         }
                         else {
                             log.warn("Skipping the Asset Assigning Because Asset Already Present and it status is {} [Serial Number: {}]", asset.getStatus(),asset.getSerialNumber());
+                            skippedData.put(asset.getSerialNumber(),"Skipping the Asset Assigning Because Asset Already Present and it status is "+asset.getStatus());
                             continue;
                         }
                     }
                     else {
                         log.warn("Skipping Asset Assigning due to already exist serial number while Importing Assigned Asset, Importing asset differ from the DB asset [Serial Number: {}]",asset.getSerialNumber());
+                        skippedData.put(asset.getSerialNumber(),"Skipping Asset Assigning due to already exist serial number while Importing Assigned Asset, Importing asset differ from the data base asset ");
                         continue;
                     }
                 }
@@ -965,31 +1012,33 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                 }
                 assignedAssetsService.assignedCountImport((Objects.requireNonNull(getCellValue(row, 4))),(Objects.requireNonNull(getCellValue(row, 7))));
                 assignedAssetsService.totalCountImport((Objects.requireNonNull(getCellValue(row, 4))),(Objects.requireNonNull(getCellValue(row, 7))));
-
                 assignedAssetsRepository.save(assignedAssetsEntity);
                 assetsHistoryServices.saveHistory(assignedAssetsEntity);
-            } else {
+            }
+            else {
                 log.warn("No employee found for EmpId: {}", asset.getEmpId());
+                skippedData.put(asset.getSerialNumber(),"Skipping the Row due to No employee found for EmpId: "+asset.getEmpId()+" while Importing Assigned Asset");
             }
         }
+        return skippedData;
     }
 
-    private void importScrapedAssets(Sheet sheet) {
+    private Map<String,String>  importScrapedAssets(Sheet sheet) {
         if (sheet == null) {
             log.warn("Sheet 'Scraped Assets' not found.");
-            return;
+            return null ;
         }
 
         Iterator<Row> rows = sheet.iterator();
         if (rows.hasNext()) rows.next();
-
+        Map<String,String> skippedData = new HashMap<>();
         while (rows.hasNext()) {
             Row row = rows.next();
             AssetsDto asset = new AssetsDto();
-
             asset.setAssetName(getCellValue(row, 0));
             asset.setSerialNumber(getCellValue(row, 1));
             asset.setPurchaseDate(parseDateSafe(getCellValue(row, 2)));
+            asset.setWarrantyDate(asset.getPurchaseDate());
 
             if (asset.getSerialNumber() == null || asset.getSerialNumber().isEmpty()) {
                 log.warn("Skipping row due to missing serial number while importing Scrap Asset.");continue;
@@ -998,7 +1047,10 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             if(assetsEntity!=null)
             {
                 if(assetsEntity.getAssetName().equalsIgnoreCase(asset.getAssetName())&&assetsEntity.getPurchaseDate().isEqual(asset.getPurchaseDate()))
-                 deleteAsset(assetsEntity.getAssetId());
+                {deleteAsset(assetsEntity.getAssetId());}
+                else {
+                    skippedData.put(asset.getSerialNumber(),"Skipping row due to AssetName and PurchaseDate are not matched with the on in the Data Base while Scapping Asset");
+                }
                 continue;
             }
             asset.setAssignedDate(parseDateSafe(getCellValue(row, 3)));
@@ -1010,9 +1062,28 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             asset.setModelName(getCellValue(row, 10));
             asset.setAddedBy(getCellValue(row, 11));
             asset.setAssetSourcedBy(getCellValue(row, 12));
-            if(asset.getPurchaseDate().isAfter(asset.getWarrantyDate())){log.warn("Warranty Date is lower than purchase date @ Importing Scrap asset");continue;}
-            deleteAsset(Objects.requireNonNull(saveAsset(asset).getBody()).getAssetId());
+            Set<ConstraintViolation<AssetsDto>> violations = validator.validate(asset);
+            if (!violations.isEmpty()) {
+                StringBuilder sb = new StringBuilder();
+                for (ConstraintViolation<AssetsDto> v : violations) {
+                    sb.append(v.getPropertyPath())
+                            .append(": ")
+                            .append(v.getMessage())
+                            .append("; ");
+                }
+                skippedData.put(asset.getSerialNumber(), "Validation Failed: " + sb);
+                continue;
+            }
+            try {
+                deleteAsset(Objects.requireNonNull(saveAsset(asset).getBody()).getAssetId());
+            }
+            catch (IllegalArgumentException e)
+            {
+                skippedData.put(asset.getSerialNumber(), e.getMessage());
+                continue;
+            }
         }
+        return skippedData;
     }
 
     private String getCellValue(Row row, int cellIndex) {

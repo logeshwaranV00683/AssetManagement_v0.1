@@ -109,12 +109,11 @@ public class EmployeeController {
             @ApiResponse(responseCode = "200", description = "Successful import")
     })
     @PostMapping(value = "employee/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> importExcel(
+    public ResponseEntity<?> importExcel(
             @Parameter(description = "Excel file", content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE))
             @RequestParam("file") MultipartFile file) {
         try {
-            employeeService.importEmployeeFromExcel(file.getInputStream());
-            return ResponseEntity.ok("Data imported successfully!");
+            return employeeService.importEmployeeFromExcel(file.getInputStream());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
         }

@@ -26,9 +26,11 @@ public class AssetsDto {
     private String status;
     @NotBlank
     private String type;
+    @NotNull(message = "Purchase Date is required")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate purchaseDate;
     @JsonFormat(pattern = "yyyy-MM-dd")
+    @NotNull(message = "Warranty Date is required")
     private LocalDate warrantyDate;
     @NotBlank
     private String location;

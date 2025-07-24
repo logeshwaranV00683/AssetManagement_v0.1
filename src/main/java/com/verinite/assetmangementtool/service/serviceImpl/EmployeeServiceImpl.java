@@ -15,13 +15,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -33,6 +32,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     AdminRegistrationRepository adminRegistrationRepository;
     @Autowired
     AdminServiceImpl adminServiceImpl;
+    @Autowired
+    private Validator validator;
 
 
     public EmployeeDto saveEmployee(EmployeeDto employeeDTO) {
@@ -135,21 +136,27 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public void importEmployeeFromExcel(InputStream inputStream) throws IOException {
+    public ResponseEntity<?> importEmployeeFromExcel(InputStream inputStream) throws IOException {
         Workbook workbook = new XSSFWorkbook(inputStream);
-        importSheet(workbook);
+        HashMap<String,String> data = importSheet(workbook);
+
         workbook.close();
+        if(data==null)
+        {
+            return new ResponseEntity<>("Employee Sheet Not Found",HttpStatus.NO_CONTENT);
+        }
+        return !data.isEmpty()?ResponseEntity.ok(data):ResponseEntity.ok("All Data Successfully Imported into Data Base");
     }
 
-    private void importSheet(Workbook workbook) {
+    private HashMap<String,String> importSheet(Workbook workbook) {
         Sheet sheet = workbook.getSheet("Employees");
-        if (sheet == null) return;
+        if (sheet == null) return null;
 
         Iterator<Row> rows = sheet.iterator();
         if (rows.hasNext()) rows.next();
 
-        HashSet<EmployeeDto> employees= new HashSet<EmployeeDto>();
-
+        HashSet<EmployeeDto> employees= new HashSet<>();
+        HashMap<String,String> skippedData = new HashMap<>();
         while (rows.hasNext()) {
             Row row = rows.next();
             EmployeeDto employee = new EmployeeDto();
@@ -163,11 +170,26 @@ public class EmployeeServiceImpl implements EmployeeService {
             employee.setDesignation(getCellValue(row, 9));
             employee.setStatus(getCellValue(row,7));
             employee.setRole("User");
+            Set<ConstraintViolation<EmployeeDto>> violations = validator.validate(employee);
+            if (!violations.isEmpty()) {
+                StringBuilder sb = new StringBuilder();
+                for (ConstraintViolation<EmployeeDto> v : violations) {
+                    sb.append(v.getPropertyPath())
+                            .append(": ")
+                            .append(v.getMessage())
+                            .append("; ");
+                }
+                skippedData.put(employee.getEmpId(), "Validation Failed: " + sb);
+                continue;
+            }
             if (!employees.add(employee)) {
                 log.warn("Duplicate employee found (ignored): {}", employee.getEmpId());
+                skippedData.put(employee.getEmpId(),"Duplicate or Invalid employee found (ignored)");
             }
         }
         saveBulkEmployee(new LinkedList<>(employees));
+        skippedData.entrySet().removeIf(entry -> entry.getKey() == null);
+        return skippedData;
     }
     private String getCellValue(Row row, int colIndex) {
         Cell cell = row.getCell(colIndex);
