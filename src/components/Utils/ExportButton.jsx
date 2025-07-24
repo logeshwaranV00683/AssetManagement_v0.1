@@ -9,6 +9,7 @@ const ExportButton = ({
   filteredRows = [],
   state = '',
   buttonLabel = 'Export'
+  
 }) => {
   const [loading, setLoading] = useState(false);
   const exportFilteredData = async () => {
@@ -78,6 +79,8 @@ const ExportButton = ({
     <Button
       onClick={exportFilteredData}
       disabled={loading}
+      className="export-button"   
+
     >
       {loading ? 'Exporting...' : buttonLabel}
     </Button>

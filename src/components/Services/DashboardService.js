@@ -107,7 +107,7 @@ export const getAssetNames = async () => {
       return [];
     }
 
-    return data.assetNames; // ✅ Return the actual array
+    return data.assetNames;  
 
   } catch (error) {
     console.error('Error fetching assets:', error);

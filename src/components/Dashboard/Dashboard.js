@@ -1,7 +1,7 @@
 import React, { useState, useEffect  } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {  PieChart,  Pie,  Cell,  ResponsiveContainer,  Tooltip,  Legend,} from 'recharts';
-import {  Container,  Card,  CardContent,  Typography,  Box,  TextField,  MenuItem,  Select,  FormControl,  InputLabel,} from '@mui/material';
+import {  Container,  Card,  CardContent,  Typography,  Box,  TextField,  MenuItem,  Select,  FormControl,  InputLabel,FormLabel } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import '../Style/font.css';
 import { getAssetsByLocation, getUnassignedAssetsByLocation ,getAssignedAssetsByLocation,} from '../Services/DashboardService'; // adjust path if needed
@@ -71,12 +71,11 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
               getUnassignedAssetsByLocation(selectedLocation)
             ]);
 
-            // Extract device options dynamically from keys
             const dynamicDevices = Object.keys(all).map((key) =>
               key.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())
             );
 
-            setDeviceOptions(dynamicDevices); // 👈 sets dropdown options
+            setDeviceOptions(dynamicDevices); 
 
 
             setAllAssetRows(
@@ -148,7 +147,7 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
           const assignedData = await getAssignedAssetsByLocation(location);
           const unassignedData = await getUnassignedAssetsByLocation(location);
 
-          const key = selectedDevice.toLowerCase().replace(/\s/g, '_'); // 👈 dynamic key
+          const key = selectedDevice.toLowerCase().replace(/\s/g, '_');
 
           const assignedCount = Number(assignedData?.[key] ?? 0);
           const unassignedCount = Number(unassignedData?.[key] ?? 0);
@@ -165,7 +164,7 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
 
       fetchPieDataForLocation('chennai', setPieDataChennai);
       fetchPieDataForLocation('pune', setPieDataPune);
-    }, [selectedDevice]); // ✅ fix here
+    }, [selectedDevice]); 
 
 
 
@@ -207,7 +206,7 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
               {/* Dropdown */}
               <Box sx={{ width: 150, display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '80px' }}>
                 <FormControl variant="outlined" style={{ width: 150 }}>
-                  <InputLabel style={{ fontFamily: "'Racing Sans One', sans-serif" }}>Device</InputLabel>
+                  <FormLabel sx={{ fontFamily: "'Racing Sans One', sans-serif", color: '#00f0ff', marginBottom: '8px' }}>Device</FormLabel>
                   <Select
                     value={selectedDevice}
                     onChange={(e) => setSelectedDevice(e.target.value)}
@@ -361,7 +360,7 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
               style={{
                 height: '65vh',
                 display: 'flex',
-                flexDirection: 'row', // 👈 Important for side-by-side
+                flexDirection: 'row',  
                 alignItems: 'flex-start',
                 justifyContent: 'center',
                 gap: 30,

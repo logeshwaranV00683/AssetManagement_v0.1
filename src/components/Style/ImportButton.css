@@ -5,7 +5,7 @@
   max-width: 240px;
   padding: 12px 16px;
   margin-top: 24px;
-  background: rgba(241, 43, 43, 0.9); /* Red base */
+  background: rgba(241, 43, 43, 0.9);  
   color: white;
   border: none;
   border-radius: 16px;
@@ -28,6 +28,9 @@
 .import-button span {
   display: inline-flex;
   align-items: center;
+  font-family: 'Racing Sans One', sans-serif;
+    font-size: clamp(12px, 1.2vw, 16px);
+
   gap: 8px;
   animation: bounceText 1.2s ease-in-out infinite;
   color: white;

@@ -32,8 +32,7 @@
   height: 250px;
 }
 
-/* 3D depth layers with pseudo-elements */
-.isometricPie::before,
+ .isometricPie::before,
 .isometricPie::after {
   content: '';
   position: absolute;

@@ -131,16 +131,16 @@ function Employee() {
         };
 
     const columns = [
-        { field: 'name', headerName: 'Name', width: 200, sortable: true },
-        { field: 'mail', headerName: 'Email', width: 300, sortable: true },
+        { field: 'name', headerName: 'Name', width: 190, sortable: true },
+        { field: 'mail', headerName: 'Email', width: 280, sortable: true },
         { field: 'designation', headerName: 'Designation', width: 180, sortable: true },
-        { field: 'department', headerName: 'Department', width: 180, sortable: true },
-        { field: 'location', headerName: 'Location', width: 100, sortable: true },
+        { field: 'department', headerName: 'Department', width: 140, sortable: true },
+        { field: 'location', headerName: 'Location', width: 120, sortable: true },
         { field: 'status', headerName: 'Status', width: 80, sortable: true },
         {
             field: 'actions',
             headerName: 'Actions',
-            width: 180,
+            width: 190,
             sortable: false,
             renderCell: (params) => (
                             <Box display="flex" alignItems="center">
@@ -220,76 +220,108 @@ function Employee() {
             <main className={classes.content}>
                 <Container maxWidth="lg">
                     <div className={classes.filterContainer}>
-                        <div style={{ display: 'flex', position: 'relative' }}>
-                            <main className={classes.content} style={{ flexGrow: 1, paddingRight: '80px' }}>
-                                <Container maxWidth="lg">
-                                </Container>
-                            </main>
+                        <SidebarEmployee onAddEmployee={handleOpenAddModal} filterByStatus={filterByStatus} resetFilters={resetFilters}/>
 
-                            <SidebarEmployee
-                            onAddEmployee={handleOpenAddModal}
-                            filterByStatus={filterByStatus} 
-                            resetFilters={resetFilters}
+
+                        <div
+                            style={{
+                            display: 'flex',
+                            flexWrap: 'nowrap',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '20px',             
+                            width: '100%',
+                            marginBottom: '16px',
+                            }}>
+
+                            <div className="import-button" onClick={() => setShowImportModal(true)}>
+                                <span style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'white', }}>
+                                    <UploadFileIcon style={{ fontSize: 20 }} /> Import Employee
+                                    </span>
+                            </div>
+
+                            {showImportModal && (
+                            <ImportExcel
+                              importType="employee"
+                              onClose={() => setShowImportModal(false)}
+                              refreshList = {fetchEmployees}
+                            />
+                            )}
+                          
+                            <TextField
+                                label="Search"
+                                variant="outlined"
+                                onChange={handleSearch}
+                                value={filterValue}
+                                sx={{
+                                width: { xs: '100%', md: '85vw' },
+                                maxWidth: '1000px',
+                                marginTop: 3,
+                                '& .MuiOutlinedInput-root': {
+                                    background: '#ffffff',
+                                    borderRadius: '15px',
+                                    color: '#52c5d2ff',
+                                    fontWeight: 500,
+                                    boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)',
+                                    '& fieldset': { border: '0.5px solid transparent' },
+                                    '&:hover fieldset': { border: '0.5px solid #1FCBEA' },
+                                    '&.Mui-focused fieldset': {
+                                    boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)',
+                                    fontSize: '20px',
+                                    },
+                                    '& input': {
+                                    background: 'transparent',
+                                    color: '#083A40',
+                                    fontFamily: "'Racing Sans One', sans-serif",
+                                    },
+                                },
+                                '& .MuiInputLabel-root': {
+                                    color: '#083A40',
+                                    fontFamily: "'Racing Sans One', sans-serif",
+                                    letterSpacing: '3.0px',
+                                    
+                                },
+                                '& .Mui-focused .MuiInputLabel-root': {
+                                    color: '#083A40',
+                                },
+                                '& .MuiInputLabel-shrink': {
+                                    transform: 'translate(18px, -30px) scale(1.0)',
+                                    background: 'transparent',
+                                    color: '#fff',
+                                    padding: '0 6px',
+                                },
+                    
+                                }}
                             />
 
+                            <div className="export-button">
+                                <ExportButton
+                            		type="employee"
+                                    status={exportType}
+                                    filter={filterValue}
+                                    filePrefix="Verinite"
+                                    filteredRows={filteredRows}
+                            		buttonLabel={
+                              			<span style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'white',  }}>
+                                		<FileDownloadIcon  />
+                                		Export Employee
+                              			</span>
+                                    }
+                                />
+                            </div>
+
                         </div>
-
-                        <TextField
-                            label="Search"
-                            variant="outlined"
-                            onChange={handleSearch}
-                            value={filterValue}
-                            sx={{
-                            width: { xs: '100%', md: '85vw' },
-                            maxWidth: '1000px',
-                            marginTop: 3,
-                            '& .MuiOutlinedInput-root': {
-                                background: '#ffffff',
-                                borderRadius: '15px',
-                                color: '#083A40',
-                                fontWeight: 500,
-                                boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)',
-                                '& fieldset': { border: '0.5px solid transparent' },
-                                '&:hover fieldset': { border: '0.5px solid #1FCBEA' },
-                                '&.Mui-focused fieldset': {
-                                boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)',
-                                fontSize: '20px',
-                                },
-                                '& input': {
-                                background: 'transparent',
-                                color: '#083A40',
-                                fontFamily: "'Racing Sans One', sans-serif",
-                                },
-                            },
-                            '& .MuiInputLabel-root': {
-                                color: '#083A40',
-                                fontFamily: "'Racing Sans One', sans-serif",
-                                letterSpacing: '3.0px',
-                                
-                            },
-                            '& .Mui-focused .MuiInputLabel-root': {
-                                color: '#083A40',
-                            },
-                            '& .MuiInputLabel-shrink': {
-                                transform: 'translate(18px, -30px) scale(1.0)',
-                                background: 'transparent',
-                                color: '#fff',
-                                padding: '0 6px',
-                            },
-                
-                            }}
-                        />
-
-
+                        
+                        
 
                     </div>
+
                     <div style={{ height: '65vh', width: '85vw', display: 'flex', flexDirection: 'column', alignItems: 'center', }}>
                         <div style={{ height: 350, marginLeft: '2%', width: '95%', flexGrow: 1 }}>
                             <DataGrid
                                 rows={filteredRows}
                                 columns={columns}
                                 pageSize={5}
-                                rowsPerPageOptions={[5, 10, 20]}
                                 sx={{
                                     borderRadius: '16px',
                                     overflow: 'hidden',
@@ -327,35 +359,7 @@ function Employee() {
                             />
 
                         </div>
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', width: '95%', marginTop: '40px' }}>
-                            <div className="export-button">
-                                <ExportButton
-                            		type="employee"
-                                    status={exportType}
-                                    filter={filterValue}
-                                    filePrefix="Verinite"
-                                    filteredRows={filteredRows}
-                            		buttonLabel={
-                              			<span style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'white' }}>
-                                		<FileDownloadIcon style={{ fontSize: 20 }} />
-                                		{`Export ${exportType} Employees`}
-                              			</span>
-                            }
-                          />
-                            </div>
-
-                           <div className="import-button" onClick={() => setShowImportModal(true)}>
-        <span><UploadFileIcon /> Import Employee</span>
-                            </div>
-
-                          {showImportModal && (
-                            <ImportExcel
-                              importType="employee"
-                              onClose={() => setShowImportModal(false)}
-                              refreshList = {fetchEmployees}
-                            />
-                          )}
-                        </div>
+                        
                     </div>
                     
                 </Container>

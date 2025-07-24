@@ -135,7 +135,7 @@ function Assets() {
 
   const handleAssign = (asset) => {
     if (asset.empId) {
-      showConfirmAlert('Unassign Asset?', `Unassign asset ${asset.serialNumber} from employee ${asset.empId}?`) // prettier-ignore
+      showConfirmAlert('Unassign Asset?', `Unassign asset ${asset.serialNumber} from employee ${asset.empId}?`)  
         .then(async (confirmed) => {
           if (confirmed) {
             try {
@@ -154,17 +154,17 @@ function Assets() {
   };
 
   const columns = [
-    { field: 'serialNumber', headerName: 'Serial Number', width: 150 },
-    { field: 'assetName', headerName: 'Name', width: 100 },
-    { field: 'type', headerName: 'Type', width: 100 },
+    { field: 'serialNumber', headerName: 'Serial Number', width: 190 },
+    { field: 'assetName', headerName: 'Name', width: 140 },
+    { field: 'type', headerName: 'Type', width: 120 },
     { field: 'status', headerName: 'Status', width: 120 },
     { field: 'empId', headerName: 'Assigned To', width: 120 },
-    { field: 'location', headerName: 'Location', width: 100 },
+    { field: 'location', headerName: 'Location', width: 120 },
     { field: 'assetSourcedBy', headerName: 'Asset Sourced By', width: 170 },
     {
       field: 'actions',
       headerName: 'Actions',
-      width: 200,
+      width: 220,
       sortable: false,
       renderCell: (params) => (
         <Box display="flex" alignItems="center">
@@ -263,75 +263,89 @@ function Assets() {
           <div className={classes.filterContainer}>
             <SidebarAssets onAddAsset={handleOpenModal} onFilter={filterByAssetStatus} onResetFilters={resetFilters} />
 
-            <div className="import-button" onClick={() => setShowImportModal(true)}>
-              <span>
-                <UploadFileIcon /> Import Assets
-              </span>
-            </div>
-
-            {showImportModal && (
-              <ImportExcel importType="asset" onClose={() => setShowImportModal(false)} refreshList={fetchAssets} />
-            )}
-
-           <TextField
-                            label="Search"
-                            variant="outlined"
-                            onChange={handleSearch}
-                            value={filterValue}
-                            sx={{
-                  width: { xs: '100%', md: '85vw' },
-                  maxWidth: '1000px',
-                  '& .MuiOutlinedInput-root': {
-                    background: '#ffffff',
-                    borderRadius: '15px',
-                    color: '#083A40',
-                    fontWeight: 500,
-                    boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)',
-                    '& fieldset': { border: '0.5px solid transparent' },
-                    '&:hover fieldset': { border: '0.5px solid #1FCBEA' },
-                    '&.Mui-focused fieldset': {
-                      boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)',
-                      fontSize: '20px',
-                    },
-                    '& input': {
-                      background: 'transparent',
-                      color: '#083A40',
-                      fontFamily: "'Racing Sans One', sans-serif",
-                    },
-                  },
-                  '& .MuiInputLabel-root': {
-                    color: '#083A40',
-                    fontFamily: "'Racing Sans One', sans-serif",
-                    letterSpacing: '3.0px',
-                    
-                  },
-                  '& .Mui-focused .MuiInputLabel-root': {
-                    color: '#083A40',
-                  },
-                  '& .MuiInputLabel-shrink': {
-                    transform: 'translate(18px, -30px) scale(1.0)',
-                    background: 'transparent',
-                    color: '#fff',
-                    padding: '0 6px',
-                  },
-    
+              <div
+                style={{
+                    display: 'flex',
+                    flexWrap: 'nowrap',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '20px',             
+                    width: '100%',
+                    marginBottom: '16px',
                 }}
-                        />
-          <div className="export-button">
-                                <ExportButton
-                                type="asset"
-                                status={exportType}
-                                filter={filterValue}
-                                filePrefix="Verinite"
-                                buttonLabel={
-                                    <span>
-                                    <FileDownloadIcon style={{ fontSize: 20 }} />
-                                    Export Assets
-                                    </span>
-                                }
-                                filteredRows={filteredRows}
-                                />
-                            </div>
+                >
+                  
+                <div className="import-button" onClick={() => setShowImportModal(true)}>
+                  <span>
+                    <UploadFileIcon /> Import Assets
+                  </span>
+                </div>
+
+                {showImportModal && (
+                  <ImportExcel importType="asset" onClose={() => setShowImportModal(false)} refreshList={fetchAssets} />
+                )}
+
+                <TextField
+                      label="Search"
+                      variant="outlined"
+                      onChange={handleSearch}
+                      value={filterValue}
+                      sx={{
+                        width: { xs: '100%', md: '75vw' },
+                        maxWidth: '1000px',
+                        '& .MuiOutlinedInput-root': {
+                          background: '#ffffff',
+                          borderRadius: '15px',
+                          color: '#52c5d2ff',
+                          fontWeight: 500,
+                          boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)',
+                          '& fieldset': { border: '0.5px solid transparent' },
+                          '&:hover fieldset': { border: '0.5px solid #1FCBEA' },
+                          '&.Mui-focused fieldset': {
+                            boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)',
+                            fontSize: '20px',
+                          },
+                          '& input': {
+                            background: 'transparent',
+                            color: '#083A40',
+                            fontFamily: "'Racing Sans One', sans-serif",
+                          },
+                        },
+                        '& .MuiInputLabel-root': {
+                          color: '#083A40',
+                          fontFamily: "'Racing Sans One', sans-serif",
+                          letterSpacing: '3.0px',
+                          
+                        },
+                        '& .Mui-focused .MuiInputLabel-root': {
+                          color: '#083A40',
+                        },
+                        '& .MuiInputLabel-shrink': {
+                          transform: 'translate(18px, -30px) scale(1.0)',
+                          background: 'transparent',
+                          color: '#fff',
+                          padding: '0 6px',
+                        },
+          
+                }}/>
+
+                <div className="export-button">
+                      <ExportButton
+                      type="asset"
+                      status={exportType}
+                      filter={filterValue}
+                      filePrefix="Verinite"
+                      buttonLabel={
+                          <span>
+                          <FileDownloadIcon />
+                          Export Assets
+                          </span>
+                      }
+                      filteredRows={filteredRows}
+                      />
+                </div>
+
+              </div>
           </div>
 
           <div style={{ height: '65vh', width: '85vw', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -339,8 +353,6 @@ function Assets() {
               <DataGrid
                 rows={filteredRows}
                 columns={columns}
-                pageSize={5}
-                rowsPerPageOptions={[5, 10, 20]}
                 sx={{
                   borderRadius: '16px',
                   overflow: 'hidden',

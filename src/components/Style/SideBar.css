@@ -25,7 +25,7 @@
 }
 
 .title-val {
-    color: #616161; /* A deeper green for better contrast */
+    color: #616161;  
     font-weight: 600;
     font-size: 15px;
 
@@ -41,12 +41,12 @@
 }
 
 .sidebar-hover .MuiListItem-root:hover {
-  background-color: #e3f2fd; /* Light hover */
+  background-color: #e3f2fd;  
   color: #000;
 }
 
 .sidebar-hover .MuiListItem-root:hover .MuiListItemIcon-root {
-  color: #1976d2; /* Highlight icon on hover */
+  color: #1976d2;  
 }
 
 .sidebar-hover .Mui-selected {

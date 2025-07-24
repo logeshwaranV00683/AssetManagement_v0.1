@@ -137,8 +137,7 @@ const Header = ({ onLogout }) => {
         </Toolbar>
       </AppBar>
 
-      {/* Push content below the fixed header */}
-      <div style={{ height: '14vh' }} />
+       <div style={{ height: '14vh' }} />
     </>
   );
 };

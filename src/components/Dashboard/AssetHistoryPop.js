@@ -9,7 +9,7 @@ function AssetHistoryPopup({ open, onClose, history = [], asset }) {
   const boxHeight = 90;
   const verticalGap = 100;
 
-  const centerX = 400; // central axis
+  const centerX = 400;  
 
   return (
     <Modal open={open} onClose={onClose}>
