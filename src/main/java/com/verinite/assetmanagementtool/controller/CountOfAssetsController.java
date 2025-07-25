@@ -22,11 +22,6 @@ public class CountOfAssetsController {
     @Autowired
     private AssetService assetService;
 
-    @PostMapping("save/count")
-    public CountOfAssetsEntity saveCount(@RequestBody CountOfAssetsEntity countOfAssetsEntity) {
-        return countOFAssetsService.postAssetCount(countOfAssetsEntity);
-    }
-
     @GetMapping("Assetcount/allLocationCount")
     public List<CountOfAssetsEntity> getAll() {
         return countOFAssetsService.getAll();
@@ -45,11 +40,6 @@ public class CountOfAssetsController {
     @GetMapping("AssetCount/assigned")
     public Map<String, Integer> getAssignedAssets(@RequestParam String location) {
         return countOFAssetsService.getAssignedAssets(location);
-    }
-
-    @PutMapping("update/count/{location}")
-    public Object updateCount(@PathVariable String location, @RequestBody CountOfAssetsEntity countOfAssetsEntity) {
-        return countOFAssetsService.updateAssetCount(location, countOfAssetsEntity);
     }
 
     @GetMapping("/unassignedCount")
