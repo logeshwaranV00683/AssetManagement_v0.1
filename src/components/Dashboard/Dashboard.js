@@ -14,12 +14,16 @@ const useStyles = makeStyles((theme) => ({
   },
   pieContainer: {
     display: 'flex',
+    flexDirection: 'column',
     justifyContent: 'space-around',
     alignItems: 'center',
     marginTop: theme.spacing(3),
-    marginLeft: '25px',
-    flexWrap: 'wrap',
-    gap: '20px',
+    marginLeft: '10px',
+    gap: '30px',
+    [theme.breakpoints.up('md')]: {
+      flexDirection: 'row',  
+    justifyContent: 'space-around',
+  },
   },
   pieCard: {
     width: '45%',
@@ -78,13 +82,28 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
             setDeviceOptions(dynamicDevices); 
 
 
+            // setAllAssetRows(
+            //   Object.entries(all).map(([key, val], i) => ({
+            //     id: i + 1,
+            //     assetName: key.replace(/_/g, ' ').toUpperCase(),
+            //     quantity: val,
+            //   }))
+            // );
+
             setAllAssetRows(
-              Object.entries(all).map(([key, val], i) => ({
-                id: i + 1,
-                assetName: key.replace(/_/g, ' ').toUpperCase(),
-                quantity: val,
-              }))
+              Object.entries(all).map(([key, val], i) => {
+                const formattedKey = key.replace(/_/g, ' ').toUpperCase();
+
+                return {
+                  id: i + 1,
+                  assetName: formattedKey,
+                  quantity: val,
+                  assignedQuantity: assigned?.[key] ?? 0,
+                  unassignedQuantity: unassigned?.[key] ?? 0,
+                };
+              })
             );
+
 
             setAssignedAssetRows(
               Object.entries(assigned).map(([key, val], i) => ({
@@ -116,24 +135,27 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
   
 
   const countTableColumns = [
-  { field: 'id', headerName: 'ID', width: 50 },
-  { field: 'assetName', headerName: 'Asset Name', width: 200 },
-  { field: 'quantity', headerName: 'Count', width: 130 },
-];
-
-  const unassignedTableColumns = [
-  { field: 'id', headerName: 'ID', width: 50 },
-  { field: 'unassignedAsset', headerName: 'UnAssigned Asset', width: 220 },
-  { field: 'unassignedQuantity', headerName: 'Count', width: 130 },
+  { field: 'id', headerName: 'ID', width: 50, flex: 1, minWidth: 30  },
+  { field: 'assetName', headerName: 'Asset Name', width: 200, flex: 2, minWidth: 120  },
+  { field: 'quantity', headerName: 'Total Count', width: 130, flex: 1, minWidth: 80  },
   
+  { field: 'unassignedQuantity', headerName: 'Unassigned Count', width: 130, flex: 1, minWidth: 120  },
+  { field: 'assignedQuantity', headerName: 'Assigned Count', width: 130, flex: 1, minWidth: 180  },
 ];
 
+//   const unassignedTableColumns = [
+//   { field: 'id', headerName: 'ID', width: 50, flex: 1, minWidth: 60 },
+//   { field: 'unassignedAsset', headerName: 'UnAssigned Asset', width: 220, flex: 2, minWidth: 120  },
+//   { field: 'unassignedQuantity', headerName: 'Count', width: 130, flex: 1, minWidth: 80  },
+  
+// ];
 
-  const assignedTableColumns = [
-    { field: 'id', headerName: 'ID', width: 50 },
-    { field: 'assignedAsset', headerName: 'Assigned Asset', width: 200 },
-    { field: 'assignedQuantity', headerName: 'Count', width: 130 },
-  ];
+
+//   const assignedTableColumns = [
+//     { field: 'id', headerName: 'ID', width: 50, flex: 1, minWidth: 60 },
+//     { field: 'assignedAsset', headerName: 'Assigned Asset', width: 200, flex: 2, minWidth: 120  },
+//     { field: 'assignedQuantity', headerName: 'Count', width: 130, flex: 1, minWidth: 80  },
+//   ];
 
 
     const [pieDataChennai, setPieDataChennai] = useState([]);
@@ -177,7 +199,7 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '30px',  }}>
               {/* Pie Chart - Chennai */}
-              <Card className={classes.pieCard} style={{ flex: 1, minWidth: '280px', background: 'transparent', boxShadow: 'none' }}>
+              <Card className={classes.pieCard} style={{ flex: 1, minWidth: '280px', width: '100%', background: 'transparent', boxShadow: 'none' }}>
                 <CardContent>
                   <div className={classes.label} style={{margin: '20px',  }}>
                     <Typography variant="h6" style={{ color: '#00f0ff', textShadow: '0 0 6px #2BC4F3', letterSpacing: '1.5px' }}>
@@ -204,7 +226,7 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
               </Card>
 
               {/* Dropdown */}
-              <Box sx={{ width: 150, display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '80px' }}>
+              <Box sx={{ width: 150, display: 'flex', justifyContent: 'center', alignItems: 'center', my: { xs: 2, md: 6 } }}>
                 <FormControl variant="outlined" style={{ width: 150 }}>
                   <FormLabel sx={{ fontFamily: "'Racing Sans One', sans-serif", color: '#00f0ff', marginBottom: '8px' }}>Device</FormLabel>
                   <Select
@@ -233,7 +255,7 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
               <Card className={classes.pieCard} style={{ flex: 1, minWidth: '280px', background: 'transparent', boxShadow: 'none' }}>
                 <CardContent>
                   <div className={classes.label} style={{margin: '20px', }}>
-                    <Typography variant="h6" style={{ color: '#00f0ff', textShadow: '0 0 6px #2BC4F3', letterSpacing: '1.5px' }}>
+                    <Typography variant="h6" style={{ color: '#00f0ff', textShadow: '0 0 6px #2BC4F3', letterSpacing: '1.5px', }}>
                       {selectedDevice}: {pieDataPune?.[0]?.value ?? 0}/{pieDataPune?.[1]?.value ?? 0}
                     </Typography>
                     <Typography variant="h6" style={{ color: '#00f0ff', textShadow: '0 0 6px #2BC4F3', letterSpacing: '1.5px' }}>
@@ -261,7 +283,7 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
           </div>
 
           {/* Search & DataGrid */}
-          <div style={{ height: 400, width: '100%', display: 'flex', marginTop: '50px', flexDirection: 'column', alignItems: 'center', marginBottom: 350 }}>
+          <div style={{ height: 400, width: '100%', display: 'flex', marginTop: '50px', flexDirection: 'column', alignItems: 'center', marginBottom: '5vh' }}>
             <Box mb={1}>
               <TextField
                 label="Search"
@@ -270,7 +292,7 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
                 onChange={(e) => setFilterValue(e.target.value)}
                
                 sx={{
-                  width: { xs: '100%', md: '85vw' },
+                  width: { xs: '90vw', sm: '80vw', md: '600px' },
                   maxWidth: '1000px',
                   '& .MuiOutlinedInput-root': {
                     background: '#ffffff',
@@ -356,21 +378,25 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
             </div>
 
             {/* DataGrid */}   
-            <div
-              style={{
-                height: '65vh',
+            {/* <Box
+              sx={{
                 display: 'flex',
-                flexDirection: 'row',  
-                alignItems: 'flex-start',
+                flexDirection: { xs: 'column', md: 'row' },
+                flexWrap: 'wrap',
                 justifyContent: 'center',
-                gap: 30,
-                marginTop: '50px',
-                width: '110%',
+                alignItems: 'center',
+                mx: 'auto',
+                px: 2,
+                gap: 2,
+                mt: 6,
+                width: '10%',
+                maxWidth: '150%',
+                m: '0 auto',
               }}
-            >
+            > */}
               {/* First Table */}
-              <div style={{ height: 450, width: '32%' }}>
-                <div 
+              <Box sx={{  width: { xs: '100%', sm: '100%', md: '100%', lg: '90%' }, mx: 'auto',  height: 450, }}>
+                {/* <div 
                   style={{
                       width: 150 ,
                       height: 40,
@@ -390,20 +416,27 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
                         }}>
                     Total Assets
 
-                </div>
+                </div> */}
 
                 <DataGrid
                   rows={filteredAllAssets}
                   columns={countTableColumns}
-                  pageSize={5}
-                  rowsPerPageOptions={[5, 10, 20]}
                   sx={{
+                    width: '100%',        
+                    height: 450,
+                    flexGrow: 1,
                     borderRadius: '16px',
                     overflow: 'hidden',
                     border: '2px solid #1FCBEA',
                     boxShadow: '0 0 3px #6DE0FF, 0 0 4px #2BC4F3',
                     fontFamily: "'Racing Sans One', sans-serif",
                     color: '#083A40',
+                    '& .MuiDataGrid-virtualScroller': {
+                      overflowX: 'hidden',
+                    },
+                    '& .MuiDataGrid-main': {
+                      overflowX: 'auto',
+                    },
                     '& .MuiDataGrid-columnHeaders': {
                       background: 'linear-gradient(45deg, #6DE0FF, #2BC4F3)',
                       color: '#083A40',
@@ -432,10 +465,13 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
                     },
                   }}
                 />
-              </div>
+              </Box>
+
+
 
               {/* Second Table */}
-              <div style={{ height: 450, width: '33%' }}>
+              {/* <Box sx={{ width: { xs: '90%', sm: '70%', md: '32%' }, height: 450 }}>
+
                 <div 
                   style={{
                       width: 200 ,
@@ -460,15 +496,24 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
                 <DataGrid
                   rows={filteredUnassignedAssets}
                   columns={unassignedTableColumns}
-                  pageSize={5}
-                  rowsPerPageOptions={[5, 10, 20]}
-                  sx={{
+                 sx={{
+                    width: { xs: '100%', sm: '80%', md: '32%' },
+                    minWidth: 350,
+                    maxWidth: 400,
+                    height: 450,
+                    flexGrow: 1,
                     borderRadius: '16px',
                     overflow: 'hidden',
                     border: '2px solid #1FCBEA',
                     boxShadow: '0 0 3px #6DE0FF, 0 0 4px #2BC4F3',
                     fontFamily: "'Racing Sans One', sans-serif",
                     color: '#083A40',
+                    '& .MuiDataGrid-virtualScroller': {
+                      overflowX: 'hidden',
+                    },
+                    '& .MuiDataGrid-main': {
+                      overflowX: 'auto',
+                    },
                     '& .MuiDataGrid-columnHeaders': {
                       background: 'linear-gradient(45deg, #6DE0FF, #2BC4F3)',
                       color: '#083A40',
@@ -497,10 +542,11 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
                     },
                   }}
                 />
-              </div>
+              </Box> */}
 
               {/* Third Table */}
-              <div style={{ height: 450, width: '32%' }}>
+              {/* <Box sx={{ width: { xs: '90%', sm: '70%', md: '32%' }, height: 450 }}>
+
                 <div 
                   style={{
                       width: 180 ,
@@ -525,15 +571,24 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
                 <DataGrid
                   rows={filteredAssignedAssets}
                   columns={assignedTableColumns}
-                  pageSize={5}
-                  rowsPerPageOptions={[5, 10, 20]}
-                  sx={{
+                 sx={{
+                    width: { xs: '100%', sm: '80%', md: '32%' },
+                    minWidth: 350,
+                    maxWidth: 400,
+                    height: 450,
+                    flexGrow: 1,
                     borderRadius: '16px',
                     overflow: 'hidden',
                     border: '2px solid #1FCBEA',
                     boxShadow: '0 0 3px #6DE0FF, 0 0 4px #2BC4F3',
                     fontFamily: "'Racing Sans One', sans-serif",
                     color: '#083A40',
+                    '& .MuiDataGrid-virtualScroller': {
+                      overflowX: 'hidden',
+                    },
+                    '& .MuiDataGrid-main': {
+                      overflowX: 'auto',
+                    },
                     '& .MuiDataGrid-columnHeaders': {
                       background: 'linear-gradient(45deg, #6DE0FF, #2BC4F3)',
                       color: '#083A40',
@@ -562,8 +617,11 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
                     },
                   }}
                 />
-              </div>
-            </div>
+              </Box> */}
+
+
+
+            {/* </Box> */}
 
           </div>
         </Container>
