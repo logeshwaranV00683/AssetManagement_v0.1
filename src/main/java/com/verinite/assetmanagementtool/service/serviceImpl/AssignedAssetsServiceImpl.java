@@ -268,11 +268,11 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
             Optional<AssetsEntity> assets = assetsRepo.findByAssetId(i);
             if (assets.isPresent()) {
                 assetsRepo.save(assets.get());
-                return " asset Unassigned";
+                assetsHistoryService.updateHistory(assignedAssets, serialNo);
+                return "Asset is UnAssigned for " + assignedAssets.getEmpId();
             }
-            assetsHistoryService.updateHistory(assignedAssets, serialNo);
         }
-        return " Asset is UnAssigned for " + assignedAssets.getEmpId();
+        return " Asset is Not UnAssigned for " + assignedAssets.getEmpId();
     }
 
     public List<AssignedAssetsEntity> getAllAssetsAssignedToParticularEmployee(String empId) {
