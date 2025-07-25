@@ -40,7 +40,7 @@ public class AssetsHistoryServiceImpl implements AssetsHistoryServices {
     public Object getByHistoryId(String serialNumber) {
 
         for (AssetsHistoryEntity assetsHistoryEntity : getAll()) {
-            if (serialNumber.equalsIgnoreCase(assetsHistoryEntity.getSerialNumber())) {
+                if (serialNumber.equalsIgnoreCase(assetsHistoryEntity.getSerialNumber())) {
                 return assetsHistoryRepository.findById(assetsHistoryEntity.getHistoryId()).orElseThrow(() -> new UsernameNotFoundException(" there is no Asset  not found with serial number " + serialNumber));
 
             }
