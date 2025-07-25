@@ -72,6 +72,12 @@ function AssetHistoryPopup({ open, onClose, history = [], asset }) {
   <strong>📅 Assigned:</strong>{' '}
   {entry.assignedDate ? new Date(entry.assignedDate).toLocaleDateString('en-GB') : 'N/A'}
 </Typography>
+<Typography>
+  <strong>📅 Return Date:</strong>{' '}
+  {entry.returnDate
+    ? new Date(entry.returnDate).toLocaleDateString('en-GB')
+    : 'Asset is not yet returned'}
+</Typography>
 
                 </Box>
               );
