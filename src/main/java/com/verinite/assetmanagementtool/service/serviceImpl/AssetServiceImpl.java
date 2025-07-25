@@ -1004,7 +1004,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
 
                 for (CountOfAssetsEntity count : assetCountRepository.findAll()) {
                     if (asset.getLocation().equalsIgnoreCase(count.getLocation())) {
-                        assignedAssetsServiceImp.updateImportUnassignedCount(modelMapper.map(asset, AssetsEntity.class), count);
+                        assignedAssetsServiceImp.updateUnassignedCount(modelMapper.map(asset, AssetsEntity.class), count);
                         assetCountRepository.save(count);
                     }
                 }
