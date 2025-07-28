@@ -41,7 +41,7 @@ public class AssignedAssetsController {
 
     @GetMapping("getall/assigned/assets")
     public ResponseEntity<List<AssignedAssetDtoList>> getAllAssignedAssets() {
-        List<AssignedAssetDtoList> assignedAssets = assignedAssetsService.getAllassignedAssets();
+        List<AssignedAssetDtoList> assignedAssets = assignedAssetsService.getAllAssignedAssets();
         return ResponseEntity.ok(assignedAssets);
     }
 

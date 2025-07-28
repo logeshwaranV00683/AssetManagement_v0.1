@@ -6,6 +6,7 @@ import com.verinite.assetmanagementtool.entity.AssignedAssetsEntity;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Map;
 
 public interface AssignedAssetsService {
 
@@ -14,7 +15,7 @@ public interface AssignedAssetsService {
 
     AssignedAssetsEntity getAssignedAssetsByAssetsId(int assetId);
 
-    List<AssignedAssetDtoList> getAllassignedAssets();
+    List<AssignedAssetDtoList> getAllAssignedAssets();
 
     AssignedAssetsEntity updateAssignedAssets(int assignedId, String empId);
 
@@ -22,7 +23,7 @@ public interface AssignedAssetsService {
 
     ResponseEntity<?> getRecentAssigned();
 
-    ResponseEntity<String> save(List<AssignableAssetDto> assignableAssetDtos);
+    ResponseEntity<?> save(List<AssignableAssetDto> assignableAssetDtos);
 
     String unAssignAsset(List<String> serialNumber);
 
