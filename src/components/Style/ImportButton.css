@@ -58,6 +58,17 @@
   animation: shine 0.8s forwards;
 }
 
+.import-button .MuiButton-root,
+.import-button .MuiButtonBase-root {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  min-width: 0 !important;
+  color: white !important;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
 @keyframes shine {
   from {
     left: -75%;

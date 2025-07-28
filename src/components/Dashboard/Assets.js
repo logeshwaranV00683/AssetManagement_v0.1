@@ -154,208 +154,246 @@ function Assets() {
   };
 
   const columns = [
-    { field: 'serialNumber', headerName: 'Serial Number', width: 190 },
-    { field: 'assetName', headerName: 'Name', width: 140 },
-    { field: 'type', headerName: 'Type', width: 120 },
-    { field: 'status', headerName: 'Status', width: 120 },
-    { field: 'empId', headerName: 'Assigned To', width: 120 },
-    { field: 'location', headerName: 'Location', width: 120 },
-    { field: 'assetSourcedBy', headerName: 'Asset Sourced By', width: 170 },
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      width: 220,
-      sortable: false,
-      renderCell: (params) => (
-        <Box display="flex" alignItems="center">
-  <Tooltip title="View">
-    <IconButton
-      sx={{
-        transition: 'transform 0.2s',
-        '&:hover': {
-          transform: 'scale(1.3)',
-          color: 'info.main',
-          filter: 'drop-shadow(0 0 4px #2196f3)',
-        },
-      }}
-      onClick={() => handleOpenEditModal(params.row, true)}
-    >
-      <VisibilityIcon />
-    </IconButton>
-  </Tooltip>
+  { field: 'serialNumber', headerName: 'Serial Number', minWidth: 120, flex: 1 },
+  { field: 'assetName', headerName: 'Name', minWidth: 100, flex: 0.8 },
+  { field: 'type', headerName: 'Type', minWidth: 100, flex: 0.85 },
+  { field: 'status', headerName: 'Status', minWidth: 40, flex: 0.8 },
+  { field: 'empId', headerName: 'Assigned To', minWidth: 120, flex: 0.7 },
+  { field: 'location', headerName: 'Location', minWidth: 120, flex: 0.6 },
+  { field: 'assetSourcedBy', headerName: 'Sourced By', minWidth: 120, flex: 0.7 },
+  {
+    field: 'actions',
+    headerName: 'Actions',
+    minWidth: 150,
+    flex: 2,
+    sortable: false,
+    renderCell: (params) => (
+      <Box display="flex" flexWrap="wrap" justifyContent="center" alignItems="center" gap={1}>
+        <Tooltip title="View">
+          <IconButton
+            sx={{
+              transition: 'transform 0.2s',
+              '&:hover': {
+                transform: 'scale(1.3)',
+                color: 'info.main',
+                filter: 'drop-shadow(0 0 4px #2196f3)',
+              },
+            }}
+            onClick={() => handleOpenEditModal(params.row, true)}
+          >
+            <VisibilityIcon />
+          </IconButton>
+        </Tooltip>
 
-  <Tooltip title={params.row.empId ? 'Unassign' : 'Assign'}>
-    <IconButton
-  sx={{
-    transition: 'transform 0.2s',
-    '&:hover': {
-      transform: 'scale(1.3)',
-      color: params.row.empId ? 'error.main' : 'success.main',
-      filter: params.row.empId
-        ? 'drop-shadow(0 0 4px rgb(246, 102, 59))'
-        : 'drop-shadow(0 0 4px rgb(30, 237, 68))',
-    },
-  }}
-  onClick={() => handleAssign(params.row)}
->
-  {params.row.empId ? <PersonRemoveIcon /> : <PersonAddIcon />}
-</IconButton>
+        <Tooltip title={params.row.empId ? 'Unassign' : 'Assign'}>
+          <IconButton
+            sx={{
+              transition: 'transform 0.2s',
+              '&:hover': {
+                transform: 'scale(1.3)',
+                color: params.row.empId ? 'error.main' : 'success.main',
+                filter: params.row.empId
+                  ? 'drop-shadow(0 0 4px rgb(246, 102, 59))'
+                  : 'drop-shadow(0 0 4px rgb(30, 237, 68))',
+              },
+            }}
+            onClick={() => handleAssign(params.row)}
+          >
+            {params.row.empId ? <PersonRemoveIcon /> : <PersonAddIcon />}
+          </IconButton>
+        </Tooltip>
 
-  </Tooltip>
+        <Tooltip title="History">
+          <IconButton
+            sx={{
+              transition: 'transform 0.2s',
+              '&:hover': {
+                transform: 'scale(1.3)',
+                color: 'warning.main',
+                filter: 'drop-shadow(0 0 4px orange)',
+              },
+            }}
+            onClick={() => handleOpenHistoryModal(params.row)}
+          >
+            <HistoryIcon />
+          </IconButton>
+        </Tooltip>
 
-  <Tooltip title="History">
-    <IconButton
-      sx={{
-        transition: 'transform 0.2s',
-        '&:hover': {
-          transform: 'scale(1.3)',
-          color: 'warning.main',
-          filter: 'drop-shadow(0 0 4px orange)',
-        },
-      }}
-      onClick={() => handleOpenHistoryModal(params.row)}
-    >
-      <HistoryIcon />
-    </IconButton>
-  </Tooltip>
+        <Tooltip title="Edit">
+          <IconButton
+            sx={{
+              transition: 'transform 0.2s',
+              '&:hover': {
+                transform: 'scale(1.3)',
+                color: 'primary.main',
+                filter: 'drop-shadow(0 0 4px #1976d2)',
+              },
+            }}
+            onClick={() => handleOpenEditModal(params.row)}
+          >
+            <EditIcon />
+          </IconButton>
+        </Tooltip>
 
-  <Tooltip title="Edit">
-    <IconButton
-      sx={{
-        transition: 'transform 0.2s',
-        '&:hover': {
-          transform: 'scale(1.3)',
-          color: 'primary.main',
-          filter: 'drop-shadow(0 0 4px #1976d2)',
-        },
-      }}
-      onClick={() => handleOpenEditModal(params.row)}
-    >
-      <EditIcon />
-    </IconButton>
-  </Tooltip>
+        <Tooltip title="Scrap">
+          <IconButton
+            sx={{
+              transition: 'transform 0.2s',
+              '&:hover': {
+                transform: 'scale(1.3)',
+                color: 'error.main',
+                filter: 'drop-shadow(0 0 4px red)',
+              },
+            }}
+            onClick={() => handleDelete(params.row)}
+          >
+            <DeleteIcon />
+          </IconButton>
+        </Tooltip>
+      </Box>
+    ),
+  },
+];
 
-  <Tooltip title="Scrap">
-    <IconButton
-      sx={{
-        transition: 'transform 0.2s',
-        '&:hover': {
-          transform: 'scale(1.3)',
-          color: 'error.main',
-          filter: 'drop-shadow(0 0 4px red)',
-        },
-      }}
-      onClick={() => handleDelete(params.row)}
-    >
-      <DeleteIcon />
-    </IconButton>
-  </Tooltip>
-</Box>
-
-      ),
-    },
-  ];
 
   return (
-    <div style={{ width: '185vh' }}>
+    <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
       <main className={classes.content}>
-        <Container maxWidth="lg">
-          <div className={classes.filterContainer}>
-            <SidebarAssets onAddAsset={handleOpenModal} onFilter={filterByAssetStatus} onResetFilters={resetFilters} />
+        <Container maxWidth={false} style={{ width: '100%', padding: 0 }}>
 
-              <div
-                style={{
-                    display: 'flex',
-                    flexWrap: 'nowrap',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '20px',             
-                    width: '100%',
-                    marginBottom: '16px',
-                }}
+          <SidebarAssets onAddAsset={handleOpenModal} onFilter={filterByAssetStatus} onResetFilters={resetFilters} />
+
+          <div className={classes.filterContainer}>
+            <div
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                width: '80%',
+                gap: '1%',
+                marginBottom: '2%',
+              }}
+            >
+              {/* Import Button */}
+              <div style={{ width: '20%', minWidth: '150px', textAlign: 'center' }}>
+                <div
+                  className="import-button"
+                  style={{
+                    padding: '0.4rem 0.8rem',
+                    textAlign: 'center',
+                    borderRadius: '0.6rem',
+                    fontWeight: 600,
+                    fontSize: '0.8rem',
+                  }}
+                  onClick={() => setShowImportModal(true)}
                 >
-                  
-                <div className="import-button" onClick={() => setShowImportModal(true)}>
-                  <span>
-                    <UploadFileIcon /> Import Assets
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem' }}>
+                    <UploadFileIcon fontSize="small" /> IMPORT
                   </span>
                 </div>
-
-                {showImportModal && (
-                  <ImportExcel importType="asset" onClose={() => setShowImportModal(false)} refreshList={fetchAssets} />
-                )}
-
-                <TextField
-                      label="Search"
-                      variant="outlined"
-                      onChange={handleSearch}
-                      value={filterValue}
-                      sx={{
-                        width: { xs: '100%', md: '75vw' },
-                        maxWidth: '1000px',
-                        '& .MuiOutlinedInput-root': {
-                          background: '#ffffff',
-                          borderRadius: '15px',
-                          color: '#52c5d2ff',
-                          fontWeight: 500,
-                          boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)',
-                          '& fieldset': { border: '0.5px solid transparent' },
-                          '&:hover fieldset': { border: '0.5px solid #1FCBEA' },
-                          '&.Mui-focused fieldset': {
-                            boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)',
-                            fontSize: '20px',
-                          },
-                          '& input': {
-                            background: 'transparent',
-                            color: '#083A40',
-                            fontFamily: "'Racing Sans One', sans-serif",
-                          },
-                        },
-                        '& .MuiInputLabel-root': {
-                          color: '#083A40',
-                          fontFamily: "'Racing Sans One', sans-serif",
-                          letterSpacing: '3.0px',
-                          
-                        },
-                        '& .Mui-focused .MuiInputLabel-root': {
-                          color: '#083A40',
-                        },
-                        '& .MuiInputLabel-shrink': {
-                          transform: 'translate(18px, -30px) scale(1.0)',
-                          background: 'transparent',
-                          color: '#fff',
-                          padding: '0 6px',
-                        },
-          
-                }}/>
-
-                <div className="export-button">
-                      <ExportButton
-                      type="asset"
-                      status={exportType}
-                      filter={filterValue}
-                      filePrefix="Verinite"
-                      buttonLabel={
-                          <span>
-                          <FileDownloadIcon />
-                          Export Assets
-                          </span>
-                      }
-                      filteredRows={filteredRows}
-                      />
-                </div>
-
               </div>
+
+              {/* Import Modal */}
+              {showImportModal && (
+                <ImportExcel
+                  importType="asset"
+                  onClose={() => setShowImportModal(false)}
+                  refreshList={fetchAssets}
+                />
+              )}
+
+              {/* Search */}
+              <div style={{ width: '55%', minWidth: '200px' }}>
+                <TextField
+                  label="Search"
+                  variant="outlined"
+                  onChange={handleSearch}
+                  value={filterValue}
+                  fullWidth
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      background: '#ffffff',
+                      borderRadius: '0.6rem',
+                      fontWeight: 500,
+                      boxShadow: '0 0 0.3rem rgba(109, 224, 255, 0.4)',
+                      '& fieldset': { border: '1px solid #ccc' },
+                      '&:hover fieldset': { borderColor: '#1FCBEA' },
+                      '&.Mui-focused fieldset': { borderColor: '#1FCBEA' },
+                      '& input': {
+                        fontFamily: "'Racing Sans One', sans-serif",
+                        fontSize: '0.9rem',
+                        color: '#083A40',
+                      },
+                    },
+                    '& .MuiInputLabel-root': {
+                      fontFamily: "'Racing Sans One', sans-serif",
+                      fontSize: '0.8rem',
+                      color: '#083A40',
+                    },
+                  }}
+                />
+              </div>
+
+              {/* Export Button */}
+              <div style={{ width: '20%', minWidth: '150px', textAlign: 'center' }}>
+                <div
+                  className="export-button"
+                  style={{
+                    padding: '0.4rem 0.8rem',
+                    textAlign: 'center',
+                    borderRadius: '0.6rem',
+                    fontWeight: 600,
+                    fontSize: '0.8rem',
+                  }}
+                >
+                  <ExportButton
+                    type="asset"
+                    status={exportType}
+                    filter={filterValue}
+                    filePrefix="Verinite"
+                    buttonLabel={
+                      <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem' }}>
+                        <FileDownloadIcon fontSize="small" /> EXPORT
+                      </span>
+                    }
+                    filteredRows={filteredRows}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div style={{ height: '65vh', width: '85vw', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <div style={{ height: 350, marginLeft: '2%', width: '95%', flexGrow: 1 }}>
+
+
+
+
+          <div
+            style={{
+              width: '80%',
+              // maxWidth: '1100px',
+              height: '65vh',
+              margin: '0 auto',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <div
+              style={{
+                width: '100%',
+                maxWidth: '100%',
+                height: '100%',
+              }}
+            >
+
               <DataGrid
                 rows={filteredRows}
                 columns={columns}
                 sx={{
                   borderRadius: '16px',
-                  overflow: 'hidden',
+                  overflowX: 'auto',
                   border: '2px solid #1FCBEA',
                   boxShadow: '0 0 3px #6DE0FF, 0 0 4px #2BC4F3',
                   fontFamily: "'Racing Sans One', sans-serif",

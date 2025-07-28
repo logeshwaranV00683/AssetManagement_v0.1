@@ -135,12 +135,12 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
   
 
   const countTableColumns = [
-  { field: 'id', headerName: 'ID', width: 50, flex: 1, minWidth: 30  },
-  { field: 'assetName', headerName: 'Asset Name', width: 200, flex: 2, minWidth: 120  },
+  { field: 'id', headerName: 'ID', width: 50, flex: 0.5, minWidth: 30  },
+  { field: 'assetName', headerName: 'Asset Name', width: 200, flex: 1, minWidth: 120  },
   { field: 'quantity', headerName: 'Total Count', width: 130, flex: 1, minWidth: 80  },
   
-  { field: 'unassignedQuantity', headerName: 'Unassigned Count', width: 130, flex: 1, minWidth: 120  },
-  { field: 'assignedQuantity', headerName: 'Assigned Count', width: 130, flex: 1, minWidth: 180  },
+  { field: 'unassignedQuantity', headerName: 'Unassigned Count', width: 130, flex: 1, minWidth: 80  },
+  { field: 'assignedQuantity', headerName: 'Assigned Count', width: 130, flex: 1, minWidth: 80  },
 ];
 
 //   const unassignedTableColumns = [
@@ -197,9 +197,9 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
           <div className={classes.pieContainer}>
 
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '30px',  }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '30px', width: '80%'  }}>
               {/* Pie Chart - Chennai */}
-              <Card className={classes.pieCard} style={{ flex: 1, minWidth: '280px', width: '100%', background: 'transparent', boxShadow: 'none' }}>
+              <Card className={classes.pieCard} style={{ flex: 1, width: '100%', background: 'transparent', boxShadow: 'none' }}>
                 <CardContent>
                   <div className={classes.label} style={{margin: '20px',  }}>
                     <Typography variant="h6" style={{ color: '#00f0ff', textShadow: '0 0 6px #2BC4F3', letterSpacing: '1.5px' }}>
@@ -283,8 +283,23 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
           </div>
 
           {/* Search & DataGrid */}
-          <div style={{ height: 400, width: '100%', display: 'flex', marginTop: '50px', flexDirection: 'column', alignItems: 'center', marginBottom: '5vh' }}>
-            <Box mb={1}>
+          <div style={{
+              height: '60vh',
+              width: '90%',
+              display: 'flex',
+              margin: 'auto',
+              marginTop: '10vh',
+              flexDirection: 'column',
+              alignItems: 'center',
+              marginBottom: '5vh'
+            }}
+          >
+            <Box sx={{
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    mb: 2,
+  }}>
               <TextField
                 label="Search"
                 variant="outlined"
@@ -292,8 +307,8 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
                 onChange={(e) => setFilterValue(e.target.value)}
                
                 sx={{
-                  width: { xs: '90vw', sm: '80vw', md: '600px' },
-                  maxWidth: '1000px',
+                  width: { xs: '90%', sm: '70%', md: '60%' },
+                  // maxWidth: '1000px',
                   '& .MuiOutlinedInput-root': {
                     background: '#ffffff',
                     borderRadius: '15px',
@@ -395,7 +410,11 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
               }}
             > */}
               {/* First Table */}
-              <Box sx={{  width: { xs: '100%', sm: '100%', md: '100%', lg: '90%' }, mx: 'auto',  height: 450, }}>
+              <Box sx={{
+          width: { xs: '100%', sm: '90%', md: '90%', lg: '100%' },
+          mx: 'auto',
+          height: '100%',
+        }}>
                 {/* <div 
                   style={{
                       width: 150 ,
@@ -423,8 +442,8 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
                   columns={countTableColumns}
                   sx={{
                     width: '100%',        
-                    height: 450,
-                    flexGrow: 1,
+                    height: '100%',
+                    // flexGrow: 1,
                     borderRadius: '16px',
                     overflow: 'hidden',
                     border: '2px solid #1FCBEA',
