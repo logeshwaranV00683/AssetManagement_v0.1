@@ -122,7 +122,7 @@ function EditEmployeeModal({ open, handleClose, employee, refreshEmployeeList, v
         >
           <CloseIcon />
         </IconButton>
-        <h2 id="edit-employee-modal-title" className={classes.textCenter}>
+        <h2 id="edit-employee-modal-title" className={classes.textCenter} style={{ textAlign: 'center', color: '#083A40' }}>
           {viewOnly ? 'View Employee' : 'Edit Employee'}
         </h2>
         <form>
@@ -227,6 +227,8 @@ function EditEmployeeModal({ open, handleClose, employee, refreshEmployeeList, v
                 variant="contained"
                 className={classes.cancelButton}
                 onClick={handleClose}
+                sx={{ backgroundColor: 'error.main', color: 'error.contrastText', mr: 2 }}
+
               >
                 Cancel
               </Button>
@@ -234,8 +236,9 @@ function EditEmployeeModal({ open, handleClose, employee, refreshEmployeeList, v
                 variant="contained"
                 className={classes.saveButton}
                 onClick={handleSaveEmployee}
+                sx={{ backgroundColor: 'success.main', color: 'success.contrastText' }}
               >
-                Save
+                Update
               </Button>
             </div>
           )}

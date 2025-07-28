@@ -109,7 +109,7 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
         >
           <CloseIcon />
         </IconButton>
-        <h2 id="add-employee-modal-title" className={classes.textCenter}>Add Employee</h2>
+        <h2 id="add-employee-modal-title" className={classes.textCenter} style={{ textAlign: 'center', color: '#083A40' }}>Add Employee</h2>
         <form>
           <div className={classes.formGrid}>
             <TextField
@@ -189,6 +189,7 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
               variant="contained"
               className={classes.cancelButton}
               onClick={handleClose}
+              sx={{ backgroundColor: 'error.main', color: 'error.contrastText' }}
             >
               Cancel
             </Button>
@@ -196,6 +197,7 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
               variant="contained"
               className={classes.addButton}
               onClick={handleAddEmployee}
+              sx={{ backgroundColor: 'success.main', color: 'success.contrastText' }}
             >
               Add
             </Button>

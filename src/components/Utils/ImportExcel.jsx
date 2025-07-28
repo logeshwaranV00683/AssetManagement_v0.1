@@ -60,7 +60,7 @@ const handleUpload = async () => {
       const confirmExport = await showDataPreviewAlert(transformed, importType, "Ignored Data!");
 
       if (confirmExport) {
-        exportToExcel(transformed, "not_imported_data.xlsx");
+        exportToExcel(transformed, "Not_Imported_Data.xlsx");
       }
     } else {
       showSuccessAlert("Import Successful", "All records were successfully imported.");

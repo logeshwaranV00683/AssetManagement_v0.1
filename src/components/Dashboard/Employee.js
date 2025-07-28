@@ -43,7 +43,6 @@ const useStyles = makeStyles((theme) => ({
 
 function Employee() {
     const classes = useStyles();
-    const [openAddModal, setOpenAddModal] = useState(false);
     const [openEditModal, setOpenEditModal] = useState(false);
     const [employees, setEmployees] = useState([]);
     const [selectedEmployee, setSelectedEmployee] = useState(null);
@@ -52,6 +51,7 @@ function Employee() {
     const [viewOnly, setViewOnly] = useState(false);
     const [showImportModal, setShowImportModal] = useState(false);
     const [exportType, setExportType] = useState('all');
+    const [open, setOpenAddModal] = useState(false); 
     const fetchEmployees = async () => {
         try {
             const data = await getEmployeeList();
@@ -363,8 +363,11 @@ function Employee() {
                     </div>
                     
                 </Container>
-                
-                <AddEmployeeModal open={openAddModal} handleClose={handleClose} refreshEmployeeList={fetchEmployees} />
+                <AddEmployeeModal
+                    open={open}
+                    handleClose={() => setOpenAddModal(false)}
+                    refreshEmployeeList={fetchEmployees}
+                    />
                 {selectedEmployee && (
                     <EditEmployeeModal
                         open={openEditModal}
