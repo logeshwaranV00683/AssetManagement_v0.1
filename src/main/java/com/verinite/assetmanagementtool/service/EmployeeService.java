@@ -22,7 +22,7 @@ public interface EmployeeService {
 
     List<EmployeeEntity> getActiveAccounts(String str);
 
-    List<EmployeeEntity> getAllByLocation(String str);
+    ResponseEntity<?> getAllByLocation(String str);
 
     Object updateEmp(String empId, EmployeeDto employee);
 

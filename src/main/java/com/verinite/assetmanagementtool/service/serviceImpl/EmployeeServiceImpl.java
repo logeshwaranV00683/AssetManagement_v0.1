@@ -9,6 +9,7 @@ import com.verinite.assetmanagementtool.service.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.tomcat.util.buf.CharsetCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -267,10 +268,14 @@ public class EmployeeServiceImpl implements EmployeeService {
 //	
 
     @Override
-    public List<EmployeeEntity> getAllByLocation(String str) {
-        return employeeRepo.findByIgnoreCaseLocation(str);
+    public ResponseEntity<?> getAllByLocation(String str) {
+        List<EmployeeEntity> employees = employeeRepo.findByIgnoreCaseLocation(str);
+        if (employees.isEmpty()) {
+            String message = "No employees found for location: " + str;
+            return ResponseEntity.ok(message);
+        }
+        return ResponseEntity.ok(employees);
     }
-
     public ResponseEntity<?> getByIdForAdmin(String empId) {
 
         EmployeeEntity emp = employeeRepo.findByEmpId(empId);

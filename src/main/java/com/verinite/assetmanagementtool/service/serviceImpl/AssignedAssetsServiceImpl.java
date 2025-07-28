@@ -239,9 +239,15 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
         return " Asset is Not UnAssigned for " + assignedAssets.getEmpId();
     }
 
-    public List<AssignedAssetsEntity> getAllAssetsAssignedToParticularEmployee(String empId) {
-        return assignedAssetsRepository.findByEmpId(empId);
+    public ResponseEntity<?> getAllAssetsAssignedToParticularEmployee(String empId) {
+        List<AssignedAssetsEntity> assignedAssetsEntities = assignedAssetsRepository.findByEmpId(empId);
+        if(assignedAssetsEntities.isEmpty()){
+            String message = "No assigned assets found for employee ID : "+empId;
+            return ResponseEntity.ok(message);
+        }
+        return ResponseEntity.ok(assignedAssetsEntities);
     }
+
 
 
     public void assignedCount(String assetName) {

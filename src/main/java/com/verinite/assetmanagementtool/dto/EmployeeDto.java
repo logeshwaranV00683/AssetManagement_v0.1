@@ -26,7 +26,7 @@ public class EmployeeDto {
     private String role;
     @NotBlank
     @Email
-    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "Invalid email address")
+    @Pattern(regexp = "^[A-Za-z0-9+_.-]+@([A-Za-z_]+\\.)[A-Za-z]{2,3}$", message = "Invalid email address")
     private String mail;
     @NotBlank
     @Pattern(regexp = "^(0|\\+91)?[6-9]\\d{9}$", message = "Valid Mobile Number Needed")

@@ -62,7 +62,7 @@ public class AssignedAssetsController {
     }
 
     @GetMapping("get/all/assigned/assets/by/{empId}")
-    public List<AssignedAssetsEntity> getAllByAssignedAssetsById(@PathVariable String empId) {
+    public ResponseEntity<?> getAllByAssignedAssetsById(@PathVariable String empId) {
         return assignedAssetsService.getAllAssetsAssignedToParticularEmployee(empId);
     }
 

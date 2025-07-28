@@ -117,9 +117,9 @@ public class EmployeeController {
         return employeeService.getActiveAccounts(checkStatus);
     }
 
-    @GetMapping("/location/{name}")
-    public List<EmployeeEntity> getByLocations(@PathVariable String name) {
-        return employeeService.getAllByLocation(name);
+    @GetMapping("/location/{locationName}")
+    public ResponseEntity<?> getByLocations(@PathVariable String locationName) {
+        return employeeService.getAllByLocation(locationName);
     }
 
     @GetMapping("/employee/get/for/admin/{empId}")
