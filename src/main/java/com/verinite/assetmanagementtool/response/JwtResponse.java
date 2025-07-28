@@ -10,16 +10,16 @@ public class JwtResponse<T> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = -8091879091924046844L;
-    private final String jwtToken;
+    private final String token;
     private final T data;
 
     public JwtResponse(String jwtToken) {
-        this.jwtToken = jwtToken;
+        this.token = jwtToken;
         this.data = null;
     }
 
     public JwtResponse(String token, T data) {
-        this.jwtToken = token;
+        this.token = token;
         this.data = data;
     }
 
