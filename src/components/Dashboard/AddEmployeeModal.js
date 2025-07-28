@@ -80,8 +80,7 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
     console.log('Employee added:', newEmployee);
     try {
       await saveEmployee(newEmployee);
-      console.log('Employee added:', newEmployee);
-      refreshEmployeeList();
+      refreshEmployeeList(); 
       handleClose();
     } catch (error) {
       console.error('Error adding employee:', error);
