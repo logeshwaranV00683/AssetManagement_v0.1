@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 
@@ -31,7 +32,7 @@ public class SaveAssetResponse {
     @NotBlank
     @Pattern(regexp = "^(\\w+)?$", message = "Must be a Alphanumeric & _")
     private String location;
-    @Pattern(regexp = "^(\\d+)?$", message = "locCode Must be a Number")
+    @NotNull
     private Integer locCode;
     @NotBlank
     @Pattern(regexp = "^(\\w+)?$", message = "ModelName must be alphanumeric & _")

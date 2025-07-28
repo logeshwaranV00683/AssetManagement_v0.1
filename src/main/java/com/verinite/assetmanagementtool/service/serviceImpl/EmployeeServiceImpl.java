@@ -127,16 +127,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Object deleteEmpByID(String empId) {
-        EmployeeEntity employee1 = employeeRepo.findByEmpId(empId);
-        employee1.setStatus("inactive");
-        employeeRepo.save(employee1);
-        return new EmployeeEntity();
-    }
-
-    @Override
     public void deleteEmployeeById(String empId) {
         EmployeeEntity byEmpId = employeeRepo.findByEmpId(empId);
+        adminRegistrationRepository.deleteByEmpId(empId);
         employeeRepo.deleteById(empId);
     }
 

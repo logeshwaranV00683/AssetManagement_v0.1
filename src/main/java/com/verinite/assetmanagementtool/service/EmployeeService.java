@@ -18,8 +18,6 @@ public interface EmployeeService {
 
     Object getById(String empId);
 
-    Object deleteEmpByID(String empId);
-
     List<EmployeeEntity> getActiveAccounts(String str);
 
     ResponseEntity<?> getAllByLocation(String str);
