@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import net.bytebuddy.build.Plugin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.validation.annotation.Validated;
@@ -122,6 +123,7 @@ public class EmployeeController {
         return employeeService.getAllByLocation(locationName);
     }
 
+    @Operation(summary = "Check employee for, Employee can be promotable to admin or not")
     @GetMapping("/employee/get/for/admin/{empId}")
     public ResponseEntity<?> getUserForAdmin(@PathVariable String empId) {
         return employeeService.getByIdForAdmin(empId);

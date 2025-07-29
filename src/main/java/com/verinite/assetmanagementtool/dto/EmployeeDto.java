@@ -40,7 +40,7 @@ public class EmployeeDto {
     @NotBlank(groups = NotBlank.class)
     @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "Department must contain only letters, spaces, or hyphens")
     private String department;
-    @NotBlank
+    @NotBlank(groups = NotBlank.class)
     @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "Designation must contain only letters, spaces, or hyphens")
     private String designation;
 
