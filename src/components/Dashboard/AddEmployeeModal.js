@@ -185,6 +185,7 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
           </div>
           <div className={classes.actionsContainer}>
             <Button
+             type="button" 
               variant="contained"
               className={classes.cancelButton}
               onClick={handleClose}
@@ -193,6 +194,8 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
               Cancel
             </Button>
             <Button
+             type="button" 
+              data-id="add-employee-button"
               variant="contained"
               className={classes.addButton}
               onClick={handleAddEmployee}
