@@ -26,26 +26,41 @@ export const getEmployeeList = async() => {
     }
   };
   
- export const saveEmployee = async (employeeData) => {
-    try {
-      const response = await fetch(`${apiUrl}/assetManager/v1/employee/saveemployee`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(employeeData),
-      });
-      
-      if (!response.ok) {
-        throw new Error('Network response was not ok ' + response.statusText);
+export const saveEmployee = async (employeeData) => {
+  try {
+    const response = await fetch(`${apiUrl}/assetManager/v1/employee/saveemployee`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(employeeData),
+    });
+
+    if (!response.ok) {
+      let errorData;
+      const contentType = response.headers.get('content-type');
+
+      if (contentType && contentType.includes('application/json')) {
+        errorData = await response.json();
+      } else {
+        errorData = await response.text();
       }
-      return await response.json();
-    } catch (error) {
-      console.error('Error saving employee:', error);
+
+      const error = new Error('Request failed');
+      error.status = response.status;
+      error.data = errorData;
       throw error;
     }
-  };
+
+    return await response.json();
+  } catch (error) {
+    throw error; 
+  }
+};
+
+
+
   
   export const updateEmployee = async (empId, employee) => {
     console.log('json',  JSON.stringify(employee));

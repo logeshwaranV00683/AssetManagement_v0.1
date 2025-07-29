@@ -11,6 +11,7 @@ import InputLabel from '@mui/material/InputLabel';
 import { IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { saveEmployee } from '../Services/EmployeeService';
+import toast from 'react-hot-toast';
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -64,28 +65,58 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
   const [department, setDepartment] = useState('');
   const [designation, setDesignation] = useState('');
 
-  const handleAddEmployee = async() => {
-    const newEmployee = {
-      empId,
-      firstName,
-      lastName,
-      role,
-      mail,
-      mobile,
-      location,
-      status,
-      department,
-      designation,
-    };
-    console.log('Employee added:', newEmployee);
-    try {
-      await saveEmployee(newEmployee);
-      refreshEmployeeList(); 
-      handleClose();
-    } catch (error) {
-      console.error('Error adding employee:', error);
-    }
+const handleAddEmployee = async () => {
+  const newEmployee = {
+    empId,
+    firstName,
+    lastName,
+    role,
+    mail,
+    mobile,
+    location,
+    status,
+    department,
+    designation,
   };
+
+ try {
+  await saveEmployee(newEmployee);
+  toast.success("Employee added successfully!");
+  refreshEmployeeList();
+     setEmpId('');
+    setFirstName('');
+    setLastName('');
+    setMail('');
+    setMobile('');
+    setLocation('');
+    setStatus('');
+    setDepartment('');
+    setDesignation('');
+
+} catch (error) {
+  if (error.status === 400 && typeof error.data === 'object') {
+    const errors = error.data;
+    if (errors.empId) toast.error(errors.empId);
+    if (errors.firstName) toast.error(errors.firstName);
+    if (errors.lastName) toast.error(errors.lastName);
+    if (errors.mail) toast.error(errors.mail);
+    if (errors.mobile) toast.error(errors.mobile);
+    if (errors.location) toast.error(errors.location);
+    if (errors.status) toast.error(errors.status);
+    if (errors.department) toast.error(errors.department);
+    if (errors.designation) toast.error(errors.designation);
+  } 
+  else if (error.status === 409) {
+    toast.error(error.data || "Employee mail or mobile already exists");
+  } 
+  else {
+    toast.error("Unexpected error occurred!");
+    console.error(error);
+  }
+}
+
+};
+
 
   return (
     <Modal
