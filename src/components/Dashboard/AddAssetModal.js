@@ -27,6 +27,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
   const [purchaseDate, setPurchaseDate] = useState('');
   const [warrantyDate, setWarrantyDate] = useState('');
   const [addedBy, setAddedBy] = useState(user.empId);
+  const [status, setStatus] = useState('Unassigned');
   const [type, setType] = useState('');
   const [assetSourcedBy, setAssetSourcedBy] = useState('Verinite');
 
@@ -36,6 +37,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
       serialNumber,
       location,
       locCode,
+      status,
       type,
       operatingSystem,
       modelName,
@@ -64,6 +66,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
     setAssetName('');
     setSerialNumber('');
     setLocation('');
+    setStatus('Unassigned');
     setLocCode('');
     setOperatingSystem('');
     setModelName('');

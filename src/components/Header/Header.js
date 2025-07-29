@@ -31,15 +31,18 @@ const Header = ({ onLogout }) => {
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
+const handleLogout = () => {
+  handleMenuClose();
 
-  const handleLogout = () => {
-    handleMenuClose();
-    if (onLogout) {
-      onLogout();
-    } else {
-      navigate('/login');
-    }
-  };
+  // Clear localStorage items
+  localStorage.removeItem('authToken');
+  localStorage.removeItem('isLogin');
+  localStorage.removeItem('user');
+
+  // Redirect to login page
+  navigate('/login');
+};
+
 
   return (
     <>
