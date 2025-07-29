@@ -72,7 +72,10 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
         if (assets.getWarrantyDate().isBefore(assets.getPurchaseDate())) {
             throw new IllegalArgumentException("Warranty Date must not be before Purchase Date");
         }
-
+        if(assetRepo.existsBySerialNumber(assetDto.getSerialNumber()))
+        {
+            throw new IllegalArgumentException("Already Serial Number is exists");
+        }
         int count = 0;
         assets.setStatus("UnAssigned");
         List<CountOfAssetsEntity> countOfAssetEntities = assetCountRepository.findAll();
