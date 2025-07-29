@@ -15,29 +15,29 @@ public class EmployeeDto {
 
     @Pattern(regexp = "^(V\\d{5})?$", message = "Must be V followed by 5 digits or empty")
     private String empId;
-    @NotBlank
+    @NotBlank(groups = NotBlank.class)
     @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "First Name must contain only letters, spaces, or hyphens")
     private String firstName;
-    @NotBlank
+    @NotBlank(groups = NotBlank.class)
     @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "Last Name must contain only letters, spaces, or hyphens")
     private String lastName;
-    @NotBlank
+    @NotBlank(groups = NotBlank.class)
     @Pattern(regexp = "^(?i)(User|Admin)?$", message = "Role can be Admin or User")
     private String role;
-    @NotBlank
+    @NotBlank(groups = NotBlank.class)
     @Email
     @Pattern(regexp = "^[A-Za-z0-9+_.-]+@([A-Za-z_]+\\.)[A-Za-z]{2,3}$", message = "Invalid email address")
     private String mail;
-    @NotBlank
+    @NotBlank(groups = NotBlank.class)
     @Pattern(regexp = "^(0|\\+91)?[6-9]\\d{9}$", message = "Valid Mobile Number Needed")
     private String mobile;
-    @NotBlank
+    @NotBlank(groups = NotBlank.class)
     @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "Location must contain only letters, spaces, or hyphens")
     private String location;
-    @NotBlank
+    @NotBlank(groups = NotBlank.class)
     @Pattern(regexp = "^(?i)(Active|Inactive)?$", message = "status can be Active or Inactive")
     private String status;
-    @NotBlank
+    @NotBlank(groups = NotBlank.class)
     @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "Department must contain only letters, spaces, or hyphens")
     private String department;
     @NotBlank
