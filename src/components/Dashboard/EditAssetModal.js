@@ -59,7 +59,6 @@ function EditAssetModal({ open, handleClose, refreshAssetList, asset, viewOnly }
     }
   }, [asset]);
 
-//  const isUnassigned = useMemo(() => fields.status === 'UnAssigned', [fields.status]);
   const isAssigned = useMemo(() => fields.status === 'Assigned', [fields.status]);
   const isScrap = useMemo(() => fields.status === 'Scrap', [fields.status]);
 

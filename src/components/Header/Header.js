@@ -55,7 +55,6 @@ const Header = ({ onLogout }) => {
           left: 0,
           right: 0,
           borderRadius: '0 0 60px 60px',
-          boxShadow: '0 0 15px #6DE0FF, 0 0 10px #2BC4F3',
           zIndex: 1300,
           display: 'flex',
           justifyContent: 'center',

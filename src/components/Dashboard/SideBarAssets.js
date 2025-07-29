@@ -60,9 +60,8 @@ const SidebarAssets = ({ onAddAsset, onFilter, onResetFilters }) => {
           background: 'linear-gradient(45deg, #6DE0FF, #2BC4F3)',
           borderRadius: '40px 0px 0px 40px',
           paddingTop: '12px',
-          paddingBottom: '12px',
-          boxShadow: '0 0 15px #6DE0FF, 0 0 10px #2BC4F3',
-        },
+          paddingBottom: '12px'
+                },
       }}
     >
       <List>
@@ -80,9 +79,8 @@ const SidebarAssets = ({ onAddAsset, onFilter, onResetFilters }) => {
                   color: '#083A40',
                   padding: '6px 12px',
                   borderRadius: '6px',
-                  fontFamily: "'Racing Sans One', sans-serif",
-                  boxShadow: '0 0 6px #6DE0FF, 0 0 12px #2BC4F3',
-                },
+                  fontFamily: "'Racing Sans One', sans-serif"
+                                },
               },
               arrow: {
                 sx: {

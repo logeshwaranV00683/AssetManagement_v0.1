@@ -278,7 +278,7 @@ function Assets() {
       justifyContent: 'space-between',
       alignItems: 'center',
       gap: '1rem',
-      width: '80%', // or maxWidth: '1000px'
+      width: '80%'
     }}
   >
               {/* Import Button */}
@@ -379,7 +379,6 @@ function Assets() {
           <div
             style={{
               width: '80%',
-              // maxWidth: '1100px',
               height: '65vh',
               margin: '0 auto',
               display: 'flex',
@@ -402,8 +401,7 @@ function Assets() {
                 sx={{
                   borderRadius: '16px',
                   overflowX: 'auto',
-                  border: '2px solid #1FCBEA',
-                  boxShadow: '0 0 3px #6DE0FF, 0 0 4px #2BC4F3',
+                  border: '2px solid #0a1113ff',
                   fontFamily: "'Racing Sans One', sans-serif",
                   color: '#083A40',
                   '& .MuiDataGrid-columnHeaders': {

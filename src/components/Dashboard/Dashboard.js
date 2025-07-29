@@ -1,7 +1,7 @@
 import React, { useState, useEffect  } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {  PieChart,  Pie,  Cell,  ResponsiveContainer,  Tooltip,  Legend,} from 'recharts';
-import {  Container,  Card,  CardContent,  Typography,  Box,  TextField,  MenuItem,  Select,  FormControl,  InputLabel,FormLabel } from '@mui/material';
+import {  Container,  Card,  CardContent,  Typography,  Box,  TextField,  MenuItem,  Select,  FormControl,FormLabel } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import '../Style/font.css';
 import { getAssetsByLocation, getUnassignedAssetsByLocation ,getAssignedAssetsByLocation,} from '../Services/DashboardService'; // adjust path if needed
@@ -57,11 +57,11 @@ function Dashboard() {
   row.assetName.toLowerCase().includes(filterValue.toLowerCase())
 );
 
-const filteredAssignedAssets = assignedAssetRows.filter((row) =>
+assignedAssetRows.filter((row) =>
   row.assignedAsset.toLowerCase().includes(filterValue.toLowerCase())
 );
 
-const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
+unassignedAssetRows.filter((row) =>
   row.unassignedAsset.toLowerCase().includes(filterValue.toLowerCase())
 );
 
@@ -129,7 +129,7 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
       }, [selectedLocation]);
 
 
-    const selectedKey = selectedDevice.toLowerCase().replace(/\s/g, '_');
+    // const selectedKey = selectedDevice.toLowerCase().replace(/\s/g, '_');
 
 
   
@@ -202,10 +202,10 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
               <Card className={classes.pieCard} style={{ flex: 1, width: '100%', background: 'transparent', boxShadow: 'none' }}>
                 <CardContent>
                   <div className={classes.label} style={{margin: '20px',  }}>
-                    <Typography variant="h6" style={{ color: '#00f0ff', textShadow: '0 0 6px #2BC4F3', letterSpacing: '1.5px' }}>
+                    <Typography variant="h6" style={{ color: '#00f0ff', letterSpacing: '1.5px' }}>
                       {selectedDevice}: {pieDataChennai?.[0]?.value ?? 0}/{pieDataChennai?.[1]?.value ?? 0}
                     </Typography>
-                    <Typography variant="h6" style={{ color: '#00f0ff', textShadow: '0 0 6px #2BC4F3', letterSpacing: '1.5px' }}>
+                    <Typography variant="h6" style={{ color: '#00f0ff', letterSpacing: '1.5px' }}>
                       CHENNAI
                     </Typography>
                   </div>
@@ -218,7 +218,7 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
                           ))}
                         </Pie>
                         <Tooltip contentStyle={{ backgroundColor: '#0d1b2a', border: '1px solid #00f0ff', color: '#ffffff' }} itemStyle={{ color: '#00f0ff' }} />
-                        <Legend wrapperStyle={{ color: '#00f0ff', textShadow: '0 0 4px #00f0ff' }} />
+                        <Legend wrapperStyle={{ color: '#00f0ff' }} />
                       </PieChart>
                     </ResponsiveContainer>
                   </div>
@@ -255,10 +255,10 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
               <Card className={classes.pieCard} style={{ flex: 1, minWidth: '280px', background: 'transparent', boxShadow: 'none' }}>
                 <CardContent>
                   <div className={classes.label} style={{margin: '20px', }}>
-                    <Typography variant="h6" style={{ color: '#00f0ff', textShadow: '0 0 6px #2BC4F3', letterSpacing: '1.5px', }}>
+                    <Typography variant="h6" style={{ color: '#00f0ff', letterSpacing: '1.5px', }}>
                       {selectedDevice}: {pieDataPune?.[0]?.value ?? 0}/{pieDataPune?.[1]?.value ?? 0}
                     </Typography>
-                    <Typography variant="h6" style={{ color: '#00f0ff', textShadow: '0 0 6px #2BC4F3', letterSpacing: '1.5px' }}>
+                    <Typography variant="h6" style={{ color: '#00f0ff',  letterSpacing: '1.5px' }}>
                       PUNE
                     </Typography>
                   </div>
@@ -272,7 +272,7 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
                         </Pie>
 
                         <Tooltip contentStyle={{ backgroundColor: '#0d1b2a', border: '1px solid #00f0ff', color: '#ffffff' }} itemStyle={{ color: '#00f0ff' }} />
-                        <Legend wrapperStyle={{ color: '#00f0ff', textShadow: '0 0 1px #00f0ff' }} />
+                        <Legend wrapperStyle={{ color: '#00f0ff' }} />
                       </PieChart>
                     </ResponsiveContainer>
                   </div>
@@ -308,7 +308,6 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
                
                 sx={{
                   width: { xs: '90%', sm: '70%', md: '60%' },
-                  // maxWidth: '1000px',
                   '& .MuiOutlinedInput-root': {
                     background: '#ffffff',
                     borderRadius: '15px',
@@ -443,11 +442,9 @@ const filteredUnassignedAssets = unassignedAssetRows.filter((row) =>
                   sx={{
                     width: '100%',        
                     height: '100%',
-                    // flexGrow: 1,
                     borderRadius: '16px',
                     overflow: 'hidden',
-                    border: '2px solid #1FCBEA',
-                    boxShadow: '0 0 3px #6DE0FF, 0 0 4px #2BC4F3',
+                    border: '2px solid #060a0bff',
                     fontFamily: "'Racing Sans One', sans-serif",
                     color: '#083A40',
                     '& .MuiDataGrid-virtualScroller': {

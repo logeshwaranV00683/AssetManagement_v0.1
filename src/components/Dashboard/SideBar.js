@@ -6,7 +6,6 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Tooltip from '@mui/material/Tooltip';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
-import HistoryIcon from '@mui/icons-material/History';
 import MonitorIcon from '@mui/icons-material/Monitor';
 import AppsIcon from '@mui/icons-material/Apps';
 import { useNavigate } from 'react-router-dom';
@@ -33,7 +32,6 @@ const Sidebar = () => {
     { key: 'assets', icon: <MonitorIcon fontSize="large" />, label: 'Assets' },
     { key: 'employee', icon: <PeopleIcon fontSize="large" />, label: 'Employees' },
     { key: 'AssetsToEmployee', icon: <AppsIcon fontSize="large" />, label: 'AssetsToEmployee' },
-    // { key: 'report', icon: <HistoryIcon fontSize="large" />, label: 'Report' },
   ];
 
   return (
@@ -55,7 +53,6 @@ const Sidebar = () => {
           borderRadius: '0px 40px 40px 0px',
           paddingTop: '12px',
           paddingBottom: '12px',
-          boxShadow: '0 0 15px #6DE0FF, 0 0 10px #2BC4F3',
         },
       }}
     >
@@ -75,7 +72,6 @@ const Sidebar = () => {
                   padding: '6px 12px',
                   borderRadius: '6px',
                   fontFamily: "'Racing Sans One', sans-serif",
-                  boxShadow: '0 0 6px #6DE0FF, 0 0 12px #2BC4F3',
                 },
               },
               arrow: {

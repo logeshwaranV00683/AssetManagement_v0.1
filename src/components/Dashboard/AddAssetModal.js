@@ -150,13 +150,6 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
 
             </Select>
           </FormControl>
-
-         {/* <TextField
-              label="Location Code"
-              value={locCode}
-              onChange={(e) => setLocCode(e.target.value)}
-              fullWidth
-          /> */}
           <TextField
               label="Operating System"
               value={operatingSystem}
