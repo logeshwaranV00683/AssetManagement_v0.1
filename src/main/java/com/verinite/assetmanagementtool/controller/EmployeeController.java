@@ -11,11 +11,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -31,12 +33,12 @@ public class EmployeeController {
     EmployeeServiceImpl employeeService;
 
     @PostMapping("employee/saveemployee")
-    public ResponseEntity<?> saveEmployee(@RequestBody @Valid EmployeeDto employeeDTO) {
+    public ResponseEntity<?> saveEmployee(@RequestBody @Valid @Validated(NotBlank.class) EmployeeDto employeeDTO) {
         try {
             EmployeeDto savedEmployee = employeeService.saveEmployee(employeeDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedEmployee);
         } catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatus()).body(e.getMessage());
+            return ResponseEntity.status(e.getStatus()).body(e.getReason());
         }
     }
 

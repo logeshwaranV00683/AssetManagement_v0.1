@@ -178,7 +178,7 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
         sendAcknowledgementMails(assetsEntityList);
         if(ignoredAsset.isEmpty())
         {
-            return ResponseEntity.ok("All data's are Assigned");
+            return ResponseEntity.ok("All Assets are Assigned");
         }
         return ResponseEntity.ok(ignoredAsset);
     }

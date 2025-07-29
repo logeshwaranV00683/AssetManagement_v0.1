@@ -19,6 +19,7 @@ public class AssetsDto {
     @NotBlank
     private String assetName;
     @NotBlank
+    @Pattern(regexp = "^(\\w+)?$", message = "Must be a Alphanumeric & _")
     private String serialNumber;
     @Pattern(regexp = "^(V\\d{5})?$", message = "Must be V followed by 5 digits or empty")
     private String empId;
@@ -38,8 +39,10 @@ public class AssetsDto {
     @NotNull
     private Integer locCode;
     @NotBlank
+    @Pattern(regexp = "^(\\w+)?$", message = "ModelName must be alphanumeric & _")
     private String modelName;
     @NotBlank
+    @Pattern(regexp = "^(\\w+)?$", message = "operatingSystem must be alphanumeric & _")
     private String operatingSystem;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate returnDate;

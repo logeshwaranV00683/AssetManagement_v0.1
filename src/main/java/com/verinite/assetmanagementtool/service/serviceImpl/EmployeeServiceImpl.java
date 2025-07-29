@@ -264,7 +264,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeRepo.findByIgnoreCaseStatus(str);
     }
 
-//	
 
     @Override
     public ResponseEntity<?> getAllByLocation(String str) {
