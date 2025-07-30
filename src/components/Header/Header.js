@@ -7,10 +7,12 @@ import {
   Menu,
   MenuItem,
 } from "@material-ui/core";
+import LockResetIcon from '@mui/icons-material/LockReset';
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 import '../Style/font.css';
+import '../Dashboard/AdminProfile';
 
 const Header = ({ onLogout }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -43,6 +45,10 @@ const handleLogout = () => {
   navigate('/login');
 };
 
+
+  const handleAdminProfile = () => {
+  navigate('/AdminProfile');
+  };
 
   return (
     <>
@@ -123,6 +129,18 @@ const handleLogout = () => {
               open={Boolean(anchorEl)}
               onClose={handleMenuClose}
             >
+              <MenuItem
+                onClick={handleAdminProfile}
+                style={{
+                  color: 'green',
+                  fontWeight: 'bold',
+                  textShadow: '0 0 3px #fff, 0 0 6px #4dff5cff',
+                }}
+              >
+                <LockResetIcon  style={{ marginRight: '8px' }} />
+                Profile
+              </MenuItem>
+
               <MenuItem
                 onClick={handleLogout}
                 style={{

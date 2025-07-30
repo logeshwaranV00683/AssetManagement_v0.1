@@ -96,10 +96,13 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
           p: 4,
           width: '60%',
           maxWidth: 700,
-          mx: 'auto',
-          my: '10%',
+          maxHeight: '80%', 
+          overflowY: 'auto', 
           borderRadius: 4,
-          position: 'relative',
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
         }}
       >
         <IconButton

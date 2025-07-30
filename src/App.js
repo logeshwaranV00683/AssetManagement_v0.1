@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import Login from './components/Login';
 import Dashboard from './components/Dashboard/Dashboard';
 import Assets from './components/Dashboard/Assets';
+import AdminProfile from './components/Dashboard/AdminProfile';
 import Header from './components/Header/Header';
 import Sidebar from './components/Dashboard/SideBar';
 import Employee from './components/Dashboard/Employee';
@@ -51,6 +52,8 @@ function App() {
           </div>
           } />
           <Route path="/" element={<Navigate to="/login" />} />
+          <Route path="/adminprofile" element={<AdminProfile />} />
+
         </Routes>
       </div>
     </Router>

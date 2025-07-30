@@ -154,13 +154,13 @@ function Assets() {
   };
 
   const columns = [
-  { field: 'serialNumber', headerName: 'Serial Number', minWidth: 120, flex: 1 },
-  { field: 'assetName', headerName: 'Name', minWidth: 100, flex: 0.8 },
-  { field: 'type', headerName: 'Type', minWidth: 100, flex: 0.85 },
-  { field: 'status', headerName: 'Status', minWidth: 40, flex: 0.8 },
-  { field: 'empId', headerName: 'Assigned To', minWidth: 120, flex: 0.7 },
-  { field: 'location', headerName: 'Location', minWidth: 120, flex: 0.6 },
-  { field: 'assetSourcedBy', headerName: 'Sourced By', minWidth: 120, flex: 0.7 },
+  { field: 'serialNumber', headerName: 'Serial Number', minWidth: 100, flex: 1 },
+  { field: 'assetName', headerName: 'Name', minWidth: 80, flex: 0.75 },
+  { field: 'type', headerName: 'Type', minWidth: 100, flex: 0.8 },
+  { field: 'status', headerName: 'Status', minWidth: 60, flex: 0.9 },
+  { field: 'empId', headerName: 'Assigned To', minWidth: 120, flex: 0.65 },
+  { field: 'location', headerName: 'Location', minWidth: 100, flex: 0.6 },
+  { field: 'assetSourcedBy', headerName: 'Sourced By', minWidth: 110, flex: 0.65 },
   {
     field: 'actions',
     headerName: 'Actions',
@@ -168,15 +168,15 @@ function Assets() {
     flex: 2,
     sortable: false,
     renderCell: (params) => (
-      <Box display="flex" flexWrap="wrap" justifyContent="center" alignItems="center" gap={1}>
+      <Box display="flex" justifyContent="center" alignItems="center" gap={0.5}>
         <Tooltip title="View">
           <IconButton
             sx={{
               transition: 'transform 0.2s',
               '&:hover': {
-                transform: 'scale(1.3)',
+                transform: 'scale(1.2)',
                 color: 'info.main',
-                filter: 'drop-shadow(0 0 4px #2196f3)',
+                filter: 'drop-shadow(0 0 30px #2196f3)',
               },
             }}
             onClick={() => handleOpenEditModal(params.row, true)}
@@ -190,7 +190,7 @@ function Assets() {
             sx={{
               transition: 'transform 0.2s',
               '&:hover': {
-                transform: 'scale(1.3)',
+                transform: 'scale(1.2)',
                 color: params.row.empId ? 'error.main' : 'success.main',
                 filter: params.row.empId
                   ? 'drop-shadow(0 0 4px rgb(246, 102, 59))'
@@ -208,7 +208,7 @@ function Assets() {
             sx={{
               transition: 'transform 0.2s',
               '&:hover': {
-                transform: 'scale(1.3)',
+                transform: 'scale(1.2)',
                 color: 'warning.main',
                 filter: 'drop-shadow(0 0 4px orange)',
               },
@@ -224,7 +224,7 @@ function Assets() {
             sx={{
               transition: 'transform 0.2s',
               '&:hover': {
-                transform: 'scale(1.3)',
+                transform: 'scale(1.2)',
                 color: 'primary.main',
                 filter: 'drop-shadow(0 0 4px #1976d2)',
               },
@@ -240,7 +240,7 @@ function Assets() {
             sx={{
               transition: 'transform 0.2s',
               '&:hover': {
-                transform: 'scale(1.3)',
+                transform: 'scale(1.2)',
                 color: 'error.main',
                 filter: 'drop-shadow(0 0 4px red)',
               },
@@ -265,22 +265,22 @@ function Assets() {
 
           <div className={classes.filterContainer}>
             <div
-  style={{
-    display: 'flex',
-    justifyContent: 'center',
-    width: '100%',
-  }}
->
-  <div
-    style={{
-      display: 'flex',
-      flexWrap: 'wrap',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      gap: '1rem',
-      width: '80%'
-    }}
-  >
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                width: '100%',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  gap: '1rem',
+                  width: '80%'
+                }}
+              >
               {/* Import Button */}
               <div style={{ width: '20%', minWidth: '150px', textAlign: 'center' }}>
                 <div
@@ -369,7 +369,7 @@ function Assets() {
               </div>
             </div>
           </div>
-          </div>
+        </div>
 
 
 

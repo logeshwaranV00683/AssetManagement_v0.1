@@ -63,3 +63,24 @@ export const handleResetPassword = async (mail,otp, newPassword, confirmPassword
     toast.error("Something went wrong");
   }
 };
+
+
+export const changePassword = async (mail, oldPassword, newPassword) => {
+  try {
+    const response = await fetch(`${apiUrl}/reset-password/change-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mail, oldPassword, newPassword }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Password change failed');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error during password change:', error);
+    throw error;
+  }
+};
