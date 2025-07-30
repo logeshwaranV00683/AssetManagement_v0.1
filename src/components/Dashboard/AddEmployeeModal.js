@@ -106,6 +106,7 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
       setRole("");
       setDepartment("");
       setDesignation("");
+      handleClose();
     } catch (error) {
       if (error.status === 400 && typeof error.data === "object") {
         Object.entries(error.data).forEach(([field, message]) => {

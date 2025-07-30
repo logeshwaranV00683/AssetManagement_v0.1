@@ -35,13 +35,9 @@ const Header = ({ onLogout }) => {
   };
   const handleLogout = () => {
     handleMenuClose();
-
-    // Clear localStorage items
     localStorage.removeItem("authToken");
     localStorage.removeItem("isLogin");
     localStorage.removeItem("user");
-
-    // Redirect to login page
     navigate("/login");
   };
 

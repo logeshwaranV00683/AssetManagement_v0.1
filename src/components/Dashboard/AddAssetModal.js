@@ -64,7 +64,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
           error.data || `Asset ${newAsset.serialNumber} already exists`
         );
       } else {
-        toast.error(`Adding ${newAsset.serialNumber} Asset Failed`);
+        toast.error(`Adding ${newAsset.serialNumber} Warranty Date must not be before Purchase Date or Already Serial Number is exists `);
       }
     } finally {
       setIsAdding(false);

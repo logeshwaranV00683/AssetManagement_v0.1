@@ -1,5 +1,3 @@
-// App.js
-
 import React from "react";
 import {
   BrowserRouter as Router,
@@ -17,58 +15,82 @@ import Employee from "./components/Dashboard/Employee";
 import AssetsToEmployee from "./components/Dashboard/AssetsToEmployee";
 import SidebarAssets from "./components/Dashboard/SideBarAssets";
 import SidebarEmployee from "./components/Dashboard/SideBarEmployee";
+import PrivateRoute from "./components/Dashboard/PrivateRoute";
 
 function App() {
   return (
     <Router>
       <div className="App">
         <Routes>
+          {/* Public Route */}
           <Route path="/login" element={<Login />} />
+
+          {/* Protected Routes */}
           <Route
             path="/dashboard"
             element={
-              <div className="dashboard-config">
-                <Sidebar />
-                <Header />
-                <Dashboard />
-              </div>
+              <PrivateRoute>
+                <div className="dashboard-config">
+                  <Sidebar />
+                  <Header />
+                  <Dashboard />
+                </div>
+              </PrivateRoute>
             }
           />
+
           <Route
             path="/assets"
             element={
-              <div className="dashboard-config">
-                <Sidebar />
-                <SidebarAssets />
-                <Header />
-                <Assets />
-              </div>
+              <PrivateRoute>
+                <div className="dashboard-config">
+                  <Sidebar />
+                  <SidebarAssets />
+                  <Header />
+                  <Assets />
+                </div>
+              </PrivateRoute>
             }
           />
+
           <Route
             path="/employee"
             element={
-              <div className="dashboard-config">
-                <Sidebar />
-                <SidebarEmployee />
-                <Header />
-                <Employee />
-              </div>
+              <PrivateRoute>
+                <div className="dashboard-config">
+                  <Sidebar />
+                  <SidebarEmployee />
+                  <Header />
+                  <Employee />
+                </div>
+              </PrivateRoute>
             }
           />
 
           <Route
             path="/assetstoemployee"
             element={
-              <div className="dashboard-config">
-                <Sidebar />
-                <Header />
-                <AssetsToEmployee />
-              </div>
+              <PrivateRoute>
+                <div className="dashboard-config">
+                  <Sidebar />
+                  <Header />
+                  <AssetsToEmployee />
+                </div>
+              </PrivateRoute>
             }
           />
+
+          <Route
+            path="/adminprofile"
+            element={
+              <PrivateRoute>
+                <AdminProfile />
+              </PrivateRoute>
+            }
+          />
+
+          {/* Default redirect */}
           <Route path="/" element={<Navigate to="/login" />} />
-          <Route path="/adminprofile" element={<AdminProfile />} />
         </Routes>
       </div>
     </Router>
