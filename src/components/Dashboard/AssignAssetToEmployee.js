@@ -105,7 +105,10 @@ function AssignAssetToEmployee({ open, onClose, employee, refresh }) {
       resetState();
     } catch (error) {
       if (error.status === 406) {
-        showWarningAlert("Asset Already Assigned", "Some assets are already assigned.");
+        showWarningAlert(
+          "Asset Already Assigned",
+          "Some assets are already assigned."
+        );
       } else if (error.status === 404) {
         return showWarningAlert("Employee Status Was In InActive");
       } else {
@@ -117,7 +120,10 @@ function AssignAssetToEmployee({ open, onClose, employee, refresh }) {
   const handleUnassign = async () => {
     try {
       await unassignAsset(selectedUnassignAssets);
-      showSuccessAlert("Assets Unassigned!", "Selected assets were unassigned.");
+      showSuccessAlert(
+        "Assets Unassigned!",
+        "Selected assets were unassigned."
+      );
       resetState();
     } catch (error) {
       showErrorAlert("Unassign Failed", "Could not unassign selected assets.");
@@ -148,7 +154,9 @@ function AssignAssetToEmployee({ open, onClose, employee, refresh }) {
                     <li key={asset.serialNumber}>
                       <Checkbox
                         size="small"
-                        checked={selectedUnassignAssets.includes(asset.serialNumber)}
+                        checked={selectedUnassignAssets.includes(
+                          asset.serialNumber
+                        )}
                         onChange={(e) => {
                           const sn = asset.serialNumber;
                           setSelectedUnassignAssets((prev) =>
@@ -208,7 +216,11 @@ function AssignAssetToEmployee({ open, onClose, employee, refresh }) {
                 </MenuItem>
               ))}
               <Box textAlign="center" p={1}>
-                <Button variant="contained" size="small" onClick={handleOkClick}>
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={handleOkClick}
+                >
                   OK
                 </Button>
               </Box>

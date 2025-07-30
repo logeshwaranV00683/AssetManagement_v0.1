@@ -1,35 +1,33 @@
-import React, { useState } from 'react';
-import Modal from '@mui/material/Modal';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
-import { saveAsset } from '../Services/AssetService';
-import { toast } from 'react-hot-toast';
-
+import React, { useState } from "react";
+import Modal from "@mui/material/Modal";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import { saveAsset } from "../Services/AssetService";
+import { toast } from "react-hot-toast";
 
 function AddAssetModal({ open, handleClose, refreshAssetList }) {
-
-  const user = JSON.parse(localStorage.getItem('user'));
+  const user = JSON.parse(localStorage.getItem("user"));
   const [isAdding, setIsAdding] = useState(false);
 
-  const [assetName, setAssetName] = useState('');
-  const [serialNumber, setSerialNumber] = useState('');
-  const [location, setLocation] = useState('');
-  const [locCode, setLocCode] = useState('0');
-  const [operatingSystem, setOperatingSystem] = useState('');
-  const [modelName, setModelName] = useState('');
-  const [purchaseDate, setPurchaseDate] = useState('');
-  const [warrantyDate, setWarrantyDate] = useState('');
+  const [assetName, setAssetName] = useState("");
+  const [serialNumber, setSerialNumber] = useState("");
+  const [location, setLocation] = useState("");
+  const [locCode, setLocCode] = useState("0");
+  const [operatingSystem, setOperatingSystem] = useState("");
+  const [modelName, setModelName] = useState("");
+  const [purchaseDate, setPurchaseDate] = useState("");
+  const [warrantyDate, setWarrantyDate] = useState("");
   const [addedBy, setAddedBy] = useState(user.empId);
-  const [status, setStatus] = useState('Unassigned');
-  const [type, setType] = useState('');
-  const [assetSourcedBy, setAssetSourcedBy] = useState('Verinite');
+  const [status, setStatus] = useState("Unassigned");
+  const [type, setType] = useState("");
+  const [assetSourcedBy, setAssetSourcedBy] = useState("");
 
   const handleAddAsset = async () => {
     const newAsset = {
@@ -46,35 +44,46 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
       addedBy,
       assetSourcedBy,
     };
-    console.log('Asset added:', newAsset);
+    console.log("Asset added:", newAsset);
     setIsAdding(true);
-           try {
-             await saveAsset(newAsset);
-             console.log('Asset added:', newAsset);
-             refreshAssetList();
-             toast.success(`${newAsset.serialNumber} Asset Added Successfully`); 
-             handleCloseModal();
-           } catch (error) {
-             console.error('Error adding Asset:', error);
-             toast.error(`Adding ${newAsset.serialNumber} Asset Failed`); 
-           } finally {
-              setIsAdding(false);
-           }
+    try {
+      await saveAsset(newAsset);
+      console.log("Asset added:", newAsset);
+      refreshAssetList();
+      toast.success(`${newAsset.serialNumber} Asset Added Successfully`);
+      handleCloseModal();
+    } catch (error) {
+      console.error("Error adding Asset:", error);
+
+      if (error.status === 400 && typeof error.data === "object") {
+        Object.entries(error.data).forEach(([field, message]) => {
+          toast.error(`${field}: ${message}`);
+        });
+      } else if (error.status === 409) {
+        toast.error(
+          error.data || `Asset ${newAsset.serialNumber} already exists`
+        );
+      } else {
+        toast.error(`Adding ${newAsset.serialNumber} Asset Failed`);
+      }
+    } finally {
+      setIsAdding(false);
+    }
   };
 
   const resetForm = () => {
-    setAssetName('');
-    setSerialNumber('');
-    setLocation('');
-    setStatus('Unassigned');
-    setLocCode('');
-    setOperatingSystem('');
-    setModelName('');
-    setType('');
-    setPurchaseDate('');
-    setWarrantyDate('');
+    setAssetName("");
+    setSerialNumber("");
+    setLocation("");
+    setStatus("Unassigned");
+    setLocCode("");
+    setOperatingSystem("");
+    setModelName("");
+    setType("");
+    setPurchaseDate("");
+    setWarrantyDate("");
     setAddedBy(user.empId);
-    setAssetSourcedBy('');
+    setAssetSourcedBy("");
   };
 
   const handleCloseModal = () => {
@@ -91,10 +100,10 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
     >
       <Box
         sx={{
-          backgroundColor: 'background.paper',
+          backgroundColor: "background.paper",
           boxShadow: 24,
           p: 4,
-          width: '60%',
+          width: "60%",
           maxWidth: 700,
           maxHeight: '80%', 
           overflowY: 'auto', 
@@ -108,12 +117,15 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
         <IconButton
           aria-label="close"
           onClick={handleCloseModal}
-          sx={{ position: 'absolute', top: 8, right: 8 }}
+          sx={{ position: "absolute", top: 8, right: 8 }}
         >
           <CloseIcon />
         </IconButton>
 
-        <h2 id="add-asset-modal-title" style={{ textAlign: 'center', color: '#083A40' }}>
+        <h2
+          id="add-asset-modal-title"
+          style={{ textAlign: "center", color: "#083A40" }}
+        >
           Add Asset
         </h2>
 
@@ -122,25 +134,25 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
           noValidate
           autoComplete="off"
           sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
             gap: 2,
           }}
         >
           <TextField
-              labelId="asset-name-label"
-              id="asset-name"
-              value={assetName}
-              label="Asset Name"
-              onChange={(e) => setAssetName(e.target.value)}
-              fullWidth
+            labelId="asset-name-label"
+            id="asset-name"
+            value={assetName}
+            label="Asset Name"
+            onChange={(e) => setAssetName(e.target.value)}
+            fullWidth
           />
 
           <TextField
-              label="Serial Number"
-              value={serialNumber}
-              onChange={(e) => setSerialNumber(e.target.value)}
-              fullWidth
+            label="Serial Number"
+            value={serialNumber}
+            onChange={(e) => setSerialNumber(e.target.value)}
+            fullWidth
           />
           <FormControl fullWidth>
             <InputLabel id="location">Location</InputLabel>
@@ -153,23 +165,21 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
             >
               <MenuItem value="Chennai">Chennai</MenuItem>
               <MenuItem value="Pune">Pune</MenuItem>
-
             </Select>
           </FormControl>
           <TextField
-              label="Operating System"
-              value={operatingSystem}
-              onChange={(e) => setOperatingSystem(e.target.value)}
-              fullWidth
+            label="Operating System"
+            value={operatingSystem}
+            onChange={(e) => setOperatingSystem(e.target.value)}
+            fullWidth
           />
           <TextField
-              label="Variant"
-              value={modelName}
-              onChange={(e) => setModelName(e.target.value)}
-              fullWidth
+            label="Model Name"
+            value={modelName}
+            onChange={(e) => setModelName(e.target.value)}
+            fullWidth
           />
-          
-          
+
           <FormControl fullWidth>
             <InputLabel id="Type">Type</InputLabel>
             <Select
@@ -192,45 +202,46 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
               <MenuItem value="projector">Projector</MenuItem>
               <MenuItem value="speaker">Speaker</MenuItem>
               <MenuItem value="switch">Switch</MenuItem>
-
             </Select>
           </FormControl>
-          
+
           <TextField
-              label="Purchase Date"
-              type="date"
-              value={purchaseDate}
-              onChange={(e) => setPurchaseDate(e.target.value)}
-              InputLabelProps={{ shrink: true }}
-              fullWidth
+            label="Purchase Date"
+            type="date"
+            value={purchaseDate}
+            onChange={(e) => setPurchaseDate(e.target.value)}
+            InputLabelProps={{ shrink: true }}
+            fullWidth
           />
 
           <TextField
-              label="Warranty Date"
-              type="date"
-              value={warrantyDate}
-              onChange={(e) => setWarrantyDate(e.target.value)}
-              InputLabelProps={{ shrink: true }}
-              fullWidth
+            label="Warranty Date"
+            type="date"
+            value={warrantyDate}
+            onChange={(e) => setWarrantyDate(e.target.value)}
+            InputLabelProps={{ shrink: true }}
+            fullWidth
           />
 
           <FormControl fullWidth>
-            <InputLabel id="asset-sourced-by-label">Asset Sourced By</InputLabel>
+            <InputLabel id="asset-sourced-by-label">
+              Asset Sourced By
+            </InputLabel>
             <Select
               labelId="asset-sourced-by-label"
               id="asset-sourced-by"
               value={
-                ['Verinite', 'Client Company'].includes(assetSourcedBy)
+                ["Verinite", "Client Company", ""].includes(assetSourcedBy)
                   ? assetSourcedBy
-                  : 'Client Company'
+                  : "Client Company"
               }
               label="Asset Sourced By"
               onChange={(e) => {
                 const value = e.target.value;
-                if (value === 'Verinite') {
-                  setAssetSourcedBy('Verinite');
+                if (value === "Verinite") {
+                  setAssetSourcedBy("Verinite");
                 } else {
-                  setAssetSourcedBy('');
+                  setAssetSourcedBy("");
                 }
               }}
             >
@@ -239,7 +250,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
             </Select>
           </FormControl>
 
-          {assetSourcedBy !== 'Verinite' && (
+          {assetSourcedBy !== "Verinite" && (
             <TextField
               label="Enter Client Company Name"
               value={assetSourcedBy}
@@ -251,15 +262,15 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
 
         <Box
           sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
+            display: "flex",
+            justifyContent: "space-between",
             mt: 3,
           }}
         >
           <Button
             variant="contained"
             onClick={handleCloseModal}
-            sx={{ backgroundColor: 'error.main', color: 'error.contrastText' }}
+            sx={{ backgroundColor: "error.main", color: "error.contrastText" }}
           >
             Cancel
           </Button>
@@ -267,9 +278,12 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
             variant="contained"
             onClick={handleAddAsset}
             disabled={isAdding}
-            sx={{ backgroundColor: 'success.main', color: 'success.contrastText' }}
+            sx={{
+              backgroundColor: "success.main",
+              color: "success.contrastText",
+            }}
           >
-            {isAdding ? 'Adding...' : 'Add'}
+            {isAdding ? "Adding..." : "Add"}
           </Button>
         </Box>
       </Box>

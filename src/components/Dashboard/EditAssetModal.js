@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import {
   Modal,
   Box,
@@ -9,58 +9,67 @@ import {
   FormControl,
   InputLabel,
   IconButton,
-} from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import { updateAsset } from '../Services/AssetService';
-import { toast } from 'react-hot-toast';
-import { showErrorAlert } from '../Utils/alerts';
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import { updateAsset } from "../Services/AssetService";
+import { toast } from "react-hot-toast";
+import { showErrorAlert } from "../Utils/alerts";
 
-function EditAssetModal({ open, handleClose, refreshAssetList, asset, viewOnly }) {
+function EditAssetModal({
+  open,
+  handleClose,
+  refreshAssetList,
+  asset,
+  viewOnly,
+}) {
   const [fields, setFields] = useState({
-    assetName: '',
-    serialNumber: '',
-    location: '',
-    locCode: '',
-    operatingSystem: '',
-    modelName: '',
-    purchaseDate: '',
-    warrantyDate: '',
-    addedBy: '',
-    assignedBy: '',
-    assignedDate: '',
-    returnDate: '',
-    type: '',
-    assetSourcedBy: '',
-    empId: '',
-    status: '',
+    assetName: "",
+    serialNumber: "",
+    location: "",
+    locCode: "",
+    operatingSystem: "",
+    modelName: "",
+    purchaseDate: "",
+    warrantyDate: "",
+    addedBy: "",
+    assignedBy: "",
+    assignedDate: "",
+    returnDate: "",
+    type: "",
+    assetSourcedBy: "",
+    empId: "",
+    status: "",
   });
   const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
     if (asset) {
       setFields({
-        assetName: asset.assetName || '',
-        serialNumber: asset.serialNumber || '',
-        location: asset.location || '',
-        locCode: asset.locCode || '',
-        operatingSystem: asset.operatingSystem || '',
-        modelName: asset.modelName || '',
-        purchaseDate: asset.purchaseDate || '',
-        warrantyDate: asset.warrantyDate || '',
-        addedBy: asset.addedBy || '',
-        assignedBy: asset.assignedBy || '',
-        assignedDate: asset.assignedDate || '',
-        returnDate: asset.returnDate || '',
-        type: asset.type || '',
-        assetSourcedBy: asset.assetSourcedBy || '',
-        empId: asset.empId || '',
-        status: asset.status || '',
+        assetName: asset.assetName || "",
+        serialNumber: asset.serialNumber || "",
+        location: asset.location || "",
+        locCode: asset.locCode || "",
+        operatingSystem: asset.operatingSystem || "",
+        modelName: asset.modelName || "",
+        purchaseDate: asset.purchaseDate || "",
+        warrantyDate: asset.warrantyDate || "",
+        addedBy: asset.addedBy || "",
+        assignedBy: asset.assignedBy || "",
+        assignedDate: asset.assignedDate || "",
+        returnDate: asset.returnDate || "",
+        type: asset.type || "",
+        assetSourcedBy: asset.assetSourcedBy || "",
+        empId: asset.empId || "",
+        status: asset.status || "",
       });
     }
   }, [asset]);
 
-  const isAssigned = useMemo(() => fields.status === 'Assigned', [fields.status]);
-  const isScrap = useMemo(() => fields.status === 'Scrap', [fields.status]);
+  const isAssigned = useMemo(
+    () => fields.status === "Assigned",
+    [fields.status]
+  );
+  const isScrap = useMemo(() => fields.status === "Scrap", [fields.status]);
 
   const handleChange = useCallback(
     (field) => (e) => {
@@ -70,35 +79,29 @@ function EditAssetModal({ open, handleClose, refreshAssetList, asset, viewOnly }
     []
   );
 
-  const handleAssetSourcedByChange = useCallback(
-    (e) => {
-      const val = e.target.value;
-      setFields((prev) => ({
-        ...prev,
-        assetSourcedBy: val === 'Verinite' ? 'Verinite' : '',
-      }));
-    },
-    []
-  );
+  const handleAssetSourcedByChange = useCallback((e) => {
+    const val = e.target.value;
+    setFields((prev) => ({
+      ...prev,
+      assetSourcedBy: val === "Verinite" ? "Verinite" : "",
+    }));
+  }, []);
 
-  const handleClientCompanyNameChange = useCallback(
-    (e) => {
-      const val = e.target.value;
-      setFields((prev) => ({
-        ...prev,
-        assetSourcedBy: val,
-      }));
-    },
-    []
-  );
+  const handleClientCompanyNameChange = useCallback((e) => {
+    const val = e.target.value;
+    setFields((prev) => ({
+      ...prev,
+      assetSourcedBy: val,
+    }));
+  }, []);
 
   const handleUpdateAsset = async () => {
     if (!asset) return;
 
     const updatedFields = {};
     for (const key in fields) {
-      const oldVal = asset[key] ?? '';
-      const newVal = fields[key] ?? '';
+      const oldVal = asset[key] ?? "";
+      const newVal = fields[key] ?? "";
       if (newVal !== oldVal) {
         updatedFields[key] = newVal;
       }
@@ -106,7 +109,10 @@ function EditAssetModal({ open, handleClose, refreshAssetList, asset, viewOnly }
 
     if (Object.keys(updatedFields).length === 0) {
       handleClose();
-      showErrorAlert('No changes detected', 'Please update some fields before submitting.');
+      showErrorAlert(
+        "No changes detected",
+        "Please update some fields before submitting."
+      );
       return;
     }
 
@@ -114,13 +120,12 @@ function EditAssetModal({ open, handleClose, refreshAssetList, asset, viewOnly }
     try {
       handleClose();
       await updateAsset(updatedFields, fields.serialNumber);
-     toast.success(`${fields.serialNumber} Updated Successfully`);
+      toast.success(`${fields.serialNumber} Updated Successfully`);
       await refreshAssetList();
-      
     } catch (error) {
-      console.error('Error updating Asset:', error);
+      console.error("Error updating Asset:", error);
       handleClose();
-      showErrorAlert('Update Failed', `${fields.serialNumber} Updation Failed`);
+      showErrorAlert("Update Failed", `${fields.serialNumber} Updation Failed`);
     } finally {
       setIsUpdating(false);
     }
@@ -135,31 +140,31 @@ function EditAssetModal({ open, handleClose, refreshAssetList, asset, viewOnly }
     >
       <Box
         sx={{
-          backgroundColor: 'background.paper',
+          backgroundColor: "background.paper",
           boxShadow: 24,
           p: 4,
-          width: '60%',
+          width: "60%",
           maxWidth: 700,
-          maxHeight: '80%', 
-          overflowY: 'auto', 
+          mx: "auto",
+          my: "10%",
           borderRadius: 4,
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
+          position: "relative",
         }}
       >
 
         <IconButton
           aria-label="close"
           onClick={handleClose}
-          sx={{ position: 'absolute', top: 8, right: 8 }}
+          sx={{ position: "absolute", top: 8, right: 8 }}
         >
           <CloseIcon />
         </IconButton>
 
-        <h2 id="edit-asset-modal-title" style={{ textAlign: 'center', color: '#083A40' }}>
-          {viewOnly ? 'View Asset' : 'Edit Asset'}
+        <h2
+          id="edit-asset-modal-title"
+          style={{ textAlign: "center", color: "#083A40" }}
+        >
+          {viewOnly ? "View Asset" : "Edit Asset"}
         </h2>
 
         <Box
@@ -167,8 +172,8 @@ function EditAssetModal({ open, handleClose, refreshAssetList, asset, viewOnly }
           noValidate
           autoComplete="off"
           sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
             gap: 2,
           }}
         >
@@ -176,42 +181,42 @@ function EditAssetModal({ open, handleClose, refreshAssetList, asset, viewOnly }
           <TextField
             label="Asset Name"
             value={fields.assetName}
-            onChange={handleChange('assetName')}
+            onChange={handleChange("assetName")}
             fullWidth
             disabled={viewOnly}
           />
           <TextField
             label="Serial Number"
             value={fields.serialNumber}
-            onChange={handleChange('serialNumber')}
+            onChange={handleChange("serialNumber")}
             fullWidth
             disabled={viewOnly}
           />
           <TextField
             label="Location"
             value={fields.location}
-            onChange={handleChange('location')}
+            onChange={handleChange("location")}
             fullWidth
             disabled={viewOnly}
           />
           <TextField
             label="Location Code"
             value={fields.locCode}
-            onChange={handleChange('locCode')}
+            onChange={handleChange("locCode")}
             fullWidth
             disabled={viewOnly}
           />
           <TextField
             label="Operating System"
             value={fields.operatingSystem}
-            onChange={handleChange('operatingSystem')}
+            onChange={handleChange("operatingSystem")}
             fullWidth
             disabled={viewOnly}
           />
           <TextField
             label="Variant"
             value={fields.modelName}
-            onChange={handleChange('modelName')}
+            onChange={handleChange("modelName")}
             fullWidth
             disabled={viewOnly}
           />
@@ -222,7 +227,7 @@ function EditAssetModal({ open, handleClose, refreshAssetList, asset, viewOnly }
               labelId="type-label"
               value={fields.type}
               label="Type"
-              onChange={handleChange('type')}
+              onChange={handleChange("type")}
             >
               <MenuItem value="LAPTOP">LAPTOP</MenuItem>
               <MenuItem value="MOUSE">MOUSE</MenuItem>
@@ -234,15 +239,20 @@ function EditAssetModal({ open, handleClose, refreshAssetList, asset, viewOnly }
             </Select>
           </FormControl>
 
-          <FormControl fullWidth disabled={viewOnly}>
+          <FormControl
+            fullWidth
+            disabled={viewOnly || fields.status === "Assigned"}
+          >
             <InputLabel id="status-label">Status</InputLabel>
             <Select
               labelId="status-label"
               value={fields.status}
               label="Status"
-              onChange={handleChange('status')}
+              onChange={handleChange("status")}
             >
-              <MenuItem value="Assigned">Assigned</MenuItem>
+              {fields.status === "Assigned" && (
+                <MenuItem value="Assigned">Assigned</MenuItem>
+              )}
               <MenuItem value="UnAssigned">UnAssigned</MenuItem>
               <MenuItem value="Scrap">Scrap</MenuItem>
             </Select>
@@ -252,9 +262,9 @@ function EditAssetModal({ open, handleClose, refreshAssetList, asset, viewOnly }
             <TextField
               label="Assigned To (Emp ID)"
               value={fields.empId}
-              onChange={handleChange('empId')}
+              onChange={handleChange("empId")}
               fullWidth
-              disabled={viewOnly}
+              disabled={true}
             />
           )}
 
@@ -262,7 +272,7 @@ function EditAssetModal({ open, handleClose, refreshAssetList, asset, viewOnly }
             label="Purchase Date"
             type="date"
             value={fields.purchaseDate}
-            onChange={handleChange('purchaseDate')}
+            onChange={handleChange("purchaseDate")}
             InputLabelProps={{ shrink: true }}
             fullWidth
             disabled={viewOnly}
@@ -271,7 +281,7 @@ function EditAssetModal({ open, handleClose, refreshAssetList, asset, viewOnly }
             label="Warranty Date"
             type="date"
             value={fields.warrantyDate}
-            onChange={handleChange('warrantyDate')}
+            onChange={handleChange("warrantyDate")}
             InputLabelProps={{ shrink: true }}
             fullWidth
             disabled={viewOnly}
@@ -280,30 +290,30 @@ function EditAssetModal({ open, handleClose, refreshAssetList, asset, viewOnly }
           <TextField
             label="Added By"
             value={fields.addedBy}
-            onChange={handleChange('addedBy')}
+            onChange={handleChange("addedBy")}
             fullWidth
             disabled={viewOnly}
           />
 
           {(isAssigned || isScrap) && (
             <TextField
-              label={isScrap ? 'Scraped By' : 'Assigned By'}
+              label={isScrap ? "Scraped By" : "Assigned By"}
               value={fields.assignedBy}
-              onChange={handleChange('assignedBy')}
+              onChange={handleChange("assignedBy")}
               fullWidth
-              disabled={viewOnly}
+              disabled={true}
             />
           )}
 
           {(isAssigned || isScrap) && (
             <TextField
-              label={isScrap ? 'Scraped Date' : 'Assigned Date'}
+              label={isScrap ? "Scraped Date" : "Assigned Date"}
               type="date"
               value={fields.assignedDate}
-              onChange={handleChange('assignedDate')}
+              onChange={handleChange("assignedDate")}
               InputLabelProps={{ shrink: true }}
               fullWidth
-              disabled={viewOnly}
+              disabled={true}
             />
           )}
 
@@ -312,18 +322,23 @@ function EditAssetModal({ open, handleClose, refreshAssetList, asset, viewOnly }
               label="Return Date"
               type="date"
               value={fields.returnDate}
-              onChange={handleChange('returnDate')}
               InputLabelProps={{ shrink: true }}
               fullWidth
-              disabled={viewOnly}
+              disabled={true}
             />
           )}
 
           <FormControl fullWidth disabled={viewOnly}>
-            <InputLabel id="asset-sourced-by-label">Asset Sourced By</InputLabel>
+            <InputLabel id="asset-sourced-by-label">
+              Asset Sourced By
+            </InputLabel>
             <Select
               labelId="asset-sourced-by-label"
-              value={fields.assetSourcedBy === 'Verinite' ? 'Verinite' : 'Client Company'}
+              value={
+                fields.assetSourcedBy === "Verinite"
+                  ? "Verinite"
+                  : "Client Company"
+              }
               label="Asset Sourced By"
               onChange={handleAssetSourcedByChange}
             >
@@ -332,7 +347,7 @@ function EditAssetModal({ open, handleClose, refreshAssetList, asset, viewOnly }
             </Select>
           </FormControl>
 
-          {fields.assetSourcedBy !== 'Verinite' && (
+          {fields.assetSourcedBy !== "Verinite" && (
             <TextField
               label="Enter Client Company Name"
               value={fields.assetSourcedBy}
@@ -344,11 +359,15 @@ function EditAssetModal({ open, handleClose, refreshAssetList, asset, viewOnly }
         </Box>
 
         {!viewOnly && (
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
+          <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}>
             <Button
               variant="contained"
               onClick={handleClose}
-              sx={{ backgroundColor: 'error.main', color: 'error.contrastText', mr: 2 }}
+              sx={{
+                backgroundColor: "error.main",
+                color: "error.contrastText",
+                mr: 2,
+              }}
             >
               Cancel
             </Button>
@@ -356,9 +375,12 @@ function EditAssetModal({ open, handleClose, refreshAssetList, asset, viewOnly }
               variant="contained"
               onClick={handleUpdateAsset}
               disabled={isUpdating}
-              sx={{ backgroundColor: 'success.main', color: 'success.contrastText' }}
+              sx={{
+                backgroundColor: "success.main",
+                color: "success.contrastText",
+              }}
             >
-              {isUpdating ? 'Updating...' : 'Update'}
+              {isUpdating ? "Updating..." : "Update"}
             </Button>
           </Box>
         )}

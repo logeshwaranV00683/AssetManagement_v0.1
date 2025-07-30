@@ -1,38 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Modal from '@mui/material/Modal';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import { IconButton } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import { updateEmployee } from '../Services/EmployeeService';
+import React, { useState, useEffect } from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import Modal from "@mui/material/Modal";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import { IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import { updateEmployee } from "../Services/EmployeeService";
 
 const useStyles = makeStyles((theme) => ({
   modal: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
   paper: {
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
-    position: 'relative',
+    position: "relative",
   },
   formControl: {
     marginTop: theme.spacing(2),
   },
   textCenter: {
-    textAlign: 'center',
+    textAlign: "center",
   },
   formGrid: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
     gap: theme.spacing(2),
   },
   cancelButton: {
@@ -45,13 +45,19 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.success.contrastText,
   },
   actionsContainer: {
-    display: 'flex',
-    justifyContent: 'space-between',
+    display: "flex",
+    justifyContent: "space-between",
     marginTop: theme.spacing(2),
   },
 }));
 
-function EditEmployeeModal({ open, handleClose, employee, refreshEmployeeList, viewOnly }) {
+function EditEmployeeModal({
+  open,
+  handleClose,
+  employee,
+  refreshEmployeeList,
+  viewOnly,
+}) {
   const classes = useStyles();
   const [empId, setEmpId] = useState(employee.empId);
   const [firstName, setFirstName] = useState(employee.firstName);
@@ -73,16 +79,18 @@ function EditEmployeeModal({ open, handleClose, employee, refreshEmployeeList, v
     if (mobile !== employee.mobile) updatedFields.mobile = mobile;
     if (location !== employee.location) updatedFields.location = location;
     if (status !== employee.status) updatedFields.status = status;
-    if (department !== employee.department) updatedFields.department = department;
-    if (designation !== employee.designation) updatedFields.designation = designation;
+    if (department !== employee.department)
+      updatedFields.department = department;
+    if (designation !== employee.designation)
+      updatedFields.designation = designation;
 
     try {
       await updateEmployee(empId, updatedFields);
-      console.log('Employee updated:', updatedFields);
+      console.log("Employee updated:", updatedFields);
       refreshEmployeeList();
       handleClose();
     } catch (error) {
-      console.error('Error updating employee:', error);
+      console.error("Error updating employee:", error);
     }
   };
 
@@ -91,11 +99,19 @@ function EditEmployeeModal({ open, handleClose, employee, refreshEmployeeList, v
       setEmpId(employee.empId);
       setFirstName(employee.firstName);
       setLastName(employee.lastName);
-      setRole(employee.role);
+      if (employee.role) {
+        const normalizedRole =
+          employee.role.trim().charAt(0).toUpperCase() +
+          employee.role.trim().slice(1).toLowerCase();
+        setRole(normalizedRole);
+      } else {
+        setRole("");
+      }
+
       setMail(employee.mail);
       setMobile(employee.mobile);
       setLocation(employee.location);
-      setStatus(employee.status);
+      setStatus(employee.status?.trim());
       setDepartment(employee.department);
       setDesignation(employee.designation);
     }
@@ -115,15 +131,19 @@ function EditEmployeeModal({ open, handleClose, employee, refreshEmployeeList, v
           aria-label="close"
           onClick={handleClose}
           sx={{
-            position: 'absolute',
-            top: '8px',
-            right: '8px',
+            position: "absolute",
+            top: "8px",
+            right: "8px",
           }}
         >
           <CloseIcon />
         </IconButton>
-        <h2 id="edit-employee-modal-title" className={classes.textCenter} style={{ textAlign: 'center', color: '#083A40' }}>
-          {viewOnly ? 'View Employee' : 'Edit Employee'}
+        <h2
+          id="edit-employee-modal-title"
+          className={classes.textCenter}
+          style={{ textAlign: "center", color: "#083A40" }}
+        >
+          {viewOnly ? "View Employee" : "Edit Employee"}
         </h2>
         <form>
           <div className={classes.formGrid}>
@@ -150,19 +170,20 @@ function EditEmployeeModal({ open, handleClose, employee, refreshEmployeeList, v
               margin="normal"
               disabled={viewOnly}
             />
-            <FormControl fullWidth className={classes.formControl} disabled={viewOnly}>
+            <FormControl
+              fullWidth
+              className={classes.formControl}
+              disabled={viewOnly}
+            >
               <InputLabel htmlFor="role">Role</InputLabel>
               <Select
                 label="Role"
-                value={role}
+                value={role?.toLowerCase() || ""}
                 onChange={(e) => setRole(e.target.value)}
-                inputProps={{
-                name: 'role',
-                id: 'role',
-               }}
+                disabled={viewOnly}
               >
-                <MenuItem value="User">User</MenuItem>
-                <MenuItem value="Admin">Admin</MenuItem>
+                <MenuItem value="employee">Employee</MenuItem>
+                <MenuItem value="admin">Admin</MenuItem>
               </Select>
             </FormControl>
             <TextField
@@ -189,16 +210,20 @@ function EditEmployeeModal({ open, handleClose, employee, refreshEmployeeList, v
               margin="normal"
               disabled={viewOnly}
             />
-            <FormControl fullWidth className={classes.formControl} disabled={viewOnly}>
+            <FormControl
+              fullWidth
+              className={classes.formControl}
+              disabled={viewOnly}
+            >
               <InputLabel htmlFor="status">Status</InputLabel>
               <Select
                 label="Status"
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
                 inputProps={{
-                name: 'status',
-                id: 'status',
-               }}
+                  name: "status",
+                  id: "status",
+                }}
               >
                 <MenuItem value="Active">Active</MenuItem>
                 <MenuItem value="Inactive">Inactive</MenuItem>
@@ -227,8 +252,11 @@ function EditEmployeeModal({ open, handleClose, employee, refreshEmployeeList, v
                 variant="contained"
                 className={classes.cancelButton}
                 onClick={handleClose}
-                sx={{ backgroundColor: 'error.main', color: 'error.contrastText', mr: 2 }}
-
+                sx={{
+                  backgroundColor: "error.main",
+                  color: "error.contrastText",
+                  mr: 2,
+                }}
               >
                 Cancel
               </Button>
@@ -236,7 +264,10 @@ function EditEmployeeModal({ open, handleClose, employee, refreshEmployeeList, v
                 variant="contained"
                 className={classes.saveButton}
                 onClick={handleSaveEmployee}
-                sx={{ backgroundColor: 'success.main', color: 'success.contrastText' }}
+                sx={{
+                  backgroundColor: "success.main",
+                  color: "success.contrastText",
+                }}
               >
                 Update
               </Button>

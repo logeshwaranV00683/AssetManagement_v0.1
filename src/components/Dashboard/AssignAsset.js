@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import { assignAsset } from "../Services/AssetService";
 import { getEmployeeList } from "../Services/EmployeeService";
 import "animate.css";
-import { showErrorAlert, showSuccessAlert, showWarningAlert } from "../Utils/alerts";
+import {
+  showErrorAlert,
+  showSuccessAlert,
+  showWarningAlert,
+} from "../Utils/alerts";
 
 function AssignAsset({ open, handleClose, asset, fetchAssets }) {
   const assetId = asset?.assetId || asset?.id;
@@ -29,7 +33,10 @@ function AssignAsset({ open, handleClose, asset, fetchAssets }) {
     );
 
     if (!foundEmp) {
-      return showWarningAlert("Select a valid employee", "Please choose from the list.");
+      return showWarningAlert(
+        "Select a valid employee",
+        "Please choose from the list."
+      );
     }
 
     if (!assetId) {
@@ -39,28 +46,33 @@ function AssignAsset({ open, handleClose, asset, fetchAssets }) {
     const assetData = {
       empId: foundEmp.empId,
       serialNumber: asset?.assetSerialNumber || asset?.serialNumber,
-      assignedDate: new Date().toISOString().split('T', 1)[0],
+      assignedDate: new Date().toISOString().split("T", 1)[0],
       assetName: asset?.assetName || "",
       assignedBy: user?.empId || "admin",
     };
 
-   try {
-  const result = await assignAsset([assetData]);
-  showSuccessAlert("Asset Assigned!", result);
-  fetchAssets();
-  handleCloseDialog();
-} catch (error) {
-  if (error.status === 406) {
-    return showWarningAlert("Already Assigned", "This asset has already been assigned.");
-  } else if (error.status === 400) {
-    return showWarningAlert("Asset Was In Scrap", "Please check the asset data and try again.");}
-    else if (error.status === 404){
-      return showWarningAlert("Employee Status Was In InActive")
-  } else {
-    return showErrorAlert("Assigning Failed", "An error occurred.");
-  }
-}
-
+    try {
+      const result = await assignAsset([assetData]);
+      showSuccessAlert("Asset Assigned!", result);
+      fetchAssets();
+      handleCloseDialog();
+    } catch (error) {
+      if (error.status === 406) {
+        return showWarningAlert(
+          "Already Assigned",
+          "This asset has already been assigned."
+        );
+      } else if (error.status === 400) {
+        return showWarningAlert(
+          "Asset Was In Scrap",
+          "Please check the asset data and try again."
+        );
+      } else if (error.status === 404) {
+        return showWarningAlert("Employee Status Was In InActive");
+      } else {
+        return showErrorAlert("Assigning Failed", "An error occurred.");
+      }
+    }
   };
 
   const handleCloseDialog = () => {

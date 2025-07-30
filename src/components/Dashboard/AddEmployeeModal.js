@@ -1,40 +1,48 @@
-import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Modal from '@mui/material/Modal';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import { IconButton } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import { saveEmployee } from '../Services/EmployeeService';
-import toast from 'react-hot-toast';
+import React, { useState } from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import Modal from "@mui/material/Modal";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import { IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import { saveEmployee } from "../Services/EmployeeService";
+import toast from "react-hot-toast";
 
 const useStyles = makeStyles((theme) => ({
   modal: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
   paper: {
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
-    position: 'relative',
+    position: "relative",
   },
   formControl: {
     marginTop: theme.spacing(2),
   },
   textCenter: {
-    textAlign: 'center',
+    textAlign: "center",
   },
   formGrid: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
     gap: theme.spacing(2),
+    alignItems: "center",
+    [theme.breakpoints.down("sm")]: {
+      gridTemplateColumns: "1fr",
+    },
+  },
+  alignFix: {
+    marginTop: 0,
+    marginBottom: 0,
   },
   cancelButton: {
     marginRight: theme.spacing(2),
@@ -46,77 +54,71 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.success.contrastText,
   },
   actionsContainer: {
-    display: 'flex',
-    justifyContent: 'space-between',
+    display: "flex",
+    justifyContent: "space-between",
     marginTop: theme.spacing(2),
+  },
+  textFieldFix: {
+    "& .MuiInputBase-root": {
+      height: "56px",
+    },
   },
 }));
 
 function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
   const classes = useStyles();
-  const [empId, setEmpId] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [role] = useState('User');
-  const [mail, setMail] = useState('');
-  const [mobile, setMobile] = useState('');
-  const [location, setLocation] = useState('');
-  const [status, setStatus] = useState('');
-  const [department, setDepartment] = useState('');
-  const [designation, setDesignation] = useState('');
+  const [empId, setEmpId] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [role, setRole] = useState("");
+  const [mail, setMail] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [location, setLocation] = useState("");
+  const [status, setStatus] = useState("");
+  const [department, setDepartment] = useState("");
+  const [designation, setDesignation] = useState("");
 
-const handleAddEmployee = async () => {
-  const newEmployee = {
-    empId,
-    firstName,
-    lastName,
-    role,
-    mail,
-    mobile,
-    location,
-    status,
-    department,
-    designation,
+  const handleAddEmployee = async () => {
+    const newEmployee = {
+      empId,
+      firstName,
+      lastName,
+      role,
+      mail,
+      mobile,
+      location,
+      status,
+      department,
+      designation,
+    };
+
+    try {
+      await saveEmployee(newEmployee);
+      toast.success("Employee added successfully!");
+      refreshEmployeeList();
+      setEmpId("");
+      setFirstName("");
+      setLastName("");
+      setMail("");
+      setMobile("");
+      setLocation("");
+      setStatus("");
+      setRole("");
+      setDepartment("");
+      setDesignation("");
+    } catch (error) {
+      if (error.status === 400 && typeof error.data === "object") {
+        Object.entries(error.data).forEach(([field, message]) => {
+          toast.error(`${field}: ${message}`);
+        });
+      } else if (error.status === 409) {
+        toast.error(error.data || "Employee mail or Mobile already exists");
+      } else {
+        toast.error("Unexpected error occurred!");
+        console.error(error);
+      }
+    }
   };
-
- try {
-  await saveEmployee(newEmployee);
-  toast.success("Employee added successfully!");
-  refreshEmployeeList();
-     setEmpId('');
-    setFirstName('');
-    setLastName('');
-    setMail('');
-    setMobile('');
-    setLocation('');
-    setStatus('');
-    setDepartment('');
-    setDesignation('');
-
-} catch (error) {
-  if (error.status === 400 && typeof error.data === 'object') {
-    const errors = error.data;
-    if (errors.empId) toast.error(errors.empId);
-    if (errors.firstName) toast.error(errors.firstName);
-    if (errors.lastName) toast.error(errors.lastName);
-    if (errors.mail) toast.error(errors.mail);
-    if (errors.mobile) toast.error(errors.mobile);
-    if (errors.location) toast.error(errors.location);
-    if (errors.status) toast.error(errors.status);
-    if (errors.department) toast.error(errors.department);
-    if (errors.designation) toast.error(errors.designation);
-  } 
-  else if (error.status === 409) {
-    toast.error(error.data || "Employee mail or mobile already exists");
-  } 
-  else {
-    toast.error("Unexpected error occurred!");
-    console.error(error);
-  }
-}
-
-};
-
 
   return (
     <Modal
@@ -132,14 +134,20 @@ const handleAddEmployee = async () => {
           aria-label="close"
           onClick={handleClose}
           sx={{
-            position: 'absolute',
-            top: '8px',
-            right: '8px',
+            position: "absolute",
+            top: "8px",
+            right: "8px",
           }}
         >
           <CloseIcon />
         </IconButton>
-        <h2 id="add-employee-modal-title" className={classes.textCenter} style={{ textAlign: 'center', color: '#083A40' }}>Add Employee</h2>
+        <h2
+          id="add-employee-modal-title"
+          className={classes.textCenter}
+          style={{ textAlign: "center", color: "#083A40" }}
+        >
+          Add Employee
+        </h2>
         <form>
           <div className={classes.formGrid}>
             <TextField
@@ -191,9 +199,9 @@ const handleAddEmployee = async () => {
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
                 inputProps={{
-                name: 'status',
-                id: 'status',
-               }}
+                  name: "status",
+                  id: "status",
+                }}
               >
                 <MenuItem value="Active">Active</MenuItem>
                 <MenuItem value="Inactive">Inactive</MenuItem>
@@ -204,33 +212,56 @@ const handleAddEmployee = async () => {
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
               fullWidth
-              margin="normal"
+              margin="dense"
+              className={classes.alignFix}
             />
+            <FormControl fullWidth className={classes.formControl}>
+              <InputLabel htmlFor="role">Role</InputLabel>
+              <Select
+                label="Role"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                inputProps={{
+                  name: "role",
+                  id: "role",
+                }}
+              >
+                <MenuItem value="Employee">Employee</MenuItem>
+                <MenuItem value="Admin">Admin</MenuItem>
+              </Select>
+            </FormControl>
             <TextField
               label="Designation"
               value={designation}
               onChange={(e) => setDesignation(e.target.value)}
               fullWidth
-              margin="normal"
+              margin="dense"
+              className={classes.alignFix}
             />
           </div>
           <div className={classes.actionsContainer}>
             <Button
-             type="button" 
+              type="button"
               variant="contained"
               className={classes.cancelButton}
               onClick={handleClose}
-              sx={{ backgroundColor: 'error.main', color: 'error.contrastText' }}
+              sx={{
+                backgroundColor: "error.main",
+                color: "error.contrastText",
+              }}
             >
               Cancel
             </Button>
             <Button
-             type="button" 
+              type="button"
               data-id="add-employee-button"
               variant="contained"
               className={classes.addButton}
               onClick={handleAddEmployee}
-              sx={{ backgroundColor: 'success.main', color: 'success.contrastText' }}
+              sx={{
+                backgroundColor: "success.main",
+                color: "success.contrastText",
+              }}
             >
               Add
             </Button>

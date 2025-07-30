@@ -1,41 +1,41 @@
-import React, { memo } from 'react';
-import Drawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import Tooltip from '@mui/material/Tooltip';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
-import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
-import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
-import ReplayIcon from '@mui/icons-material/Replay';
-import '../Style/font.css';
+import React, { memo } from "react";
+import Drawer from "@mui/material/Drawer";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import Tooltip from "@mui/material/Tooltip";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
+import ReplayIcon from "@mui/icons-material/Replay";
+import "../Style/font.css";
 
 const drawerWidth = 80;
 
 const SidebarAssets = ({ onAddAsset, onFilter, onResetFilters }) => {
   const buttons = [
     {
-      label: 'Add Asset',
+      label: "Add Asset",
       icon: <AddCircleOutlineIcon fontSize="large" />,
       onClick: onAddAsset,
     },
     {
-      label: 'Assigned',
+      label: "Assigned",
       icon: <AssignmentTurnedInIcon fontSize="large" />,
-      onClick: () => onFilter('assigned'),
+      onClick: () => onFilter("assigned"),
     },
     {
-      label: 'Unassigned',
+      label: "Unassigned",
       icon: <RemoveCircleOutlineIcon fontSize="large" />,
-      onClick: () => onFilter('unassigned'),
+      onClick: () => onFilter("unassigned"),
     },
     {
-      label: 'Scrap',
+      label: "Scrap",
       icon: <DeleteSweepIcon fontSize="large" />,
-      onClick: () => onFilter('scrap'),
+      onClick: () => onFilter("scrap"),
     },
     {
-      label: 'Reset',
+      label: "Reset",
       icon: <ReplayIcon fontSize="large" />,
       onClick: onResetFilters,
     },
@@ -49,19 +49,19 @@ const SidebarAssets = ({ onAddAsset, onFilter, onResetFilters }) => {
         flexShrink: 0,
         [`& .MuiDrawer-paper`]: {
           width: drawerWidth,
-          height: 'auto',
-          top: '52%',
-          transform: 'translateY(-50%)',
+          height: "auto",
+          top: "52%",
+          transform: "translateY(-50%)",
           right: 0,
-          left: 'auto',
-          bottom: 'auto',
-          position: 'fixed',
-          boxSizing: 'border-box',
-          background: 'linear-gradient(45deg, #6DE0FF, #2BC4F3)',
-          borderRadius: '40px 0px 0px 40px',
-          paddingTop: '12px',
-          paddingBottom: '12px'
-                },
+          left: "auto",
+          bottom: "auto",
+          position: "fixed",
+          boxSizing: "border-box",
+          background: "linear-gradient(45deg, #6DE0FF, #2BC4F3)",
+          borderRadius: "40px 0px 0px 40px",
+          paddingTop: "12px",
+          paddingBottom: "12px",
+        },
       }}
     >
       <List>
@@ -74,17 +74,17 @@ const SidebarAssets = ({ onAddAsset, onFilter, onResetFilters }) => {
             componentsProps={{
               tooltip: {
                 sx: {
-                  fontSize: '22px',
-                  backgroundColor: '#2BC4F3',
-                  color: '#083A40',
-                  padding: '6px 12px',
-                  borderRadius: '6px',
-                  fontFamily: "'Racing Sans One', sans-serif"
-                                },
+                  fontSize: "22px",
+                  backgroundColor: "#2BC4F3",
+                  color: "#083A40",
+                  padding: "6px 12px",
+                  borderRadius: "6px",
+                  fontFamily: "'Racing Sans One', sans-serif",
+                },
               },
               arrow: {
                 sx: {
-                  color: '#2BC4F3',
+                  color: "#2BC4F3",
                 },
               },
             }}
@@ -93,15 +93,16 @@ const SidebarAssets = ({ onAddAsset, onFilter, onResetFilters }) => {
               button
               onClick={onClick}
               sx={{
-                justifyContent: 'center',
+                justifyContent: "center",
                 mb: 2.5,
-                borderRadius: '12px',
-                transition: 'background-color 0.3s ease',
-                '&:hover': {
-                  backgroundColor: '#1FCBEA',
-                  '& .MuiSvgIcon-root': {
-                    color: '#fff',
-                    textShadow: '0 0 6px #fff, 0 0 12px #6DE0FF, 0 0 18px #2BC4F3',
+                borderRadius: "12px",
+                transition: "background-color 0.3s ease",
+                "&:hover": {
+                  backgroundColor: "#1FCBEA",
+                  "& .MuiSvgIcon-root": {
+                    color: "#fff",
+                    textShadow:
+                      "0 0 6px #fff, 0 0 12px #6DE0FF, 0 0 18px #2BC4F3",
                   },
                 },
               }}
@@ -114,6 +115,5 @@ const SidebarAssets = ({ onAddAsset, onFilter, onResetFilters }) => {
     </Drawer>
   );
 };
-
 
 export default memo(SidebarAssets);
