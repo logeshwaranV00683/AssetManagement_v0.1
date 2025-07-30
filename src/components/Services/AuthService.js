@@ -3,26 +3,33 @@ const apiUrl = process.env.REACT_APP_API_URL;
 
 export const logIn = (formData) => {
   return fetch(`${apiUrl}/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(formData),
   })
     .then((response) => {
-      if (!response.ok) throw new Error('Network response was not ok');
+      if (!response.ok) throw new Error("Network response was not ok");
       return response.json();
     })
     .catch((error) => {
-      console.error('Error during Sign In:', error);
+      console.error("Error during Sign In:", error);
       throw error;
     });
 };
 
-export const ResetPassword = async (empId, setShowResetPassword, setShowForgotPassword, setShowLogin) => {
-  const url = `${apiUrl}/reset-password/send-otp?empId=${encodeURIComponent(empId)}`;
+export const ResetPassword = async (
+  empId,
+  setShowResetPassword,
+  setShowForgotPassword,
+  setShowLogin
+) => {
+  const url = `${apiUrl}/reset-password/send-otp?empId=${encodeURIComponent(
+    empId
+  )}`;
   try {
     const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
     });
 
     if (response.ok) {
@@ -34,12 +41,19 @@ export const ResetPassword = async (empId, setShowResetPassword, setShowForgotPa
       toast.error("Invalid empId");
     }
   } catch (error) {
-    console.error('Error during forgot password:', error);
+    console.error("Error during forgot password:", error);
     toast.error("Something went wrong");
   }
 };
 
-export const handleResetPassword = async (mail,otp, newPassword, confirmPassword, setShowLogin, setShowResetPassword) => {
+export const handleResetPassword = async (
+  mail,
+  otp,
+  newPassword,
+  confirmPassword,
+  setShowLogin,
+  setShowResetPassword
+) => {
   if (newPassword !== confirmPassword) {
     toast.error("Passwords do not match");
     return;
@@ -47,9 +61,9 @@ export const handleResetPassword = async (mail,otp, newPassword, confirmPassword
 
   try {
     const response = await fetch(`${apiUrl}/reset-password/verify-otp`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({mail, otp, newPassword }),
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mail, otp, newPassword }),
     });
 
     if (response.ok) {
@@ -64,23 +78,22 @@ export const handleResetPassword = async (mail,otp, newPassword, confirmPassword
   }
 };
 
-
 export const changePassword = async (mail, oldPassword, newPassword) => {
   try {
     const response = await fetch(`${apiUrl}/reset-password/change-password`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ mail, oldPassword, newPassword }),
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.message || 'Password change failed');
+      throw new Error(errorData.message || "Password change failed");
     }
 
     return await response.json();
   } catch (error) {
-    console.error('Error during password change:', error);
+    console.error("Error during password change:", error);
     throw error;
   }
 };

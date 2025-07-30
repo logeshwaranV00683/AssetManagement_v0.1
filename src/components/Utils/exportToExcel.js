@@ -12,17 +12,17 @@ export const exportToExcel = async (jsonData, fileName) => {
     worksheet.addRow(Object.values(rowData));
   });
 
-worksheet.getRow(1).eachCell((cell) => {
-  cell.fill = {
-    type: 'pattern',
-    pattern: 'solid',
-    fgColor: { argb: 'FF87CEEB' }, 
-  };
-  cell.font = {
-    bold: true,
-    color: { argb: 'FF000000' },
-  };
-});
+  worksheet.getRow(1).eachCell((cell) => {
+    cell.fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "FF87CEEB" },
+    };
+    cell.font = {
+      bold: true,
+      color: { argb: "FF000000" },
+    };
+  });
 
   worksheet.columns.forEach((column) => {
     let maxLength = 10;

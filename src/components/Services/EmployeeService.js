@@ -1,53 +1,56 @@
-const token = localStorage.getItem('authToken');
+const token = localStorage.getItem("authToken");
 const apiUrl = process.env.REACT_APP_API_URL;
 
-export const getEmployeeList = async() => {
-    const url = `${apiUrl}/assetManager/v1/employee/employeelist`;
-    try {
-      const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      if (!response.ok) {
-        throw new Error('Network response was not ok ' + response.statusText);
-      }
-      let data = await response.json();
-      let filteredData = data.map(employee => ({
-        ...employee,
-        id: employee.empId,
-        name:employee.firstName + " " + employee.lastName
-      }));
-      console.log('dt', filteredData);
-      return filteredData;
-    } catch (error) {
-      console.error('Error fetching employee list:', error);
-      throw error;
+export const getEmployeeList = async () => {
+  const url = `${apiUrl}/assetManager/v1/employee/employeelist`;
+  try {
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) {
+      throw new Error("Network response was not ok " + response.statusText);
     }
-  };
-  
+    let data = await response.json();
+    let filteredData = data.map((employee) => ({
+      ...employee,
+      id: employee.empId,
+      name: employee.firstName + " " + employee.lastName,
+    }));
+    console.log("dt", filteredData);
+    return filteredData;
+  } catch (error) {
+    console.error("Error fetching employee list:", error);
+    throw error;
+  }
+};
+
 export const saveEmployee = async (employeeData) => {
   try {
-    const response = await fetch(`${apiUrl}/assetManager/v1/employee/saveemployee`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(employeeData),
-    });
+    const response = await fetch(
+      `${apiUrl}/assetManager/v1/employee/saveemployee`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(employeeData),
+      }
+    );
 
     if (!response.ok) {
       let errorData;
-      const contentType = response.headers.get('content-type');
+      const contentType = response.headers.get("content-type");
 
-      if (contentType && contentType.includes('application/json')) {
+      if (contentType && contentType.includes("application/json")) {
         errorData = await response.json();
       } else {
         errorData = await response.text();
       }
 
-      const error = new Error('Request failed');
+      const error = new Error("Request failed");
       error.status = response.status;
       error.data = errorData;
       throw error;
@@ -55,49 +58,52 @@ export const saveEmployee = async (employeeData) => {
 
     return await response.json();
   } catch (error) {
-    throw error; 
+    throw error;
   }
 };
 
-
-
-  
-  export const updateEmployee = async (empId, employee) => {
-    console.log('json',  JSON.stringify(employee));
-    try {
-        const response = await fetch(`${apiUrl}/assetManager/v1/updateEmp/${empId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(employee),
-        });
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return await response.json();
-    } catch (error) {
-        console.error('Error updating employee:', error);
-        throw error;
+export const updateEmployee = async (empId, employee) => {
+  console.log("json", JSON.stringify(employee));
+  try {
+    const response = await fetch(
+      `${apiUrl}/assetManager/v1/updateEmp/${empId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(employee),
+      }
+    );
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
     }
+    return await response.json();
+  } catch (error) {
+    console.error("Error updating employee:", error);
+    throw error;
+  }
 };
 
- export const deleteEmployee = async (empId) => {
-    try {
-        const response = await fetch(`${apiUrl}/assetManager/v1/deleteEmp/${empId}`, {
-            method: 'Delete',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-        });
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return true;
-    } catch (error) {
-        console.error('Error deleting employee:', error);
-        throw error;
+export const deleteEmployee = async (empId) => {
+  try {
+    const response = await fetch(
+      `${apiUrl}/assetManager/v1/deleteEmp/${empId}`,
+      {
+        method: "Delete",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
     }
+    return true;
+  } catch (error) {
+    console.error("Error deleting employee:", error);
+    throw error;
+  }
 };

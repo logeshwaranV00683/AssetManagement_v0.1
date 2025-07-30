@@ -151,7 +151,6 @@ function EditAssetModal({
           position: "relative",
         }}
       >
-
         <IconButton
           aria-label="close"
           onClick={handleClose}
