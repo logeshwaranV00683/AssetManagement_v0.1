@@ -55,7 +55,7 @@ public class ForgotPasswordService implements ForgotPasswordInterface {
 
         Optional<AdminRegistrationEntity> optionalAdmin = adminRegistrationRepository.findByMail(mail);
         if (optionalAdmin.isEmpty()) {
-            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Employee not found", HttpStatus.NOT_FOUND);
         }
 
         AdminRegistrationEntity admin = optionalAdmin.get();
@@ -85,7 +85,7 @@ public class ForgotPasswordService implements ForgotPasswordInterface {
 
         Optional<AdminRegistrationEntity> optionalAdmin = adminRegistrationRepository.findByMail(mail);
         if (optionalAdmin.isEmpty()) {
-            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Employee not found", HttpStatus.NOT_FOUND);
         }
 
         AdminRegistrationEntity admin = optionalAdmin.get();

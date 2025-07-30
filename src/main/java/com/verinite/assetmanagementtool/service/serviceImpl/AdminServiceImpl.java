@@ -203,7 +203,7 @@ public class AdminServiceImpl implements AdminService {
     public ResponseEntity<String> deleteAdmin(String empId) {
         EmployeeEntity employee = employeeRepository.findByEmpId(empId);
         registerRepo.deleteByEmpId(empId);
-        employee.setRole("User");
+        employee.setRole("Employee");
         employeeRepository.save(employee);
         return ResponseEntity.status(HttpStatus.OK).body("Admin Deleted successfully.");
     }

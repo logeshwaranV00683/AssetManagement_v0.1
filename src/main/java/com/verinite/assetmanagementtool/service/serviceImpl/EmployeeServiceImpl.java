@@ -41,11 +41,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeDto saveEmployee(EmployeeDto employeeDTO) {
         EmployeeEntity employeeEntity = dtoToEntity(employeeDTO);
 
-        // Set default values
-        employeeEntity.setRole("User"); // Set role to 'User'
-        employeeEntity.setStatus("Active"); // Set status to 'Active'
+        employeeEntity.setRole("Employee");
+        employeeEntity.setStatus("Active");
 
-        // Generate employee ID
+
         EmployeeEntity lastEmployee = employeeRepo.findTopByOrderByEmpIdDesc();
         String lastEmpId = (lastEmployee != null) ? lastEmployee.getEmpId() : "emp000";
         String newEmpId = generateNewEmpId(lastEmpId);
@@ -172,7 +171,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             employee.setDepartment(getCellValue(row, 8));
             employee.setDesignation(getCellValue(row, 9));
             employee.setStatus(getCellValue(row, 7));
-            employee.setRole("User");
+            employee.setRole("Employee");
             Set<ConstraintViolation<EmployeeDto>> violations = validator.validate(employee);
             if (!violations.isEmpty()) {
                 StringBuilder sb = new StringBuilder();
@@ -245,7 +244,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                         adminServiceImpl.updateAdminEntity(existingEmployee);
                     }
                 }
-                if (employee.getRole().equalsIgnoreCase("User")) {
+                if (employee.getRole().equalsIgnoreCase("Employee")) {
                     if (existingEmployee.getRole().equalsIgnoreCase("Admin")) {
                         adminServiceImpl.deleteAdmin(existingEmployee.getEmpId());
                     }
@@ -279,13 +278,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         EmployeeEntity emp = employeeRepo.findByEmpId(empId);
         if (emp != null) {
             if (emp.getStatus().equalsIgnoreCase("Active")) {
-                if (emp.getRole().equalsIgnoreCase("User")) {
+                if (emp.getRole().equalsIgnoreCase("Employee")) {
                     return ResponseEntity.ok().body(emp);
                 } else {
-                    return ResponseEntity.status(HttpStatus.FOUND).body("User is Already Admin");
+                    return ResponseEntity.status(HttpStatus.FOUND).body("Employee is Already Admin");
                 }
             } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not Found(Inactive)");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Employee not Found(Inactive)");
 
             }
         } else {

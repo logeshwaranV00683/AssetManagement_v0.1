@@ -22,7 +22,7 @@ public class EmployeeDto {
     @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "Last Name must contain only letters, spaces, or hyphens")
     private String lastName;
     @NotBlank(groups = NotBlank.class)
-    @Pattern(regexp = "^(?i)(User|Admin)?$", message = "Role can be Admin or User")
+    @Pattern(regexp = "^(?i)(Employee|Admin)?$", message = "Role can be Admin or Employee")
     private String role;
     @NotBlank(groups = NotBlank.class)
     @Email

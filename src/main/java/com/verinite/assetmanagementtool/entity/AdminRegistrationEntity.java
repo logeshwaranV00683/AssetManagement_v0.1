@@ -34,7 +34,7 @@ public class AdminRegistrationEntity {
     @Pattern(regexp = "^(?i)(Active|Inactive)?$", message = "status can be Active or Inactive")
     private String status;
     @NotBlank
-    @Pattern(regexp = "^(?i)(User|Admin)?$", message = "Role can be Admin or User")
+    @Pattern(regexp = "^(?i)(Employee|Admin)?$", message = "Role can be Admin or Employee")
     private String role;
     @NotBlank
     @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "Location must contain only letters, spaces, or hyphens")

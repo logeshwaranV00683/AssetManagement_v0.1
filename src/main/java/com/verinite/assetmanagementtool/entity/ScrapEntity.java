@@ -44,7 +44,7 @@ public class ScrapEntity {
     @Override
     public String toString() {
         return "ScrapTable{" + "scrapId=" + scrapId + ", Assetname='" + Assetname + '\'' + ", SerialNo='" + SerialNo
-                + '\'' + ", purchaseDate=" + purchaseDate + ", warrantyDate=" + warrantyDate + ", users='" + users
+                + '\'' + ", purchaseDate=" + purchaseDate + ", warrantyDate=" + warrantyDate + ", Employees='" + users
                 + '\'' + ", status='" + status + '\'' + ", type='" + type + '\'' + ", assetId=" + assetId + '}';
     }
 
