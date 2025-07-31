@@ -49,11 +49,4 @@ public class ScrapServiceImpl implements ScrapService {
         }
     }
 
-//    public static void main(String[] args) throws ParseException {
-//
-//        Date date1=new SimpleDateFormat("yyyy-MM-dd").parse("1999-06-03 05:30:00");
-//
-//        System.out.println(new Date().toInstant());
-//        System.out.println((DAYS.between(date1.toInstant(),new Date().toInstant()))>15);
-//    }
 }

@@ -7,8 +7,6 @@ import java.util.Map;
 
 public interface CountOFAssetsService {
 
-    public int getLaptopCount(String id);
-
     public CountOfAssetsEntity postAssetCount(CountOfAssetsEntity countOfAssetsEntity);
 
     public Object updateAssetCount(String location, CountOfAssetsEntity countOfAssetsEntity);
@@ -21,5 +19,4 @@ public interface CountOFAssetsService {
 
     public Map<String, Integer> getAssignedAssets(String location);
 
-    public int totalLaptops();
 }

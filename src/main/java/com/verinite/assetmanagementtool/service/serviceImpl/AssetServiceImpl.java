@@ -1,11 +1,9 @@
 package com.verinite.assetmanagementtool.service.serviceImpl;
 
-import com.verinite.assetmanagementtool.dto.AssetCounterDto;
 import com.verinite.assetmanagementtool.dto.AssetExportDto;
 import com.verinite.assetmanagementtool.dto.AssetsDto;
 import com.verinite.assetmanagementtool.dto.AssignableAssetDto;
 import com.verinite.assetmanagementtool.entity.AssetsEntity;
-import com.verinite.assetmanagementtool.entity.AssetsHistoryEntity;
 import com.verinite.assetmanagementtool.entity.AssignedAssetsEntity;
 import com.verinite.assetmanagementtool.entity.CountOfAssetsEntity;
 import com.verinite.assetmanagementtool.repository.*;
@@ -31,9 +29,7 @@ import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -49,8 +45,6 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
     @Autowired
     EmployeeRepository employeeRepository;
     @Autowired
-    AssetsHistoryRepository assetsHistoryRepository;
-    @Autowired
     AssignedAssetsRepository assignedAssetsRepository;
     @Autowired
     AssetsHistoryServices assetsHistoryServices;
@@ -60,7 +54,6 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
     ModelMapper modelMapper;
     @Autowired
     AdminRegistrationRepository adminRegistrationRepository;
-
     @Autowired
     AssignedAssetsServiceImpl assignedAssetsService;
     @Autowired
@@ -74,176 +67,45 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
         if (assets.getWarrantyDate().isBefore(assets.getPurchaseDate())) {
             throw new IllegalArgumentException("Warranty Date must not be before Purchase Date");
         }
-        if(assetRepo.existsBySerialNumber(assetDto.getSerialNumber()))
-        {
-            throw new IllegalArgumentException("Already Serial Number is exists");
+
+        if (assetRepo.existsBySerialNumber(assetDto.getSerialNumber())) {
+            throw new IllegalArgumentException("Already Serial Number exists");
         }
-        if(!adminRegistrationRepository.existsByEmpId(assetDto.getAddedBy())){
+
+        if (!adminRegistrationRepository.existsByEmpId(assetDto.getAddedBy())) {
             throw new IllegalArgumentException("Only Admin can add asset");
         }
-        int count = 0;
+
         assets.setStatus("UnAssigned");
-        List<CountOfAssetsEntity> countOfAssetEntities = assetCountRepository.findAll();
-        CountOfAssetsEntity countOfAssetsEntity2 = new CountOfAssetsEntity();
-        CountOfAssetsEntity countOfAssetsEntity3 = new CountOfAssetsEntity();
-        if (countOfAssetEntities.isEmpty()) {
-            countOfAssetsEntity3.setLocation(assetDto.getLocation());
-            assetCountRepository.save(countOfAssetsEntity3);
-            countOfAssetEntities.add(countOfAssetsEntity3);
-        }
-        for (CountOfAssetsEntity i : countOfAssetEntities) {
-            if (assetDto.getLocation().equalsIgnoreCase(i.getLocation())) {
-                count += 1;
-            }
-        }
-        if (count == 0) {
-            countOfAssetsEntity2.setLocation(assetDto.getLocation());
-            assetCountRepository.save(countOfAssetsEntity2);
-            countOfAssetEntities.add(countOfAssetsEntity2);
-            count += 1;
-            System.out.println(countOfAssetEntities.size());
-        }
-        for (CountOfAssetsEntity i : countOfAssetEntities) {
-            if (i.getLocation().equalsIgnoreCase(assetDto.getLocation())) {
-                if (assetDto.getType().equalsIgnoreCase("Laptop")) {
-                    i.setLaptopCount(i.getLaptopCount() + 1);
-                    i.setUnAssignedLaptopCount(i.getUnAssignedLaptopCount() + 1);
-                }
-                if (assetDto.getType().equalsIgnoreCase("Mouse")) {
-                    i.setMouseCount(i.getMouseCount() + 1);
-                    i.setUnAssignedMouseCount(i.getUnAssignedMouseCount() + 1);
-                }
-                if (assetDto.getType().equalsIgnoreCase("LaptopCharger")) {
-                    i.setLaptopChargerCount(i.getLaptopChargerCount() + 1);
-                    i.setUnAssignedLaptopChargerCount(i.getUnAssignedLaptopChargerCount() + 1);
-                }
-                if (assetDto.getType().equalsIgnoreCase("HeadPhone")) {
-                    i.setHeadPhonesCount(i.getHeadPhonesCount() + 1);
-                    i.setUnAssignedHeadphonesCount(i.getUnAssignedHeadphonesCount() + 1);
-                }
-                if (assetDto.getType().equalsIgnoreCase("Bag")) {
-                    i.setBagCount(i.getBagCount() + 1);
-                    i.setUnAssignedBagCount(i.getUnAssignedBagCount() + 1);
-                }
-                if (assetDto.getType().equalsIgnoreCase("DataCard")) {
-                    i.setDataCardCount(i.getDataCardCount() + 1);
-                    i.setUnAssignedDataCardCount(i.getUnAssignedDataCardCount() + 1);
-                }
-                if (assetDto.getType().equalsIgnoreCase("Mobile")) {
-                    i.setMobileCount(i.getMobileCount() + 1);
-                    i.setUnAssignedMobileCount(i.getUnAssignedMobileCount() + 1);
-                }
-                if (assetDto.getType().equalsIgnoreCase("Camera")) {
-                    i.setCameraCount(i.getCameraCount() + 1);
-                    i.setUnAssignedCameraCount(i.getUnAssignedCameraCount() + 1);
-                }
-                if (assetDto.getType().equalsIgnoreCase("Projector")) {
-                    i.setProjectorCount(i.getProjectorCount() + 1);
-                    i.setUnAssignedProjectorCount(i.getUnAssignedProjectorCount() + 1);
-                }
-                if (assetDto.getType().equalsIgnoreCase("Firewall")) {
-                    i.setFireWallCount(i.getFireWallCount() + 1);
-                    i.setUnAssignedFireWallCount(i.getUnAssignedFireWallCount() + 1);
-                }
-                if (assetDto.getType().equalsIgnoreCase("Switch")) {
-                    i.setSwitchCount(i.getSwitchCount() + 1);
-                    i.setUnAssignedSwitchCount(i.getUnAssignedSwitchCount() + 1);
-                }
-                if (assetDto.getType().equalsIgnoreCase("DVR")) {
-                    i.setDvrCount(i.getDvrCount() + 1);
-                    i.setUnAssignedDvrCount(i.getUnAssignedDvrCount() + 1);
-                }
-                if (assetDto.getType().equalsIgnoreCase("Speaker")) {
-                    i.setSpeakerCount(i.getSpeakerCount() + 1);
-                    i.setUnAssignedSpeakerCount(i.getUnAssignedSpeakerCount() + 1);
-                }
-                assetCountRepository.save(i);
-            }
-        }
+
         assetRepo.save(assets);
+
+        String location = assetDto.getLocation();
+        String type = assetDto.getType();
+
+        Optional<CountOfAssetsEntity> existing = assetCountRepository
+                .findByLocationIgnoreCaseAndTypeIgnoreCase(location, type);
+
+        CountOfAssetsEntity countEntity;
+        if (existing.isPresent()) {
+            countEntity = existing.get();
+            countEntity.setTotal(countEntity.getTotal() + 1);
+            countEntity.setUnassigned(countEntity.getUnassigned() + 1);
+        } else {
+            countEntity = new CountOfAssetsEntity();
+            countEntity.setLocation(location);
+            countEntity.setType(type);
+            countEntity.setTotal(1);
+            countEntity.setAssigned(0);
+            countEntity.setUnassigned(1);
+            countEntity.setScrapped(0);
+        }
+
+        assetCountRepository.save(countEntity);
+
         return ResponseEntity.ok(modelMapper.map(assets, AssetsDto.class));
     }
 
-    private void updateCountOfAssets(CountOfAssetsEntity countOfAssetsEntity, String assetName) {
-        switch (assetName.toLowerCase()) {
-            case "laptop":
-                countOfAssetsEntity.setLaptopCount(countOfAssetsEntity.getLaptopCount() + 1);
-                countOfAssetsEntity.setUnAssignedLaptopCount(countOfAssetsEntity.getUnAssignedLaptopCount() + 1);
-                break;
-            case "mouse":
-                countOfAssetsEntity.setMouseCount(countOfAssetsEntity.getMouseCount() + 1);
-                countOfAssetsEntity.setUnAssignedMouseCount(countOfAssetsEntity.getUnAssignedMouseCount() + 1);
-                break;
-            case "laptopcharger":
-                countOfAssetsEntity.setLaptopChargerCount(countOfAssetsEntity.getLaptopChargerCount() + 1);
-                countOfAssetsEntity.setUnAssignedLaptopChargerCount(countOfAssetsEntity.getUnAssignedLaptopChargerCount() + 1);
-                break;
-            // Add cases for other asset types as needed
-            default:
-                // Handle unknown asset types
-                break;
-        }
-    }
-
-    private void updateAssetCount(CountOfAssetsEntity countOfAssetsEntity, String assetName) {
-        switch (assetName.toLowerCase()) {
-            case "laptop":
-                countOfAssetsEntity.setLaptopCount(countOfAssetsEntity.getLaptopCount() + 1);
-                countOfAssetsEntity.setUnAssignedLaptopCount(countOfAssetsEntity.getUnAssignedLaptopCount() + 1);
-                break;
-            case "mouse":
-                countOfAssetsEntity.setMouseCount(countOfAssetsEntity.getMouseCount() + 1);
-                countOfAssetsEntity.setUnAssignedMouseCount(countOfAssetsEntity.getUnAssignedMouseCount() + 1);
-                break;
-            case "laptopcharger":
-                countOfAssetsEntity.setLaptopChargerCount(countOfAssetsEntity.getLaptopChargerCount() + 1);
-                countOfAssetsEntity.setUnAssignedLaptopChargerCount(countOfAssetsEntity.getUnAssignedLaptopChargerCount() + 1);
-                break;
-            case "headphone":
-                countOfAssetsEntity.setHeadPhonesCount(countOfAssetsEntity.getHeadPhonesCount() + 1);
-                countOfAssetsEntity.setUnAssignedHeadphonesCount(countOfAssetsEntity.getUnAssignedHeadphonesCount() + 1);
-                break;
-            case "bag":
-                countOfAssetsEntity.setBagCount(countOfAssetsEntity.getBagCount() + 1);
-                countOfAssetsEntity.setUnAssignedBagCount(countOfAssetsEntity.getUnAssignedBagCount() + 1);
-                break;
-            case "datacard":
-                countOfAssetsEntity.setDataCardCount(countOfAssetsEntity.getDataCardCount() + 1);
-                countOfAssetsEntity.setUnAssignedDataCardCount(countOfAssetsEntity.getUnAssignedDataCardCount() + 1);
-                break;
-            case "mobile":
-                countOfAssetsEntity.setMobileCount(countOfAssetsEntity.getMobileCount() + 1);
-                countOfAssetsEntity.setUnAssignedMobileCount(countOfAssetsEntity.getUnAssignedMobileCount() + 1);
-                break;
-            case "camera":
-                countOfAssetsEntity.setCameraCount(countOfAssetsEntity.getCameraCount() + 1);
-                countOfAssetsEntity.setUnAssignedCameraCount(countOfAssetsEntity.getUnAssignedCameraCount() + 1);
-                break;
-            case "projector":
-                countOfAssetsEntity.setProjectorCount(countOfAssetsEntity.getProjectorCount() + 1);
-                countOfAssetsEntity.setUnAssignedProjectorCount(countOfAssetsEntity.getUnAssignedProjectorCount() + 1);
-                break;
-            case "firewall":
-                countOfAssetsEntity.setFireWallCount(countOfAssetsEntity.getFireWallCount() + 1);
-                countOfAssetsEntity.setUnAssignedFireWallCount(countOfAssetsEntity.getUnAssignedFireWallCount() + 1);
-                break;
-            case "switch":
-                countOfAssetsEntity.setSwitchCount(countOfAssetsEntity.getSwitchCount() + 1);
-                countOfAssetsEntity.setUnAssignedSwitchCount(countOfAssetsEntity.getUnAssignedSwitchCount() + 1);
-                break;
-            case "dvr":
-                countOfAssetsEntity.setDvrCount(countOfAssetsEntity.getDvrCount() + 1);
-                countOfAssetsEntity.setUnAssignedDvrCount(countOfAssetsEntity.getUnAssignedDvrCount() + 1);
-                break;
-            case "speaker":
-                countOfAssetsEntity.setSpeakerCount(countOfAssetsEntity.getSpeakerCount() + 1);
-                countOfAssetsEntity.setUnAssignedSpeakerCount(countOfAssetsEntity.getUnAssignedSpeakerCount() + 1);
-                break;
-            default:
-                // Handle unexpected asset names
-                throw new IllegalArgumentException("Unknown asset name: " + assetName);
-        }
-    }
 
     @Override
     public Object getAssetBySerialNumber(String id) {
@@ -267,9 +129,9 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
         if (existingAsset != null) {
             if (asset.getAssetName() != null)
                 existingAsset.setAssetName(asset.getAssetName());
-            if (asset.getPurchaseDate() != null&&existingAsset.getWarrantyDate().isAfter(asset.getPurchaseDate()))
+            if (asset.getPurchaseDate() != null && existingAsset.getWarrantyDate().isAfter(asset.getPurchaseDate()))
                 existingAsset.setPurchaseDate(asset.getPurchaseDate());
-            if (asset.getWarrantyDate() != null&&existingAsset.getPurchaseDate().isBefore(asset.getWarrantyDate()))
+            if (asset.getWarrantyDate() != null && existingAsset.getPurchaseDate().isBefore(asset.getWarrantyDate()))
                 existingAsset.setWarrantyDate(asset.getWarrantyDate());
             if (asset.getSerialNumber() != null)
                 existingAsset.setSerialNumber(asset.getSerialNumber());
@@ -283,15 +145,15 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                 existingAsset.setOperatingSystem(asset.getOperatingSystem());
             if (asset.getModelName() != null)
                 existingAsset.setModelName(asset.getModelName());
-            if (asset.getEmpId() != null&& existingAsset.getEmpId()==null)
+            if (asset.getEmpId() != null && existingAsset.getEmpId() == null)
                 existingAsset.setEmpId(asset.getEmpId());
             if (asset.getLocation() != null)
                 existingAsset.setLocation(asset.getLocation());
-            if (asset.getReturnDate() != null&&existingAsset.getReturnDate()==null)
+            if (asset.getReturnDate() != null && existingAsset.getReturnDate() == null)
                 existingAsset.setReturnDate(asset.getReturnDate());
-            if (asset.getAssignedDate() != null&&existingAsset.getAssignedDate()==null)
+            if (asset.getAssignedDate() != null && existingAsset.getAssignedDate() == null)
                 existingAsset.setAssignedDate(asset.getAssignedDate());
-            if (asset.getAssignedBy() != null&&existingAsset.getAssignedBy()==null)
+            if (asset.getAssignedBy() != null && existingAsset.getAssignedBy() == null)
                 existingAsset.setAssignedBy(asset.getAssignedBy());
             if (asset.getAssertSourcedBy() != null)
                 existingAsset.setAssetSourcedBy(asset.getAssertSourcedBy());
@@ -367,13 +229,37 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
         if (optionalAsset.isEmpty()) {
             throw new IllegalArgumentException("Invalid asset ID: " + id);
         }
+
         AssetsEntity asset = optionalAsset.get();
         if (!"unassigned".equalsIgnoreCase(asset.getStatus())) {
-            throw new IllegalArgumentException("Asset must be unassigned before deletion.");
+            throw new IllegalArgumentException("Asset must be proper Status before deletion.");
         }
         asset.setStatus("Scrap");
         assetRepo.save(asset);
+
+        String location = asset.getLocation().trim();
+        String assetType = asset.getType().trim();
+
+        Optional<CountOfAssetsEntity> optionalEntity =
+                assetCountRepository.findByLocationIgnoreCaseAndTypeIgnoreCase(location, assetType);
+
+        CountOfAssetsEntity entity = optionalEntity.orElseGet(() -> {
+            CountOfAssetsEntity newEntity = new CountOfAssetsEntity();
+            newEntity.setLocation(location);
+            newEntity.setType(assetType);
+            newEntity.setTotal(0);
+            newEntity.setAssigned(0);
+            newEntity.setUnassigned(0);
+            newEntity.setScrapped(0);
+            return newEntity;
+        });
+        entity.setUnassigned((entity.getUnassigned() != null ? entity.getUnassigned() : 0) - 1);
+        entity.setScrapped((entity.getScrapped() != null ? entity.getScrapped() : 0) + 1);
+
+        assetCountRepository.save(entity);
     }
+
+
 
     @Override
     public List<AssetsEntity> getThroughStatus(String str) {
@@ -418,198 +304,6 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
         return unassigned;
     }
 
-    @Override
-    public int getLaptopCountByLocation(String id) {
-        CountOfAssetsEntity countOfAsset = assetCountRepository.findByLocation(id);
-        return countOfAsset.getLaptopCount();
-    }
-
-
-    /// /////////////////////////////////////////////////
-//	@Override
-//	public int getLaptopCountByAssertSourced(String assertSourcedBy) {
-//		CountOfAssetsRepository countOfAsset = assetCountRepository.findByAssertSourcedBy(assertSourcedBy);
-//		return countOfAsset.getLaptopCount();
-//	}
-
-    /// //////////////////////////////
-    @Override
-    public int totalLaptops() {
-        List<CountOfAssetsEntity> countOfAssetEntities = assetCountRepository.findAll();
-        int total = 0;
-        for (CountOfAssetsEntity i : countOfAssetEntities) {
-            total += i.getLaptopCount();
-        }
-        return total;
-    }
-
-    @Override
-    public int getCountOfUnassignedByLocation(String id) {
-        CountOfAssetsEntity countOfAsset = assetCountRepository.findByLocation(id);
-        return countOfAsset.getUnAssignedLaptopCount();
-    }
-
-    @Override
-    public List<AssetCounterDto> getUnassignedAndTotalLaptops() {
-        List<AssetCounterDto> assetCounterDTOs = new ArrayList<>();
-        AssetCounterDto temp1 = new AssetCounterDto();
-        List<CountOfAssetsEntity> countOfAssetEntities = assetCountRepository.findAll();
-        countOfAssetEntities.forEach(x -> {
-            temp1.setLocation(x.getLocation());
-            temp1.setTotal(x.getLaptopCount());
-            temp1.setUnAssigned(x.getUnAssignedLaptopCount());
-            assetCounterDTOs.add(temp1);
-        });
-        for (AssetCounterDto i : assetCounterDTOs)
-            System.out.println(i.getLocation());
-
-        return assetCounterDTOs;
-    }
-
-    @Override
-    public List<AssetsEntity> getLaptopsUnderWarenty() {
-        List<AssetsEntity> all = assetRepo.findAll();
-        List<AssetsEntity> assetsEntities = new ArrayList<>();
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDateTime now = LocalDateTime.now();
-        // System.out.println(dtf.format(now));
-        String today = dtf.format(now);
-
-        for (AssetsEntity i : all) {
-            try {
-                Date date = new SimpleDateFormat("dd/MM/yyyy").parse(String.valueOf(i.getWarrantyDate()));
-                Date todatDate = new SimpleDateFormat("dd/MM/yyyy").parse(today);
-                if (date.compareTo(todatDate) > 0) {
-                    assetsEntities.add(i);
-                }
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-        return assetsEntities;
-    }
-
-    @Override
-    public List<AssetsEntity> getLaptopsOverWarenty() {
-        List<AssetsEntity> all = assetRepo.findAll();
-        List<AssetsEntity> assetsEntities = new ArrayList<>();
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDateTime now = LocalDateTime.now();
-        // System.out.println(dtf.format(now));
-        String today = dtf.format(now);
-
-        for (AssetsEntity i : all) {
-            try {
-                Date date = new SimpleDateFormat("dd/MM/yyyy").parse(String.valueOf(i.getWarrantyDate()));
-                Date todayDate = new SimpleDateFormat("dd/MM/yyyy").parse(today);
-                if (date.compareTo(todayDate) < 0) {
-                    assetsEntities.add(i);
-                }
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-        return assetsEntities;
-    }
-
-    @Override
-    public Object saveHistory(String serialNo, String empId) {
-        try {
-            AssetsEntity asset = assetRepo.findBySerialNumber(serialNo);
-            AssetsHistoryEntity assetsHistoryEntity = new AssetsHistoryEntity();
-            List<AssetsHistoryEntity> assetsHistoryEntities = assetsHistoryRepository.findAll();
-            List<CountOfAssetsEntity> countOfAssetEntities = assetCountRepository.findAll();
-            if (!asset.getStatus().equalsIgnoreCase("scrap")) {
-
-                assetsHistoryEntity.setEmpId(asset.getEmpId());
-                assetsHistoryEntity.setReturnDate(LocalDate.now());
-                assetsHistoryEntity.setEmpId(asset.getEmpId());
-                assetsHistoryEntity.setSerialNumber(asset.getSerialNumber());
-                assetsHistoryEntity.setAssignedBy(asset.getAssignedBy());
-                assetsHistoryEntity.setAssignedDate(asset.getAssignedDate());
-                asset.setEmpId(null);
-                asset.setAssignedBy(null);
-                asset.setAssignedDate(null);
-                asset.setStatus("Unassigned");
-                asset.setReturnDate(null);
-                for (CountOfAssetsEntity i : countOfAssetEntities) {
-                    if (i.getLocation().equalsIgnoreCase(asset.getLocation())) {
-                        if (asset.getAssetName().equalsIgnoreCase("Laptop")) {
-                            i.setUnAssignedLaptopCount(i.getUnAssignedLaptopCount() + 1);
-                            assetCountRepository.save(i);
-                        }
-                        if (asset.getAssetName().equalsIgnoreCase("Mouse")) {
-                            i.setUnAssignedMouseCount(i.getUnAssignedMouseCount() + 1);
-                            assetCountRepository.save(i);
-                        }
-                        if (asset.getAssetName().equalsIgnoreCase("LaptopCharger")) {
-                            i.setUnAssignedLaptopChargerCount(i.getUnAssignedLaptopChargerCount());
-                            assetCountRepository.save(i);
-                        }
-                        if (asset.getAssetName().equalsIgnoreCase("HaedPhone")) {
-                            i.setUnAssignedHeadphonesCount(i.getUnAssignedHeadphonesCount() + 1);
-                            assetCountRepository.save(i);
-                        }
-                        if (asset.getAssetName().equalsIgnoreCase("Bag")) {
-                            i.setUnAssignedBagCount(i.getUnAssignedBagCount() + 1);
-                            assetCountRepository.save(i);
-                        }
-
-                        if (asset.getAssetName().equalsIgnoreCase("DataCard")) {
-                            i.setUnAssignedDataCardCount(i.getUnAssignedDataCardCount() + 1);
-                            assetCountRepository.save(i);
-                        }
-
-                        if (asset.getAssetName().equalsIgnoreCase("Mobile")) {
-                            i.setUnAssignedMobileCount(i.getUnAssignedMobileCount() + 1);
-                            assetCountRepository.save(i);
-                        }
-                        if (asset.getAssetName().equalsIgnoreCase("Camera")) {
-                            i.setUnAssignedCameraCount(i.getUnAssignedCameraCount() + 1);
-                            assetCountRepository.save(i);
-                        }
-                        if (asset.getAssetName().equalsIgnoreCase("Projector")) {
-                            i.setUnAssignedProjectorCount(i.getUnAssignedProjectorCount() + 1);
-                            assetCountRepository.save(i);
-                        }
-                        if (asset.getAssetName().equalsIgnoreCase("FireWall")) {
-                            i.setUnAssignedFireWallCount(i.getUnAssignedFireWallCount() + 1);
-                            assetCountRepository.save(i);
-                        }
-                        if (asset.getAssetName().equalsIgnoreCase("Switch")) {
-                            i.setUnAssignedSwitchCount(i.getUnAssignedSwitchCount() + 1);
-                            assetCountRepository.save(i);
-                        }
-                        if (asset.getAssetName().equalsIgnoreCase("DVR")) {
-                            i.setUnAssignedDvrCount(i.getUnAssignedDvrCount() + 1);
-                            assetCountRepository.save(i);
-                        }
-                        if (asset.getAssetName().equalsIgnoreCase("Speaker")) {
-                            i.setUnAssignedSpeakerCount(i.getUnAssignedSpeakerCount() + 1);
-                            assetCountRepository.save(i);
-                        }
-                        assetCountRepository.save(i);
-                    }
-                }
-                AssetsEntity assetCopy = assetRepo.findBySerialNumber(serialNo);
-                assetCopy.setStatus("unassigned");
-                assetCopy.setEmpId(null);
-                assetRepo.save(assetCopy);
-                assetRepo.save(asset);
-                assetsHistoryEntities.add(assetsHistoryEntity);
-                assetsHistoryRepository.saveAll(assetsHistoryEntities);
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return "Serial Number not found or The Item belongs to this Serial Number is in Scrap";
-        }
-        System.out.println("Updated Successfully");
-        return "Updated Successfully";
-    }
 
     @Override
     public List<AssetsEntity> getUnAssigned() {
@@ -909,11 +603,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                 saveAsset(asset);
             } catch (IllegalArgumentException e) {
                 skippedData.put(asset.getSerialNumber(), e.getMessage());
-                continue;
             }
-            assignedAssetsService.unAssignedCountImport((Objects.requireNonNull(getCellValue(row, 3))), (Objects.requireNonNull(getCellValue(row, 6))));
-
-            assignedAssetsService.totalCountImport((Objects.requireNonNull(getCellValue(row, 3))), (Objects.requireNonNull(getCellValue(row, 6))));
         }
         return skippedData;
     }
@@ -947,10 +637,6 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                 asset.setAssignedBy(getCellValue(row, 12));
                 asset.setAssetSourcedBy(getCellValue(row, 13));
                 asset.setAssignedDate(parseDateSafe(getCellValue(row, 11)));
-                //     asset.setReturnDate(parseDateSafe(getCellValue(row, )));
-                assignedAssetsService.assignedCountImport((Objects.requireNonNull(getCellValue(row, 4))), (Objects.requireNonNull(getCellValue(row, 7))));
-                assignedAssetsService.totalCountImport((Objects.requireNonNull(getCellValue(row, 4))), (Objects.requireNonNull(getCellValue(row, 7))));
-
                 Set<ConstraintViolation<AssetsDto>> violations = validator.validate(asset);
                 if (!violations.isEmpty()) {
                     StringBuilder sb = new StringBuilder();
@@ -999,15 +685,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                 assignableAssetDto.setAssignedDate(asset.getAssignedDate());
                 AssignedAssetsEntity assignedAssetsEntity = assignedAssetsServiceImp.getAssignedAssetsEntity(assignableAssetDto
                         , modelMapper.map(asset, AssetsEntity.class));
-
-                for (CountOfAssetsEntity count : assetCountRepository.findAll()) {
-                    if (asset.getLocation().equalsIgnoreCase(count.getLocation())) {
-                        assignedAssetsServiceImp.updateImportUnassignedCount(modelMapper.map(asset, AssetsEntity.class), count);
-                        assetCountRepository.save(count);
-                    }
-                }
                 assignedAssetsService.assignedCountImport((Objects.requireNonNull(getCellValue(row, 4))), (Objects.requireNonNull(getCellValue(row, 7))));
-                assignedAssetsService.totalCountImport((Objects.requireNonNull(getCellValue(row, 4))), (Objects.requireNonNull(getCellValue(row, 7))));
                 assignedAssetsRepository.save(assignedAssetsEntity);
                 assetsHistoryServices.saveHistory(assignedAssetsEntity);
             } else {
@@ -1042,7 +720,13 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             AssetsEntity assetsEntity = assetRepo.findBySerialNumber(asset.getSerialNumber());
             if (assetsEntity != null) {
                 if (assetsEntity.getAssetName().equalsIgnoreCase(asset.getAssetName()) && assetsEntity.getPurchaseDate().isEqual(asset.getPurchaseDate())) {
-                    deleteAsset(assetsEntity.getAssetId());
+                    try{
+                        deleteAsset(assetsEntity.getAssetId());
+                    }catch (IllegalArgumentException e)
+                    {
+                        skippedData.put(asset.getSerialNumber(), e.getMessage());
+                        continue;
+                    }
                 } else {
                     skippedData.put(asset.getSerialNumber(), "Skipping row due to AssetName and PurchaseDate are not matched with the on in the Data Base while Scapping Asset");
                 }
@@ -1051,6 +735,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             asset.setAssignedDate(parseDateSafe(getCellValue(row, 3)));
             asset.setAssignedBy(getCellValue(row, 4));
             asset.setOperatingSystem(getCellValue(row, 5));
+            asset.setStatus(getCellValue(row, 6));
             asset.setType(getCellValue(row, 7));
             asset.setLocation(getCellValue(row, 8));
             asset.setModelName(getCellValue(row, 9));
@@ -1072,7 +757,6 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                 deleteAsset(Objects.requireNonNull(saveAsset(asset).getBody()).getAssetId());
             } catch (IllegalArgumentException e) {
                 skippedData.put(asset.getSerialNumber(), e.getMessage());
-                continue;
             }
         }
         return skippedData;
@@ -1090,14 +774,6 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
         };
     }
 
-    private Integer parseIntSafe(String value) {
-        try {
-            return (value != null && !value.isBlank()) ? Integer.parseInt(value) : null;
-        } catch (NumberFormatException e) {
-            log.warn("Failed to parse integer: {}", value);
-            return null;
-        }
-    }
 
     private LocalDate parseDateSafe(String dateStr) {
         if (dateStr == null || dateStr.isBlank()) return null;

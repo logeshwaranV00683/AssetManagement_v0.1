@@ -54,12 +54,6 @@ public class CountOfAssetsController {
         return ResponseEntity.ok(assignedCount);
     }
 
-    @GetMapping("/count/laptops/{locationId}")
-    public ResponseEntity<Integer> getLaptopCountByLocation(@PathVariable String locationId) {
-        int laptopCount = assetService.getLaptopCountByLocation(locationId);
-        return ResponseEntity.ok(laptopCount);
-    }
-
     @GetMapping("/unassignedList")
     public ResponseEntity<List<AssetsEntity>> getUnAssignedAssets() {
         List<AssetsEntity> unAssignedAssets = assetService.getUnAssigned();

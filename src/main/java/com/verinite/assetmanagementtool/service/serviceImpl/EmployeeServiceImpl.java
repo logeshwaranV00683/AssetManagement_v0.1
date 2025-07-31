@@ -1,6 +1,5 @@
 package com.verinite.assetmanagementtool.service.serviceImpl;
 
-import com.verinite.assetmanagementtool.dto.AdminRegistrationDto;
 import com.verinite.assetmanagementtool.dto.EmployeeDto;
 import com.verinite.assetmanagementtool.dto.EmployeeExportDto;
 import com.verinite.assetmanagementtool.entity.EmployeeEntity;
@@ -11,7 +10,6 @@ import com.verinite.assetmanagementtool.service.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.tomcat.util.buf.CharsetCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -129,7 +127,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             employeeRepo.deleteById(empId);
             return ResponseEntity.ok("Employee deleted successfully");
         } else {
-            return new ResponseEntity<>( "Employee not found",HttpStatus.NOT_FOUND );
+            return new ResponseEntity<>("Employee not found", HttpStatus.NOT_FOUND);
         }
     }
 
@@ -228,13 +226,10 @@ public class EmployeeServiceImpl implements EmployeeService {
                 existingEmployee.setMobile(employee.getMobile());
             }
             if (employee.getStatus() != null) {
-                if(employee.getStatus().equalsIgnoreCase("Inactive")&&adminRegistrationRepository.existsByEmpId(employee.getEmpId()))
-                {
+                if (employee.getStatus().equalsIgnoreCase("Inactive") && adminRegistrationRepository.existsByEmpId(employee.getEmpId())) {
                     existingEmployee.setStatus(employee.getStatus());
                     adminServiceImpl.deleteAdmin(existingEmployee.getEmpId());
-                }
-                else
-                {
+                } else {
                     existingEmployee.setStatus(employee.getStatus());
                 }
             }
@@ -242,8 +237,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             if (employee.getRole() != null) {
                 if (employee.getRole().equalsIgnoreCase("Admin")) {
                     if (!adminRegistrationRepository.existsByEmpId(employee.getEmpId())) {
-                        if(employee.getStatus().equalsIgnoreCase("active"))
-                        {
+                        if (employee.getStatus().equalsIgnoreCase("active")) {
                             adminServiceImpl.registerNewAdminWithoutPassword(existingEmployee);
                             existingEmployee.setRole(employee.getRole());
                         }

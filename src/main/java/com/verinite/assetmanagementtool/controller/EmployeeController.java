@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import net.bytebuddy.build.Plugin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.validation.annotation.Validated;
@@ -19,7 +18,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -113,7 +111,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/employee/status/{checkStatus}")
-    public ResponseEntity<?> getActiveAccounts(@PathVariable  String checkStatus) {
+    public ResponseEntity<?> getActiveAccounts(@PathVariable String checkStatus) {
         if (!checkStatus.equalsIgnoreCase("Active") && !checkStatus.equalsIgnoreCase("Inactive")) {
             return ResponseEntity
                     .badRequest()

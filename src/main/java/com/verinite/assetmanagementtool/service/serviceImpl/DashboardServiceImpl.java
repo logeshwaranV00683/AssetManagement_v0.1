@@ -36,7 +36,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     public ResponseEntity<?> getFormattedAssetCounts(List<String> locations) {
         List<Object[]> queryResult = assetRepo.findAggregatedAssetCountsByLocations(locations);
-        if(queryResult.isEmpty()){
+        if (queryResult.isEmpty()) {
             String message = "No assets found for location: " + locations;
             return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
         }

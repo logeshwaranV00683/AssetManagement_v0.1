@@ -92,50 +92,17 @@ CREATE TABLE `tbl_assigned_assets` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `tbl_count` (
-  `location` varchar(255) NOT NULL,
-  `bag_count` int NOT NULL,
-  `camera_count` int NOT NULL,
-  `data_card_count` int NOT NULL,
-  `dvr_count` int NOT NULL,
-  `fire_wall_count` int NOT NULL,
-  `head_phones_count` int NOT NULL,
-  `laptop_charger_count` int NOT NULL,
-  `laptop_count` int NOT NULL,
-  `mobile_count` int NOT NULL,
-  `mouse_count` int NOT NULL,
-  `projector_count` int NOT NULL,
-  `speaker_count` int NOT NULL,
-  `switch_count` int NOT NULL,
-
-  `un_assigned_bag_count` int NOT NULL,
-  `un_assigned_camera_count` int NOT NULL,
-  `un_assigned_data_card_count` int NOT NULL,
-  `un_assigned_dvr_count` int NOT NULL,
-  `un_assigned_fire_wall_count` int NOT NULL,
-  `un_assigned_headphones_count` int NOT NULL,
-  `un_assigned_laptop_charger_count` int NOT NULL,
-  `un_assigned_laptop_count` int NOT NULL,
-  `un_assigned_mobile_count` int NOT NULL,
-  `un_assigned_mouse_count` int NOT NULL,
-  `un_assigned_projector_count` int NOT NULL,
-  `un_assigned_speaker_count` int NOT NULL,
-  `un_assigned_switch_count` int NOT NULL,
-
-    `assigned_bag_count` int NOT NULL,
-    `assigned_camera_count` int NOT NULL,
-    `assigned_data_card_count` int NOT NULL,
-    `assigned_dvr_count` int NOT NULL,
-    `assigned_fire_wall_count` int NOT NULL,
-    `assigned_headphones_count` int NOT NULL,
-    `assigned_laptop_charger_count` int NOT NULL,
-    `assigned_laptop_count` int NOT NULL,
-    `assigned_mobile_count` int NOT NULL,
-    `assigned_mouse_count` int NOT NULL,
-    `assigned_projector_count` int NOT NULL,
-    `assigned_speaker_count` int NOT NULL,
-    `assigned_switch_count` int NOT NULL,
-  PRIMARY KEY (`location`)
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `location` VARCHAR(255) NOT NULL,
+  `type` VARCHAR(100) NOT NULL,
+  `total` INT NOT NULL DEFAULT 0,
+  `assigned` INT NOT NULL DEFAULT 0,
+  `unassigned` INT NOT NULL DEFAULT 0,
+  `scrapped` INT NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_location_type` (`location`, `type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 CREATE TABLE `tbl_location` (
   `loc_code` int NOT NULL AUTO_INCREMENT,

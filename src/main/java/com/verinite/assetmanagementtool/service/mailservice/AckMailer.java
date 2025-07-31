@@ -177,7 +177,7 @@ public class AckMailer {
                 "      \n" +
                 "      <div id=\"invoice-mid\" style=\"margin: 0; box-sizing: border-box; -webkit-print-color-adjust: exact; padding: 20px; min-height: 110px;\">   \n" +
                 "        <div id=\"message\" style=\"margin: 0; box-sizing: border-box; -webkit-print-color-adjust: exact; margin-bottom: 30px; display: block;\">\n" +
-                "          <h2 style=\"margin: 0; box-sizing: border-box; -webkit-print-color-adjust: exact; font-size: .9em; margin-bottom: 5px; color: #444;\">Hi " + empData.getFirstName()+" " + empData.getLastName()+",</h2>\n" +
+                "          <h2 style=\"margin: 0; box-sizing: border-box; -webkit-print-color-adjust: exact; font-size: .9em; margin-bottom: 5px; color: #444;\">Hi " + empData.getFirstName() + " " + empData.getLastName() + ",</h2>\n" +
                 "          <p style=\"margin: 0; box-sizing: border-box; -webkit-print-color-adjust: exact; font-size: .85em; color: #666; line-height: 1.2em;\"> <span id=\"invoice_num\" style=\"margin: 0; box-sizing: border-box; -webkit-print-color-adjust: exact;\">The Below listed assets have been handover to you by  IT Department . Kindly provide your confirmation on the assets received</span></p>\n" +
                 "        </div>\n" +
                 "         <!-- <div class=\"cta-group mobile-btn-group\">\n" +

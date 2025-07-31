@@ -1,6 +1,5 @@
 package com.verinite.assetmanagementtool.service;
 
-import com.verinite.assetmanagementtool.dto.AssetCounterDto;
 import com.verinite.assetmanagementtool.dto.AssetExportDto;
 import com.verinite.assetmanagementtool.dto.AssetsDto;
 import com.verinite.assetmanagementtool.entity.AssetsEntity;
@@ -25,20 +24,6 @@ public interface AssetService {
     public int getCountOfAssigned();
 
     public int getCountOfUnassigned();
-
-    public int getLaptopCountByLocation(String id);
-
-    public int totalLaptops();
-
-    public int getCountOfUnassignedByLocation(String id);
-
-    public List<AssetCounterDto> getUnassignedAndTotalLaptops();
-
-    public List<AssetsEntity> getLaptopsUnderWarenty();
-
-    public List<AssetsEntity> getLaptopsOverWarenty();
-
-    public Object saveHistory(String serialNo, String empId);
 
     List<AssetsEntity> getUnAssigned();
 

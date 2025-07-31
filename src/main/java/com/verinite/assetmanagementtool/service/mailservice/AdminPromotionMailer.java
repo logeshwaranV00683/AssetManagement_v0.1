@@ -30,7 +30,7 @@ public class AdminPromotionMailer {
                 "        </div>" +
                 "        <div style=\"padding: 30px; color: #333333;\">" +
                 "            <h2 style=\"color: #0072C6;\">You're now an Admin!</h2>" +
-                "            <p>Hi <strong>" + adminRegistrationDto.getFirstName() +" "+adminRegistrationDto.getLastName()+ "</strong>,</p>" +
+                "            <p>Hi <strong>" + adminRegistrationDto.getFirstName() + " " + adminRegistrationDto.getLastName() + "</strong>,</p>" +
                 "            <p>Congratulations! You’ve been promoted to <strong>Admin</strong> for the Asset Management Tool.</p>" +
                 "            <p><strong>Your User ID:</strong> " + adminRegistrationDto.getEmpId() + "</p>" +
                 "            <p><strong>Your Temporary Password:</strong> " + password + "</p>" +

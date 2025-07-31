@@ -46,10 +46,10 @@ public class OTPMailer {
                 throw new RuntimeException(e);
             }
         }).start();
-        sendOtpMail(adminRegistrationDto.getFirstName(),adminRegistrationDto.getLastName(), adminRegistrationDto.getMail(), otp);
+        sendOtpMail(adminRegistrationDto.getFirstName(), adminRegistrationDto.getLastName(), adminRegistrationDto.getMail(), otp);
     }
 
-    public void sendOtpMail(String firstName,String lastName, String email, String otp) throws MessagingException {
+    public void sendOtpMail(String firstName, String lastName, String email, String otp) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
@@ -68,7 +68,7 @@ public class OTPMailer {
                 "        <img src=\"https://raw.githubusercontent.com/g0bikrishnan/images/main/v.jpg\" alt=\"Logo\" style=\"width: 180px;\">\n" +
                 "    </div>\n" +
                 "    <div style=\"padding: 20px;\">\n" +
-                "        <h2 style=\"font-size: 1.1em; color: #444;\">Hi " +firstName+" "+lastName + ",</h2>\n" +
+                "        <h2 style=\"font-size: 1.1em; color: #444;\">Hi " + firstName + " " + lastName + ",</h2>\n" +
                 "        <p style=\"font-size: 0.95em; color: #666; line-height: 1.6em;\">You have requested to verify your identity for Asset Management. Please use the following OTP to proceed:</p>\n" +
                 "        <div style=\"margin: 20px 0; font-size: 24px; background: #0072C6; color: white; padding: 15px; text-align: center; border-radius: 5px; letter-spacing: 4px;\">\n" +
                 otp +

@@ -7,10 +7,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class CountOfAssetsImpl implements CountOFAssetsService {
@@ -22,17 +19,6 @@ public class CountOfAssetsImpl implements CountOFAssetsService {
 
 
     @Override
-    public int getLaptopCount(String id) {
-        try {
-            return assetCountRepository.getLaptopCount(id);
-        } catch (Exception e) {
-            return 0;
-        }
-
-    }
-
-
-    @Override
     public CountOfAssetsEntity postAssetCount(CountOfAssetsEntity countOfAssetsEntity) {
         return assetCountRepository.save(countOfAssetsEntity);
     }
@@ -40,23 +26,34 @@ public class CountOfAssetsImpl implements CountOFAssetsService {
     @Override
     public Object updateAssetCount(String location, CountOfAssetsEntity countOfAssetsEntity) {
         try {
-            CountOfAssetsEntity countOfAssetsEntity2 = assetCountRepository.findByLocation(location);
-            if (countOfAssetsEntity.getLaptopCount() != 0)
-                countOfAssetsEntity2.setLaptopCount(countOfAssetsEntity.getLaptopCount());
-            if (countOfAssetsEntity.getBagCount() != 0)
-                countOfAssetsEntity2.setBagCount(countOfAssetsEntity.getBagCount());
-            if (countOfAssetsEntity.getLaptopChargerCount() != 0)
-                countOfAssetsEntity2.setLaptopChargerCount(countOfAssetsEntity.getLaptopChargerCount());
-            if (countOfAssetsEntity.getHeadPhonesCount() != 0)
-                countOfAssetsEntity2.setHeadPhonesCount(countOfAssetsEntity.getHeadPhonesCount());
-            if (countOfAssetsEntity.getMouseCount() != 0)
-                countOfAssetsEntity2.setMouseCount(countOfAssetsEntity.getMouseCount());
-            assetCountRepository.save(countOfAssetsEntity2);
-            return "Updated Successfully";
+            Optional<CountOfAssetsEntity> optionalEntity = assetCountRepository
+                    .findByLocationIgnoreCaseAndTypeIgnoreCase(location, countOfAssetsEntity.getType());
+
+            if (optionalEntity.isPresent()) {
+                CountOfAssetsEntity existing = optionalEntity.get();
+
+                if (countOfAssetsEntity.getTotal() != null)
+                    existing.setTotal(countOfAssetsEntity.getTotal());
+
+                if (countOfAssetsEntity.getAssigned() != null)
+                    existing.setAssigned(countOfAssetsEntity.getAssigned());
+
+                if (countOfAssetsEntity.getUnassigned() != null)
+                    existing.setUnassigned(countOfAssetsEntity.getUnassigned());
+
+                if (countOfAssetsEntity.getScrapped() != null)
+                    existing.setScrapped(countOfAssetsEntity.getScrapped());
+
+                assetCountRepository.save(existing);
+                return "Updated Successfully";
+            } else {
+                return "No data found for location: " + location + " and type: " + countOfAssetsEntity.getType();
+            }
         } catch (Exception e) {
-            return "No Location is found";
+            return "Error occurred while updating: " + e.getMessage();
         }
     }
+
 
     @Override
     public List<CountOfAssetsEntity> getAll() {
@@ -65,23 +62,16 @@ public class CountOfAssetsImpl implements CountOFAssetsService {
 
 
     public Map<String, Integer> getByLoc(String location) {
-        List<Object[]> resultList = assetCountRepository.findByLoc(location);
+        List<CountOfAssetsEntity> resultList = assetCountRepository.findByLocationIgnoreCase(location);
 
         if (resultList == null || resultList.isEmpty()) {
             return Collections.emptyMap();
         }
 
-        Object[] row = resultList.get(0); // first row
-
-        String[] keys = {
-                "bag", "camera", "data_card", "dvr", "fire_wall",
-                "head_phones", "laptop_charger", "laptop", "mobile",
-                "mouse", "projector", "speaker", "switch"
-        };
-
         Map<String, Integer> countMap = new LinkedHashMap<>();
-        for (int i = 0; i < keys.length; i++) {
-            countMap.put(keys[i], ((Number) row[i]).intValue());
+
+        for (CountOfAssetsEntity entity : resultList) {
+            countMap.put(entity.getType().toLowerCase(), entity.getTotal());
         }
 
         return countMap;
@@ -89,60 +79,42 @@ public class CountOfAssetsImpl implements CountOFAssetsService {
 
 
     public Map<String, Integer> getUnassignedAssets(String location) {
-        List<Object[]> resultList = assetCountRepository.findUnassignedAssets(location);
+        List<CountOfAssetsEntity> entities = assetCountRepository.findByLocationIgnoreCase(location);
 
-        if (resultList == null || resultList.isEmpty()) {
+        if (entities == null || entities.isEmpty()) {
             return Collections.emptyMap();
         }
 
-        Object[] row = resultList.get(0); // first row
-
-        String[] keys = {
-                "bag", "camera", "data_card", "dvr", "fire_wall",
-                "head_phones", "laptop_charger", "laptop", "mobile",
-                "mouse", "projector", "speaker", "switch"
-        };
-
         Map<String, Integer> countMap = new LinkedHashMap<>();
-        for (int i = 0; i < keys.length; i++) {
-            countMap.put(keys[i], ((Number) row[i]).intValue());
+
+        for (CountOfAssetsEntity entity : entities) {
+            countMap.put(
+                    entity.getType().toLowerCase(),
+                    entity.getUnassigned() != null ? entity.getUnassigned() : 0
+            );
         }
 
         return countMap;
     }
+
 
     public Map<String, Integer> getAssignedAssets(String location) {
-        List<Object[]> resultList = assetCountRepository.findAssignedAssets(location);
+        List<CountOfAssetsEntity> entities = assetCountRepository.findByLocationIgnoreCase(location);
 
-        if (resultList == null || resultList.isEmpty()) {
+        if (entities == null || entities.isEmpty()) {
             return Collections.emptyMap();
         }
 
-        Object[] row = resultList.get(0); // first row
-
-        String[] keys = {
-                "bag", "camera", "data_card", "dvr", "fire_wall",
-                "head_phones", "laptop_charger", "laptop", "mobile",
-                "mouse", "projector", "speaker", "switch"
-        };
-
         Map<String, Integer> countMap = new LinkedHashMap<>();
-        for (int i = 0; i < keys.length; i++) {
-            countMap.put(keys[i], ((Number) row[i]).intValue());
+
+        for (CountOfAssetsEntity entity : entities) {
+            countMap.put(
+                    entity.getType().toLowerCase(),
+                    entity.getAssigned() != null ? entity.getAssigned() : 0
+            );
         }
 
         return countMap;
-    }
-
-
-    @Override
-    public int totalLaptops() {
-        List<CountOfAssetsEntity> countOfAssetEntities = assetCountRepository.findAll();
-        int total = 0;
-        for (CountOfAssetsEntity i : countOfAssetEntities) {
-            total += i.getLaptopCount();
-        }
-        return total;
     }
 
 
