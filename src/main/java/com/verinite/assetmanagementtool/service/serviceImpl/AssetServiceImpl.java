@@ -363,18 +363,16 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
 
     @Override
     public void deleteAsset(int id) {
-        try {
-            AssetsEntity asset = assetRepo.findById(id).get();
-            System.out.println(asset.getAssetId());
-            if (!asset.getStatus().equalsIgnoreCase("Scrap")) {
-                asset.setStatus("Scrap");
-
-                assetRepo.save(asset);
-                // return scarpRepository.save(asset);
-            }
-        } catch (NoSuchElementException ignored) {
+        Optional<AssetsEntity> optionalAsset = assetRepo.findById(id);
+        if (optionalAsset.isEmpty()) {
+            throw new IllegalArgumentException("Invalid asset ID: " + id);
         }
-
+        AssetsEntity asset = optionalAsset.get();
+        if (!"unassigned".equalsIgnoreCase(asset.getStatus())) {
+            throw new IllegalArgumentException("Asset must be unassigned before deletion.");
+        }
+        asset.setStatus("Scrap");
+        assetRepo.save(asset);
     }
 
     @Override

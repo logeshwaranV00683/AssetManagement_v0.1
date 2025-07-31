@@ -22,9 +22,9 @@ public class SaveAssetResponse {
     private String status;
     @Pattern(regexp = "^(\\w+)?$", message = "Must be a Alphanumeric & _")
     private String type;
-    @Pattern(regexp = "^(\\d{4}-\\d{2}-\\d{2})?$", message = "Date must be in format yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate purchaseDate;
-    @Pattern(regexp = "^(\\d{4}-\\d{2}-\\d{2})?$", message = "Date must be in format yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate warrantyDate;
     @Pattern(regexp = "^(\\w+)?$", message = "Must be a Alphanumeric & _")
     private String location;

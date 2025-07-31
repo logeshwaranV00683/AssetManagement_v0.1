@@ -76,9 +76,9 @@ public class AssetsController implements ApplicationRunner {
     }
 
     @DeleteMapping("asset/delete/{id}")
-    public String delete(@PathVariable int id) {
+    public ResponseEntity<?> delete(@PathVariable int id) {
         assetService.deleteAsset(id);
-        return "Asset Scrapped successfully. ";
+        return new ResponseEntity<>("Asset Scrapped successfully. ",HttpStatus.NOT_FOUND);
     }
 
     @Override
