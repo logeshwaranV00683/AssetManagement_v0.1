@@ -47,13 +47,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         employeeEntity.setRole("Employee");
         employeeEntity.setStatus("Active");
-
-
-        EmployeeEntity lastEmployee = employeeRepo.findTopByOrderByEmpIdDesc();
-        String lastEmpId = (lastEmployee != null) ? lastEmployee.getEmpId() : "emp000";
-        String newEmpId = generateNewEmpId(lastEmpId);
-        employeeEntity.setEmpId(newEmpId);
-
         // Check if the employee ID already exists
         if (employeeRepo.findByEmpId(employeeEntity.getEmpId()) == null) {
             if (!(employeeRepo.existsByMail(employeeEntity.getMail()) || employeeRepo.existsByMobile(employeeEntity.getMobile()))) {
@@ -65,12 +58,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         } else {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Employee already exists");
         }
-    }
-
-    // Example of generateNewEmpId method
-    private String generateNewEmpId(String lastEmpId) {
-        int num = Integer.parseInt(lastEmpId.substring(3)) + 1;
-        return String.format("V%05d", num);
     }
 
     public void saveBulkEmployee(List<EmployeeDto> employeeDTOs) {
@@ -134,7 +121,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Transactional
     public ResponseEntity<?> deleteEmployeeById(String empId) {
         if (employeeRepo.existsById(empId)) {
-            if(!(assignedAssetsService.getAllAssetsAssignedToParticularEmployee(empId).getStatusCode()==HttpStatus.BAD_REQUEST))
+            if(assignedAssetsService.getAllAssetsAssignedToParticularEmployee(empId).getStatusCode()==HttpStatus.OK)
             {
                 return new ResponseEntity<>( "Still Assets are not returned",HttpStatus.BAD_REQUEST );
             }
