@@ -56,9 +56,8 @@ public class EmployeeController {
     }
 
     @DeleteMapping("/deleteEmp/{empId}")
-    public ResponseEntity<String> deleteEmployee(@PathVariable String empId) {
-        String message = employeeService.deleteEmployeeById(empId);
-        return ResponseEntity.ok(message);
+    public ResponseEntity<?> deleteEmployee(@PathVariable String empId) {
+        return employeeService.deleteEmployeeById(empId);
     }
 
     @PostMapping("employee/export")

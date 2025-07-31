@@ -267,7 +267,7 @@ public ResponseEntity<?> getAllAssetsAssignedToParticularEmployee(String empId) 
     List<AssignedAssetsEntity> assignedAssetsEntities = assignedAssetsRepository.findByEmpId(empId);
     if(assignedAssetsEntities.isEmpty()){
         String message = "No assigned assets found for employee ID : "+empId;
-        return ResponseEntity.ok(message);
+        return  new ResponseEntity<>(message,HttpStatus.NOT_FOUND);
     }
     return ResponseEntity.ok(assignedAssetsEntities);
 }

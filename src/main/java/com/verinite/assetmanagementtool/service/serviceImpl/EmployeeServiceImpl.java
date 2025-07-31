@@ -6,6 +6,7 @@ import com.verinite.assetmanagementtool.dto.EmployeeExportDto;
 import com.verinite.assetmanagementtool.entity.EmployeeEntity;
 import com.verinite.assetmanagementtool.repository.AdminRegistrationRepository;
 import com.verinite.assetmanagementtool.repository.EmployeeRepository;
+import com.verinite.assetmanagementtool.service.AssignedAssetsService;
 import com.verinite.assetmanagementtool.service.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
@@ -37,6 +38,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     AdminServiceImpl adminServiceImpl;
     @Autowired
     private Validator validator;
+    @Autowired
+    private AssignedAssetsService assignedAssetsService;
 
 
     public EmployeeDto saveEmployee(EmployeeDto employeeDTO) {
@@ -129,13 +132,17 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional
-    public String deleteEmployeeById(String empId) {
+    public ResponseEntity<?> deleteEmployeeById(String empId) {
         if (employeeRepo.existsById(empId)) {
+            if(!(assignedAssetsService.getAllAssetsAssignedToParticularEmployee(empId).getStatusCode()==HttpStatus.BAD_REQUEST))
+            {
+                return new ResponseEntity<>( "Still Assets are not returned",HttpStatus.BAD_REQUEST );
+            }
             adminRegistrationRepository.deleteByEmpId(empId);
             employeeRepo.deleteById(empId);
-            return "Employee deleted successfully";
+            return ResponseEntity.ok("Employee deleted successfully");
         } else {
-            return "Employee not found";
+            return new ResponseEntity<>( "Employee not found",HttpStatus.NOT_FOUND );
         }
     }
 
