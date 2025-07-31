@@ -160,14 +160,14 @@ function EditAssetModal({
     >
       <Box
         sx={{
-         backgroundColor: "background.paper",
+          backgroundColor: "background.paper",
           boxShadow: 24,
           p: 4,
           width: "60%",
           maxWidth: 700,
           borderRadius: 4,
           position: "relative",
-          maxHeight: "80%",
+          maxHeight: "75%",
           overflowY: "auto",
         }}
       >

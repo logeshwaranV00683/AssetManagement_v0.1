@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { useEffect } from "react";
+import { getAssetTypes } from "../Services/AssetService";
+
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -28,19 +31,41 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
   const [type, setType] = useState("");
   const [assetSourcedBy, setAssetSourcedBy] = useState("");
 
+
+  const [typeOptions, setTypeOptions] = useState([]);
+  const [customType, setCustomType] = useState("");
+
+
+  useEffect(() => {
+    fetchAssetTypes();
+  }, []);
+
+  const fetchAssetTypes = async () => {
+    try {
+      const types = await getAssetTypes(); // ✅ correct call
+      setTypeOptions(types);
+    } catch (err) {
+      console.error("Failed to fetch asset types:", err);
+    }
+  };
+
+
+
   const handleAddAsset = async () => {
+    const finalType = type === "__custom__" ? customType : type;
     const newAsset = {
       assetName,
       serialNumber,
       location,
       status,
-      type,
+      type: finalType,
       operatingSystem,
       modelName,
       purchaseDate,
       warrantyDate,
       addedBy,
       assetSourcedBy,
+
     };
     console.log("Asset added:", newAsset);
     setIsAdding(true);
@@ -104,7 +129,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
           p: 4,
           width: "60%",
           maxWidth: 700,
-          maxHeight: "80%",
+          maxHeight: "75%",
           overflowY: "auto",
           borderRadius: 4,
           position: "absolute",
@@ -138,6 +163,37 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
             gap: 2,
           }}
         >
+          <FormControl fullWidth>
+            <InputLabel id="Type">Type</InputLabel>
+            <Select
+              labelId="Type"
+              id="Type"
+              label="Type"
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+              displayEmpty
+              renderValue={(selected) => selected || "Select or enter type"}
+            >
+              {typeOptions.map((option, index) => (
+                <MenuItem key={index} value={option}>
+                  {option}
+                </MenuItem>
+              ))}
+              <MenuItem value="__custom__">Other (Type manually)</MenuItem>
+            </Select>
+          </FormControl>
+
+          {type === "__custom__" && (
+            <TextField
+              label="Enter Custom Type"
+              value={customType}
+              onChange={(e) => setCustomType(e.target.value)}
+              fullWidth
+            />
+          )}
+
+
+
           <TextField
             labelId="asset-name-label"
             id="asset-name"
@@ -166,6 +222,8 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
               <MenuItem value="Pune">Pune</MenuItem>
             </Select>
           </FormControl>
+
+
           <TextField
             label="Operating System"
             value={operatingSystem}
@@ -179,30 +237,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
             fullWidth
           />
 
-          <FormControl fullWidth>
-            <InputLabel id="Type">Type</InputLabel>
-            <Select
-              labelId="Type"
-              id="Type"
-              label="Type"
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-            >
-              <MenuItem value="bag">Bag</MenuItem>
-              <MenuItem value="camera">Camera</MenuItem>
-              <MenuItem value="data_card">Data card</MenuItem>
-              <MenuItem value="dvr">DVR</MenuItem>
-              <MenuItem value="fire_wall">Fire wall</MenuItem>
-              <MenuItem value="head_phones">Head phones</MenuItem>
-              <MenuItem value="laptop_charger">Laptop charger</MenuItem>
-              <MenuItem value="Laptop">Laptop</MenuItem>
-              <MenuItem value="mobile">Mobile</MenuItem>
-              <MenuItem value="mouse">Mouse</MenuItem>
-              <MenuItem value="projector">Projector</MenuItem>
-              <MenuItem value="speaker">Speaker</MenuItem>
-              <MenuItem value="switch">Switch</MenuItem>
-            </Select>
-          </FormControl>
+
 
           <TextField
             label="Purchase Date"

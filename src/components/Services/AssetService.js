@@ -193,3 +193,34 @@ export const getAssignedAssetsByEmployee = async (empId) => {
   if (!response.ok) throw new Error("Failed to fetch assigned assets");
   return await response.json();
 };
+
+
+
+export const getAssetTypes = async () => {
+  const url = `${apiUrl}/assetManager/v1/AssetCount/GetAssetType`;
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+    console.log("Asset type API response:", data);
+
+    if (!data || typeof data !== "object" || !Array.isArray(data.assetTypes)) {
+      console.error("Invalid response structure:", data);
+      return [];
+    }
+
+    return data.assetTypes;
+  } catch (error) {
+    console.error("Error fetching asset types:", error);
+    return [];
+  }
+};
+
+
