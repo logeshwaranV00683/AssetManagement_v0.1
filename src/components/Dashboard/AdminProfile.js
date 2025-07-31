@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { changePassword } from "../Services/AuthService";
+import { changePassword, getOtherAdmins  } from "../Services/AuthService";
+import toast from "react-hot-toast";
+
 
 import {
   Box,
@@ -20,6 +22,13 @@ const AdminProfile = () => {
     location: "",
   });
 
+  const [otherAdmins, setOtherAdmins] = useState([]);
+
+  getOtherAdmins().then((data) => {
+  setOtherAdmins(data);
+});
+
+
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem("user"));
     if (userData) {
@@ -39,42 +48,36 @@ const AdminProfile = () => {
     confirmPassword: "",
   });
 
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-
   const handlePasswordChange = (e) => {
     setPasswords({ ...passwords, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setSuccess("");
+  e.preventDefault();
 
-    const { currentPassword, newPassword, confirmPassword } = passwords;
+  const { currentPassword, newPassword, confirmPassword } = passwords;
 
-    if (!currentPassword || !newPassword || !confirmPassword) {
-      setError("All password fields are required");
-      return;
-    }
+  if (!currentPassword || !newPassword || !confirmPassword) {
+    toast.error("All password fields are required");
+    return;
+  }
 
-    if (newPassword !== confirmPassword) {
-      setError("New password and confirm password do not match");
-      return;
-    }
+  if (newPassword !== confirmPassword) {
+    toast.error("New password and confirm password do not match");
+    return;
+  }
 
-    try {
-      await changePassword(adminData.email, currentPassword, newPassword);
-      setSuccess("Password changed successfully");
-      setPasswords({
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      });
-    } catch (error) {
-      setError(error.message || "Failed to change password");
-    }
-  };
+  try {
+    await changePassword(adminData.email, currentPassword, newPassword);
+    setPasswords({
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    });
+  } catch (error) {
+  }
+};
+
 
   return (
     <Box
@@ -89,7 +92,7 @@ const AdminProfile = () => {
       {/* Left Section */}
       <Paper elevation={4} sx={{ flex: 3, maxWidth: "70%", p: 4 }}>
         {/* Admin Details */}
-        <Typography variant="h4" sx={{ color: "#083A40", mb: 2 }}>
+        <Typography variant="h4" sx={{ color: "#083A40", mb: 2, fontWeight: "bold" }}>
           Your Profile
         </Typography>
 
@@ -171,6 +174,7 @@ const AdminProfile = () => {
             margin="normal"
           />
 
+          {/*
           {error && (
             <Typography color="error" sx={{ mt: 1 }}>
               {error}
@@ -180,6 +184,7 @@ const AdminProfile = () => {
             <Typography sx={{ mt: 1, color: "green" }}>{success}</Typography>
           )}
 
+          */}
           <Box sx={{ textAlign: "right", mt: 3 }}>
             <Button variant="contained" color="primary" type="submit">
               Change Password
@@ -189,46 +194,24 @@ const AdminProfile = () => {
       </Paper>
 
       {/* Right Section */}
-      <Paper elevation={4} sx={{ flex: 1, maxWidth: "30%", p: 4 }}>
-        <Typography variant="h5" sx={{ color: "#083A40", mb: 2 }}>
-          Other Admin's Profile
+      <Paper elevation={4} sx={{ flex: 1, maxWidth: "30%", p: 4, maxHeight: '80vh', overflowY: 'auto' }}>
+        <Typography variant="h5" sx={{ color: "#083A40", mb: 2, fontWeight: "bold" }}>
+          Other Admins' Profile
         </Typography>
 
-        {/* <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            label="Name"
-            value={adminData.name}
-            fullWidth
-            InputProps={{ readOnly: true }}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            label="Email"
-            value={adminData.email}
-            fullWidth
-            InputProps={{ readOnly: true }}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            label="Role"
-            value={adminData.role}
-            fullWidth
-            InputProps={{ readOnly: true }}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            label="Contact"
-            value={adminData.contact}
-            fullWidth
-            InputProps={{ readOnly: true }}
-          />
-        </Grid>
-      </Grid> */}
+        {otherAdmins.length > 0 ? (
+          otherAdmins.map((admin, index) => (
+            <Box key={index} sx={{ mb: 1, p: 2, border: '0.2px solid #ccc', borderRadius: '12px' }}>
+              <Typography><strong>Name:</strong> {admin.firstName} {admin.lastName}</Typography>
+              <Typography><strong>Email:</strong> {admin.mail}</Typography>
+              <Typography><strong>Location:</strong> {admin.location}</Typography>
+            </Box>
+          ))
+        ) : (
+          <Typography variant="body2">No other admins found.</Typography>
+        )}
       </Paper>
+
     </Box>
   );
 };

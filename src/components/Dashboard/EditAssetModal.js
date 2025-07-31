@@ -137,18 +137,23 @@ function EditAssetModal({
       onClose={handleClose}
       aria-labelledby="edit-asset-modal-title"
       aria-describedby="edit-asset-modal-description"
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
     >
       <Box
         sx={{
-          backgroundColor: "background.paper",
+         backgroundColor: "background.paper",
           boxShadow: 24,
           p: 4,
           width: "60%",
           maxWidth: 700,
-          mx: "auto",
-          my: "10%",
           borderRadius: 4,
           position: "relative",
+          maxHeight: "80%",
+          overflowY: "auto",
         }}
       >
         <IconButton

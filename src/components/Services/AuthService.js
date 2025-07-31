@@ -1,4 +1,5 @@
 import toast from "react-hot-toast";
+const token = localStorage.getItem("authToken");
 const apiUrl = process.env.REACT_APP_API_URL;
 
 export const logIn = (formData) => {
@@ -80,20 +81,62 @@ export const handleResetPassword = async (
 
 export const changePassword = async (mail, oldPassword, newPassword) => {
   try {
-    const response = await fetch(`${apiUrl}/reset-password/change-password`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    const response = await fetch(`${apiUrl}/reset-password/change-password-using-oldPassword`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ mail, oldPassword, newPassword }),
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Password change failed");
+    // Force read the response safely
+    const text = await response.text();
+
+    let message = '';
+    try {
+      const data = JSON.parse(text);
+      message = data.message || '';
+    } catch (e) {
+      message = text;
     }
 
-    return await response.json();
+    console.log("STATUS:", response.status);
+    console.log("BODY:", message);
+
+    if (response.status === 200 || response.status === 201) {
+      toast.success(message || "Password changed successfully");
+    } else {
+      toast.error(message || "Password change failed");
+    }
   } catch (error) {
-    console.error("Error during password change:", error);
+    console.error("Error changing password:", error);
+    toast.error("Something went wrong");
+  }
+};
+
+export const getOtherAdmins = async () => {
+  try {
+    const response = await fetch(`${apiUrl}/assetManager/v1/admin/get/all`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorMsg = await response.text();
+      throw new Error(errorMsg || 'Failed to fetch admin list');
+    }
+
+    const data = await response.json();
+    return data; // array of admin objects expected
+  } catch (error) {
+    console.error("Error fetching other admins:", error);
     throw error;
   }
 };
+
+
+
