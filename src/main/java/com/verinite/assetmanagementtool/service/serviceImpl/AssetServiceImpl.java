@@ -78,7 +78,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
         {
             throw new IllegalArgumentException("Already Serial Number is exists");
         }
-        if(adminRegistrationRepository.existsByEmpId(assetDto.getAddedBy())){
+        if(!adminRegistrationRepository.existsByEmpId(assetDto.getAddedBy())){
             throw new IllegalArgumentException("Only Admin can add asset");
         }
         int count = 0;
@@ -267,10 +267,10 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
         if (existingAsset != null) {
             if (asset.getAssetName() != null)
                 existingAsset.setAssetName(asset.getAssetName());
-            if (asset.getPurchaseDate() != null)
-                existingAsset.setPurchaseDate(LocalDate.parse(asset.getPurchaseDate()));
-            if (asset.getWarrantyDate() != null)
-                existingAsset.setWarrantyDate(LocalDate.parse(asset.getWarrantyDate()));
+            if (asset.getPurchaseDate() != null&&existingAsset.getWarrantyDate().isAfter(asset.getPurchaseDate()))
+                existingAsset.setPurchaseDate(asset.getPurchaseDate());
+            if (asset.getWarrantyDate() != null&&existingAsset.getPurchaseDate().isBefore(asset.getWarrantyDate()))
+                existingAsset.setWarrantyDate(asset.getWarrantyDate());
             if (asset.getSerialNumber() != null)
                 existingAsset.setSerialNumber(asset.getSerialNumber());
             if (asset.getStatus() != null && !(existingAsset.getStatus().equalsIgnoreCase("Assigned")))

@@ -23,9 +23,9 @@ public class SaveAssetResponse {
     @Pattern(regexp = "^(\\w+)?$", message = "Must be a Alphanumeric & _")
     private String type;
     @Pattern(regexp = "^(\\d{4}-\\d{2}-\\d{2})?$", message = "Date must be in format yyyy-MM-dd")
-    private String purchaseDate;
+    private LocalDate purchaseDate;
     @Pattern(regexp = "^(\\d{4}-\\d{2}-\\d{2})?$", message = "Date must be in format yyyy-MM-dd")
-    private String warrantyDate;
+    private LocalDate warrantyDate;
     @Pattern(regexp = "^(\\w+)?$", message = "Must be a Alphanumeric & _")
     private String location;
     @Pattern(regexp = "^(\\w+)?$", message = "ModelName must be alphanumeric & _")
