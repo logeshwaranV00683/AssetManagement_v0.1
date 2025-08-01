@@ -232,7 +232,7 @@ function Assets() {
                   color: params.row.empId ? "error.main" : "success.main",
                   filter: params.row.empId
                     ? "drop-shadow(0 0 4px rgba(211, 47, 47, 0.8))"
-                    : "drop-shadow(0 0 4px rgba(76, 175, 80, 0.8))",
+                    : "drop-shadow(0 0 4px rgba(23, 206, 29, 0.8))",
                 },
               }}
               onClick={() => handleAssign(params.row)}

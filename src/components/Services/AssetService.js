@@ -219,7 +219,6 @@ export const getAssetTypes = async () => {
       return [];
     }
 
-    // Extract and return unique 'type' values
     const types = [...new Set(data.map((item) => item.type))];
     return types;
   } catch (error) {
@@ -228,3 +227,19 @@ export const getAssetTypes = async () => {
   }
 };
 
+export const RecentAssignedAssetDetails = async () => {
+  try {
+    const response = await fetch(`${apiUrl}/assetManager/v1/admin/get-recent-assigned`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error("Failed to fetch More page data");
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching More page data:", error);
+    throw error;
+  }
+};
