@@ -2,7 +2,6 @@ package com.verinite.assetmanagementtool.service.serviceImpl;
 
 import com.verinite.assetmanagementtool.dto.AssignableAssetDto;
 import com.verinite.assetmanagementtool.dto.AssignedAssetDtoList;
-import com.verinite.assetmanagementtool.dto.RecentAssignedEmp;
 import com.verinite.assetmanagementtool.entity.AssetsEntity;
 import com.verinite.assetmanagementtool.entity.AssignedAssetsEntity;
 import com.verinite.assetmanagementtool.entity.CountOfAssetsEntity;
@@ -17,16 +16,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static java.time.temporal.ChronoUnit.DAYS;
 
 @Service
 public class AssignedAssetsServiceImpl implements AssignedAssetsService {
@@ -41,8 +35,6 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
     AssetsHistoryServices assetsHistoryServices;
     @Autowired
     AssetsHistoryServiceImpl assetsHistoryService;
-    @Autowired
-    ModelMapper modelMapper;
     @Autowired
     private AssignedAssetsRepository assignedAssetsRepository;
     @Autowired
@@ -199,23 +191,31 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
 
     @Override
     @Async
-    public ResponseEntity<?> getRecentAssigned() {
-        RecentAssignedEmp recent = new RecentAssignedEmp();
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-        List<EmployeeEntity> emps = new ArrayList<>();
-        List<RecentAssignedEmp> recentAssignedEmpSet = new ArrayList<>();
-        List<AssignedAssetsEntity> set = assignedAssetsRepository.findByEmpIdNotNull().stream().filter(x -> {
-            try {
-                return (DAYS.between(sf.parse(x.getAssignedDate().toString()).toInstant(),
-                        new Date().toInstant())) < 15;
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
-            }
+    public List<Map<String, Object>> getRecentAssignedAssets() {
+        List<AssignedAssetsEntity> recentAssigned = assignedAssetsRepository.findByEmpIdNotNull()
+                .stream()
+                .filter(x -> {
+                    LocalDate assignedDate = x.getAssignedDate();
+                    return assignedDate != null &&
+                            assignedDate.isEqual(LocalDate.now());
+                })
+                .toList();
+        return recentAssigned.stream().map(assigned -> {
+            EmployeeEntity employee = employeeRepository.findByEmpId(assigned.getEmpId());
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("assetId", assigned.getAssignedAssetsId());
+            map.put("serialNumber", assigned.getSerialNumber());
+            map.put("assignedDate", assigned.getAssignedDate());
+            map.put("empId", employee.getEmpId());
+            map.put("firstName", employee.getFirstName());
+            map.put("lastName", employee.getLastName());
+
+            return map;
         }).toList();
-        set.forEach(x -> emps.add(employeeRepository.findByEmpId(x.getEmpId())));
-        List<EmployeeEntity> uniqEmp = new ArrayList<>(new HashSet<>(emps));
-        return ResponseEntity.ok().body(uniqEmp);
+
     }
+
 
     @Override
     public String unAssignAsset(List<String> serialNumbers) {

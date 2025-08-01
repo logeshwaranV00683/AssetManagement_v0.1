@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/assetManager/v1/admin/")
@@ -57,8 +58,8 @@ public class AssignedAssetsController {
     }
 
     @GetMapping("get-recent-assigned")
-    public ResponseEntity<?> getRecentAssigned() {
-        return assignedAssetsService.getRecentAssigned();
+    public List<Map<String, Object>>  getRecentAssigned() {
+        return assignedAssetsService.getRecentAssignedAssets();
     }
 
     @GetMapping("get/all/assigned/assets/by/{empId}")

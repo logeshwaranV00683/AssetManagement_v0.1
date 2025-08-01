@@ -6,6 +6,7 @@ import com.verinite.assetmanagementtool.entity.AssignedAssetsEntity;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Map;
 
 public interface AssignedAssetsService {
 
@@ -20,7 +21,7 @@ public interface AssignedAssetsService {
 
     String deleteAssignedAssets(int assignedId);
 
-    ResponseEntity<?> getRecentAssigned();
+    List<Map<String, Object>> getRecentAssignedAssets();
 
     ResponseEntity<?> save(List<AssignableAssetDto> assignableAssetDtos);
 
