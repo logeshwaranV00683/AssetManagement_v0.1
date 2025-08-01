@@ -1,5 +1,6 @@
 package com.verinite.assetmanagementtool.controller;
 
+import com.verinite.assetmanagementtool.dto.CountOfAssetsDTO;
 import com.verinite.assetmanagementtool.entity.AssetsEntity;
 import com.verinite.assetmanagementtool.entity.CountOfAssetsEntity;
 import com.verinite.assetmanagementtool.service.AssetService;
@@ -28,7 +29,7 @@ public class CountOfAssetsController {
     }
 
     @GetMapping("AssetCount/location")
-    public Map<String, Integer> getByLoc(@RequestParam String location) {
+    public List<CountOfAssetsDTO> getByLoc(@RequestParam String location) {
         return countOFAssetsService.getByLoc(location);
     }
 

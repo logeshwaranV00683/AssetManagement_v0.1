@@ -1,5 +1,6 @@
 package com.verinite.assetmanagementtool.service;
 
+import com.verinite.assetmanagementtool.dto.CountOfAssetsDTO;
 import com.verinite.assetmanagementtool.entity.CountOfAssetsEntity;
 
 import java.util.List;
@@ -13,10 +14,11 @@ public interface CountOFAssetsService {
 
     public List<CountOfAssetsEntity> getAll();
 
-    public Map<String, Integer> getByLoc(String location);
+    public List<CountOfAssetsDTO> getByLoc(String location);
 
     public Map<String, Integer> getUnassignedAssets(String location);
 
     public Map<String, Integer> getAssignedAssets(String location);
 
+    List<String> getUniqueAssetTypes();
 }

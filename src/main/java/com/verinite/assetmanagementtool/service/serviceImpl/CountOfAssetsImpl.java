@@ -1,5 +1,6 @@
 package com.verinite.assetmanagementtool.service.serviceImpl;
 
+import com.verinite.assetmanagementtool.dto.CountOfAssetsDTO;
 import com.verinite.assetmanagementtool.entity.CountOfAssetsEntity;
 import com.verinite.assetmanagementtool.repository.AssetCountRepository;
 import com.verinite.assetmanagementtool.service.CountOFAssetsService;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CountOfAssetsImpl implements CountOFAssetsService {
@@ -61,21 +63,26 @@ public class CountOfAssetsImpl implements CountOFAssetsService {
     }
 
 
-    public Map<String, Integer> getByLoc(String location) {
+    public List<CountOfAssetsDTO> getByLoc(String location) {
         List<CountOfAssetsEntity> resultList = assetCountRepository.findByLocationIgnoreCase(location);
 
         if (resultList == null || resultList.isEmpty()) {
-            return Collections.emptyMap();
+            return Collections.emptyList();
         }
 
-        Map<String, Integer> countMap = new LinkedHashMap<>();
-
-        for (CountOfAssetsEntity entity : resultList) {
-            countMap.put(entity.getType().toLowerCase(), entity.getTotal());
-        }
-
-        return countMap;
+        return resultList.stream()
+                .map(entity -> new CountOfAssetsDTO(
+                        entity.getId(),
+                        entity.getLocation(),
+                        entity.getType(),
+                        entity.getTotal(),
+                        entity.getAssigned(),
+                        entity.getUnassigned(),
+                        entity.getScrapped()
+                ))
+                .collect(Collectors.toList());
     }
+
 
 
     public Map<String, Integer> getUnassignedAssets(String location) {
@@ -117,5 +124,9 @@ public class CountOfAssetsImpl implements CountOFAssetsService {
         return countMap;
     }
 
+    @Override
+    public List<String> getUniqueAssetTypes() {
+        return assetCountRepository.findDistinctAssetTypes();
+    }
 
 }

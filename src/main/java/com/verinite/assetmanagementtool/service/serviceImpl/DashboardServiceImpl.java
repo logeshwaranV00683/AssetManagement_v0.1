@@ -71,10 +71,6 @@ public class DashboardServiceImpl implements DashboardService {
         return locationDataMap;
     }
 
-    public List<String> getUniqueAssetTypes() {
-        return assetRepo.findDistinctAssetTypes();
-    }
-
     public Map<String, Map<String, Object>> getAssetsCountWithLocationByAssetType(String assetType) {
         Map<String, Map<String, Object>> locationDataMap = new HashMap<>();
 

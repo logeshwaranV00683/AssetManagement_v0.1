@@ -2,6 +2,7 @@ package com.verinite.assetmanagementtool.controller;
 
 import com.verinite.assetmanagementtool.entity.AssetsEntity;
 import com.verinite.assetmanagementtool.service.AssetService;
+import com.verinite.assetmanagementtool.service.CountOFAssetsService;
 import com.verinite.assetmanagementtool.service.serviceImpl.DashboardServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,14 +19,13 @@ import java.util.Map;
 public class DashboardController {
 
     @Autowired
-    private AssetService assetService;
+    private CountOFAssetsService countOfAssetsService;
 
     @Autowired
     private DashboardServiceImpl dashboardServiceImpl;
 
     @GetMapping("/getAllAssets")
     public List<AssetsEntity> getAssetCountsWithLocation() {
-
         return dashboardServiceImpl.getAssetCountsWithLocation();
     }
 
@@ -36,7 +36,7 @@ public class DashboardController {
 
     @GetMapping("/unique/assets")
     public ResponseEntity<List<String>> getUniqueAssetTypes() {
-        List<String> assetTypes = dashboardServiceImpl.getUniqueAssetTypes();
+        List<String> assetTypes = countOfAssetsService.getUniqueAssetTypes();
         return ResponseEntity.ok(assetTypes);
     }
 
