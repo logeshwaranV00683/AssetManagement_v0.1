@@ -163,16 +163,20 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
             gap: 2,
           }}
         >
-          <FormControl fullWidth>
-            <InputLabel id="Type">Type</InputLabel>
+          <FormControl fullWidth variant="outlined">
+            <InputLabel id="type-label">Type</InputLabel>
             <Select
-              labelId="Type"
-              id="Type"
+              labelId="type-label"
+              id="type"
               label="Type"
               value={type}
               onChange={(e) => setType(e.target.value)}
               displayEmpty
-              renderValue={(selected) => selected || "Select or enter type"}
+              renderValue={(selected) =>
+                selected === "__custom__"
+                  ? "Other (Type manually)"
+                  : selected
+              }
             >
               {typeOptions.map((option, index) => (
                 <MenuItem key={index} value={option}>
@@ -183,6 +187,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
             </Select>
           </FormControl>
 
+
           {type === "__custom__" && (
             <TextField
               label="Enter Custom Type"
@@ -191,6 +196,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
               fullWidth
             />
           )}
+
 
 
 

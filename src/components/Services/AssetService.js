@@ -200,7 +200,7 @@ export const getAssignedAssetsByEmployee = async (empId) => {
 };
 
 export const getAssetTypes = async () => {
-  const url = `${apiUrl}/assetManager/v1/AssetCount/GetAssetType`;
+  const url = `${apiUrl}/assetManager/v1/asset/listOfAssets`;
 
   try {
     const response = await fetch(url, {
@@ -214,14 +214,17 @@ export const getAssetTypes = async () => {
     const data = await response.json();
     console.log("Asset type API response:", data);
 
-    if (!data || typeof data !== "object" || !Array.isArray(data.assetTypes)) {
-      console.error("Invalid response structure:", data);
+    if (!Array.isArray(data)) {
+      console.error("Expected an array of assets but got:", data);
       return [];
     }
 
-    return data.assetTypes;
+    // Extract and return unique 'type' values
+    const types = [...new Set(data.map((item) => item.type))];
+    return types;
   } catch (error) {
     console.error("Error fetching asset types:", error);
     return [];
   }
 };
+

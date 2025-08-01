@@ -374,6 +374,7 @@ function Assets() {
                     onChange={handleSearch}
                     value={filterValue}
                     fullWidth
+
                     sx={{
                       "& .MuiOutlinedInput-root": {
                         background: "#ffffff",
@@ -387,12 +388,21 @@ function Assets() {
                           fontFamily: "'Racing Sans One', sans-serif",
                           fontSize: "0.9rem",
                           color: "#083A40",
+                          paddingTop: "20px", // space for label
                         },
                       },
                       "& .MuiInputLabel-root": {
                         fontFamily: "'Racing Sans One', sans-serif",
-                        fontSize: "0.8rem",
+                        fontSize: "1rem",
                         color: "#083A40",
+                        transform: "translate(14px, 16px) scale(1)", // default position
+                        transition: "all 0.2s ease",
+                      },
+                      "& .MuiInputLabel-root.Mui-focused": {
+                        transform: "translate(14px, -25px) scale(0.85)", // lifted position
+                        fontSize: "1.3rem",
+                        padding: "0 4px",
+                        color: "#fff"
                       },
                     }}
                   />
