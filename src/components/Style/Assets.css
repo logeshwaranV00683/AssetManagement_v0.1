@@ -64,6 +64,10 @@ body{
   max-width: 600px;
   transition: all 0.3s ease;
 }
-
-
+.MuiDataGrid-virtualScroller {
+  overflow-y: scroll !important;
+}
+.MuiDataGrid-virtualScroller {
+  overflow-y: auto !important;
+}
 

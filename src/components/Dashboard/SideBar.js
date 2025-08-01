@@ -40,9 +40,9 @@ const Sidebar = () => {
       label: "Employees",
     },
     {
-      key: "AssetsToEmployee",
+      key: "more",
       icon: <AppsIcon fontSize="large" />,
-      label: "AssetsToEmployee",
+      label: "More",
     },
   ];
 
