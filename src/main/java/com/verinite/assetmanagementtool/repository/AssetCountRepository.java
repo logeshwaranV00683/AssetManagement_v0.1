@@ -2,6 +2,7 @@ package com.verinite.assetmanagementtool.repository;
 
 import com.verinite.assetmanagementtool.entity.CountOfAssetsEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -12,4 +13,12 @@ public interface AssetCountRepository extends JpaRepository<CountOfAssetsEntity,
     Optional<CountOfAssetsEntity> findByLocationIgnoreCaseAndTypeIgnoreCase(String location, String type);
 
     List<CountOfAssetsEntity> findByLocationIgnoreCase(String location);
+
+    @Query("SELECT SUM(c.assigned) FROM CountOfAssetsEntity c")
+    Integer getTotalAssigned();
+
+    @Query("SELECT SUM(c.unassigned) FROM CountOfAssetsEntity c")
+    Integer getTotalUnassigned();
+
+
 }

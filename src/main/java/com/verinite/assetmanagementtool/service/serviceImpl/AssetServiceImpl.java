@@ -123,104 +123,91 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
 
     @Override
     public SaveAssetResponse updateAsset(SaveAssetResponse asset) {
-        modelMapper.map(asset, AssetsEntity.class);
-
         AssetsEntity existingAsset = assetRepo.findBySerialNumber(asset.getSerialNumber());
-        if (existingAsset != null) {
-            if (asset.getAssetName() != null)
-                existingAsset.setAssetName(asset.getAssetName());
-            if (asset.getPurchaseDate() != null && existingAsset.getWarrantyDate().isAfter(asset.getPurchaseDate()))
-                existingAsset.setPurchaseDate(asset.getPurchaseDate());
-            if (asset.getWarrantyDate() != null && existingAsset.getPurchaseDate().isBefore(asset.getWarrantyDate()))
-                existingAsset.setWarrantyDate(asset.getWarrantyDate());
-            if (asset.getSerialNumber() != null)
-                existingAsset.setSerialNumber(asset.getSerialNumber());
-            if (asset.getStatus() != null && !(existingAsset.getStatus().equalsIgnoreCase("Assigned")))
-                existingAsset.setStatus(asset.getStatus());
-            if (asset.getType() != null)
-                existingAsset.setType(asset.getType());
-            if (asset.getAddedBy() != null)
-                existingAsset.setAddedBy(asset.getAddedBy());
-            if (asset.getOperatingSystem() != null)
-                existingAsset.setOperatingSystem(asset.getOperatingSystem());
-            if (asset.getModelName() != null)
-                existingAsset.setModelName(asset.getModelName());
-            if (asset.getEmpId() != null && existingAsset.getEmpId() == null)
-                existingAsset.setEmpId(asset.getEmpId());
-            if (asset.getLocation() != null)
-                existingAsset.setLocation(asset.getLocation());
-            if (asset.getReturnDate() != null && existingAsset.getReturnDate() == null)
-                existingAsset.setReturnDate(asset.getReturnDate());
-            if (asset.getAssignedDate() != null && existingAsset.getAssignedDate() == null)
-                existingAsset.setAssignedDate(asset.getAssignedDate());
-            if (asset.getAssignedBy() != null && existingAsset.getAssignedBy() == null)
-                existingAsset.setAssignedBy(asset.getAssignedBy());
-            if (asset.getAssertSourcedBy() != null)
-                existingAsset.setAssetSourcedBy(asset.getAssertSourcedBy());
-
-            return modelMapper.map(assetRepo.save(existingAsset), SaveAssetResponse.class);
-        } else {
+        if (existingAsset == null) {
             return null;
         }
+
+        String oldStatus = existingAsset.getStatus();
+        String oldLocation = existingAsset.getLocation();
+        String oldType = existingAsset.getType();
+
+        if (asset.getAssetName() != null)
+            existingAsset.setAssetName(asset.getAssetName());
+        if (asset.getPurchaseDate() != null &&
+                (existingAsset.getWarrantyDate() == null || existingAsset.getWarrantyDate().isAfter(asset.getPurchaseDate())))
+            existingAsset.setPurchaseDate(asset.getPurchaseDate());
+        if (asset.getWarrantyDate() != null &&
+                (existingAsset.getPurchaseDate() == null || existingAsset.getPurchaseDate().isBefore(asset.getWarrantyDate())))
+            existingAsset.setWarrantyDate(asset.getWarrantyDate());
+        if (asset.getSerialNumber() != null)
+            existingAsset.setSerialNumber(asset.getSerialNumber());
+        if (asset.getStatus() != null && !oldStatus.equalsIgnoreCase("Assigned"))
+            existingAsset.setStatus(asset.getStatus());
+        if (asset.getType() != null)
+            existingAsset.setType(asset.getType());
+        if (asset.getAddedBy() != null)
+            existingAsset.setAddedBy(asset.getAddedBy());
+        if (asset.getOperatingSystem() != null)
+            existingAsset.setOperatingSystem(asset.getOperatingSystem());
+        if (asset.getModelName() != null)
+            existingAsset.setModelName(asset.getModelName());
+        if (asset.getEmpId() != null && existingAsset.getEmpId() == null)
+            existingAsset.setEmpId(asset.getEmpId());
+        if (asset.getLocation() != null)
+            existingAsset.setLocation(asset.getLocation());
+        if (asset.getReturnDate() != null && existingAsset.getReturnDate() == null)
+            existingAsset.setReturnDate(asset.getReturnDate());
+        if (asset.getAssignedDate() != null && existingAsset.getAssignedDate() == null)
+            existingAsset.setAssignedDate(asset.getAssignedDate());
+        if (asset.getAssignedBy() != null && existingAsset.getAssignedBy() == null)
+            existingAsset.setAssignedBy(asset.getAssignedBy());
+        if (asset.getAssertSourcedBy() != null)
+            existingAsset.setAssetSourcedBy(asset.getAssertSourcedBy());
+
+        boolean isLocationChanged = !oldLocation.equalsIgnoreCase(existingAsset.getLocation());
+        boolean isTypeChanged = !oldType.equalsIgnoreCase(existingAsset.getType());
+        boolean isStatusChanged = !oldStatus.equalsIgnoreCase(existingAsset.getStatus());
+
+        if (isLocationChanged || isTypeChanged || isStatusChanged) {
+            updateCountTable(oldLocation, oldType, oldStatus, -1);
+            updateCountTable(existingAsset.getLocation(), existingAsset.getType(), existingAsset.getStatus(), 1);
+        }
+
+        AssetsEntity saved = assetRepo.save(existingAsset);
+        return modelMapper.map(saved, SaveAssetResponse.class);
     }
 
-    // below code i write
-    public ResponseEntity<Object> updateAssets(AssetsEntity asset) {
-        // Log input serial number for debugging
-        System.out.println("Updating asset with serial number: " + asset.getSerialNumber());
+    private void updateCountTable(String location, String type, String status, int delta) {
+        Optional<CountOfAssetsEntity> optionalCount = assetCountRepository.findByLocationIgnoreCaseAndTypeIgnoreCase(location, type);
 
-        try {
-            // Find the existing asset by serial number
-            AssetsEntity existingAsset = assetRepo.findBySerialNumber(asset.getSerialNumber());
+        CountOfAssetsEntity count = optionalCount.orElseGet(() -> {
+            CountOfAssetsEntity newCount = new CountOfAssetsEntity();
+            newCount.setLocation(location.trim());
+            newCount.setType(type.trim());
+            newCount.setTotal(0);
+            newCount.setAssigned(0);
+            newCount.setUnassigned(0);
+            newCount.setScrapped(0);
+            return newCount;
+        });
 
-            // Check if the asset status is not 'Scrap'
-            if (!"Scrap".equalsIgnoreCase(existingAsset.getStatus())) {
-                // Update fields only if they are provided
-                if (asset.getAssetName() != null) {
-                    existingAsset.setAssetName(asset.getAssetName());
-                }
-                if (asset.getEmpId() != null) {
-                    existingAsset.setEmpId(asset.getEmpId());
-                }
-                if (asset.getPurchaseDate() != null) {
-                    existingAsset.setPurchaseDate(asset.getPurchaseDate());
-                }
-                if (asset.getWarrantyDate() != null) {
-                    existingAsset.setWarrantyDate(asset.getWarrantyDate());
-                }
-                if (asset.getSerialNumber() != null) {
-                    existingAsset.setSerialNumber(asset.getSerialNumber());
-                }
-                if (asset.getStatus() != null) {
-                    existingAsset.setStatus(asset.getStatus());
-                }
-                if (asset.getType() != null) {
-                    existingAsset.setType(asset.getType());
-                }
-                if (asset.getAddedBy() != null) {
-                    existingAsset.setAddedBy(asset.getAddedBy());
-                }
-                if (asset.getOperatingSystem() != null) {
-                    existingAsset.setOperatingSystem(asset.getOperatingSystem());
-                }
-                if (asset.getModelName() != null) {
-                    existingAsset.setModelName(asset.getModelName());
-                }
+        count.setTotal(count.getTotal() + delta);
 
-                AssetsEntity updatedAsset = assetRepo.save(existingAsset);
-                return ResponseEntity.ok(updatedAsset);
-
-            } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("The asset is marked as Scrap and cannot be updated.");
-            }
-
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Asset with the provided serial number not found.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("An error occurred while updating the asset.");
+        switch (status.toLowerCase()) {
+            case "assigned":
+                count.setAssigned(count.getAssigned() + delta);
+                break;
+            case "unassigned":
+                count.setUnassigned(count.getUnassigned() + delta);
+                break;
+            case "scrap":
+                count.setScrapped(count.getScrapped() + delta);
+                break;
+            default:
+                break;
         }
+        assetCountRepository.save(count);
     }
 
     @Override
@@ -232,7 +219,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
 
         AssetsEntity asset = optionalAsset.get();
         if (!"unassigned".equalsIgnoreCase(asset.getStatus())) {
-            throw new IllegalArgumentException("Asset must be proper Status before deletion.");
+            throw new IllegalArgumentException("Asset must be proper Status before Scrapping.");
         }
         asset.setStatus("Scrap");
         assetRepo.save(asset);
@@ -259,8 +246,6 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
         assetCountRepository.save(entity);
     }
 
-
-
     @Override
     public List<AssetsEntity> getThroughStatus(String str) {
         List<AssetsEntity> assets = get();
@@ -283,27 +268,15 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
 
     @Override
     public int getCountOfAssigned() {
-        int assigned = 0;
-        List<AssetsEntity> assetsEntities = assetRepo.findAll();
-        for (AssetsEntity i : assetsEntities) {
-            if (i.getStatus().equalsIgnoreCase("Assigned"))
-                assigned += 1;
-        }
-        return assigned;
-
+        Integer totalAssigned = assetCountRepository.getTotalAssigned();
+        return (totalAssigned != null) ? totalAssigned : 0;
     }
 
     @Override
     public int getCountOfUnassigned() {
-        int unassigned = 0;
-        List<AssetsEntity> assetsEntities = assetRepo.findAll();
-        for (AssetsEntity i : assetsEntities) {
-            if (i.getStatus().equalsIgnoreCase("UnAssigned"))
-                unassigned += 1;
-        }
-        return unassigned;
+        Integer totalUnassigned = assetCountRepository.getTotalUnassigned();
+        return (totalUnassigned != null) ? totalUnassigned : 0;
     }
-
 
     @Override
     public List<AssetsEntity> getUnAssigned() {

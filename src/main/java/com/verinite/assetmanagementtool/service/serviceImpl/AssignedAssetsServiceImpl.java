@@ -42,8 +42,6 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
     @Autowired
     AssetsHistoryServiceImpl assetsHistoryService;
     @Autowired
-    CountOfAssetsRepository countOfAssetsRepository;
-    @Autowired
     ModelMapper modelMapper;
     @Autowired
     private AssignedAssetsRepository assignedAssetsRepository;
