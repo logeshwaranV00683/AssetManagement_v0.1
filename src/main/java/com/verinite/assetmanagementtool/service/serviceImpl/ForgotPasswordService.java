@@ -14,6 +14,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -78,14 +80,18 @@ public class ForgotPasswordService implements ForgotPasswordInterface {
 
 
     @Override
-    public ResponseEntity<?> changePassword(ResetPasswordDTO changePassword) {
+    public ResponseEntity<Map<String, String>> changePassword(ResetPasswordDTO changePassword) {
+        Map<String, String> response = new HashMap<>();
+
         String mail = changePassword.getMail();
         String oldPassword = changePassword.getOldPassword();
         String newPassword = changePassword.getNewPassword();
 
         Optional<AdminRegistrationEntity> optionalAdmin = adminRegistrationRepository.findByMail(mail);
+
         if (optionalAdmin.isEmpty()) {
-            return new ResponseEntity<>("Employee not found", HttpStatus.NOT_FOUND);
+            response.put("message", "Employee not found");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
 
         AdminRegistrationEntity admin = optionalAdmin.get();
@@ -93,11 +99,15 @@ public class ForgotPasswordService implements ForgotPasswordInterface {
         if (bCryptPasswordEncoder.matches(oldPassword, admin.getPassword())) {
             String encodedNewPassword = bCryptPasswordEncoder.encode(newPassword);
             admin.setPassword(encodedNewPassword);
+            admin.setOtpVerify(false);
             adminRegistrationRepository.save(admin);
-            return new ResponseEntity<>("Password updated successfully", HttpStatus.OK);
+
+            response.put("message", "Password updated successfully");
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }
 
-        return new ResponseEntity<>("Old password is incorrect", HttpStatus.BAD_REQUEST);
+        response.put("message", "Old password is incorrect");
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
 }
