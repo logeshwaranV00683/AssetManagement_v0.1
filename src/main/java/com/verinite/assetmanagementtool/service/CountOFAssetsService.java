@@ -21,4 +21,6 @@ public interface CountOFAssetsService {
     public Map<String, Integer> getAssignedAssets(String location);
 
     List<String> getUniqueAssetTypes();
+
+    List<String> getUniqueLocation();
 }

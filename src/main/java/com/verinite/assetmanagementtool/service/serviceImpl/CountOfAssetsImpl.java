@@ -129,4 +129,9 @@ public class CountOfAssetsImpl implements CountOFAssetsService {
         return assetCountRepository.findDistinctAssetTypes();
     }
 
+    @Override
+    public List<String> getUniqueLocation() {
+        return assetCountRepository.findDistinctLocation();
+    }
+
 }

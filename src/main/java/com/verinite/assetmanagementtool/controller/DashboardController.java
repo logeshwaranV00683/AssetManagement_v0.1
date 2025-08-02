@@ -34,10 +34,16 @@ public class DashboardController {
         return dashboardServiceImpl.getFormattedAssetCounts(locations);
     }
 
-    @GetMapping("/unique/assets")
+    @GetMapping("/unique/assetTypes")
     public ResponseEntity<List<String>> getUniqueAssetTypes() {
         List<String> assetTypes = countOfAssetsService.getUniqueAssetTypes();
         return ResponseEntity.ok(assetTypes);
+    }
+
+    @GetMapping("/unique/location")
+    public ResponseEntity<List<String>> getUniqueLocation() {
+        List<String> assetLocation = countOfAssetsService.getUniqueLocation();
+        return ResponseEntity.ok(assetLocation);
     }
 
     @GetMapping("/assets/count/{assetType}")

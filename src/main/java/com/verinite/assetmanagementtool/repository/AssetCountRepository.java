@@ -22,5 +22,6 @@ public interface AssetCountRepository extends JpaRepository<CountOfAssetsEntity,
 
     @Query(value = "SELECT DISTINCT LOWER(a.type) FROM tbl_count a", nativeQuery = true)
     List<String> findDistinctAssetTypes();
-
+    @Query(value = "SELECT DISTINCT LOWER(a.location) FROM tbl_count a", nativeQuery = true)
+    List<String> findDistinctLocation();
 }
