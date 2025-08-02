@@ -69,88 +69,44 @@ function Dashboard() {
   const [selectedDevice, setSelectedDevice] = useState("Laptop");
   const [filterValue, setFilterValue] = useState("");
   const [assetCountData,setAssetCountData]= useState([]);
-  const [allAssetRows, setAllAssetRows] = useState([]);
-  const [assignedAssetRows, setAssignedAssetRows] = useState([]);
-  const [unassignedAssetRows, setUnassignedAssetRows] = useState([]);
   const [deviceOptions, setDeviceOptions] = useState([]);
 
-  const filteredAllAssets = allAssetRows.filter((row) =>
-    row.assetName.toLowerCase().includes(filterValue.toLowerCase())
-  );
-
-  assignedAssetRows.filter((row) =>
-    row.assignedAsset.toLowerCase().includes(filterValue.toLowerCase())
-  );
-
-  unassignedAssetRows.filter((row) =>
-    row.unassignedAsset.toLowerCase().includes(filterValue.toLowerCase())
-  );
-
-  useEffect(() => {
-    const fetchAllAssetData = async () => {
-      try {
-        const [all, assigned, unassigned] = await Promise.all([
-          getcountsByLocation(selectedLocation),
-          getAssignedAssetsByLocation(selectedLocation),
-          getUnassignedAssetsByLocation(selectedLocation),
-        ]);
-
-          const rawData = await getcountsByLocation(selectedLocation);
-          if (Array.isArray(rawData)) {
-            const extractedAssets = rawData.map((item, index) => ({
-              id: item.id ?? index + 1,
-              type: item.type,
-              total: item.total ?? 0,
-              assigned: item.assigned ?? 0,
-              unassigned: item.unassigned ?? 0,
-              scrapped: item.scrapped ?? 0,
-            }));
-
-            setAssetCountData(extractedAssets);
-          } else {
-            console.error("Unexpected data format for asset count:", rawData);
-            setAssetCountData([]);
-          }
-        const uniqueLocations = await getLocations();
-        setLocationOptions(uniqueLocations);
-        const dynamicDevices = await getAssetTypes();
-        setDeviceOptions(dynamicDevices);
-        setAllAssetRows(
-          Object.entries(all).map(([key, val], i) => {
-            const formattedKey = key.replace(/_/g, " ").toUpperCase();
-
-            return {
-              id: i + 1,
-              assetName: formattedKey,
-              quantity: val,
-              assignedQuantity: assigned?.[key] ?? 0,
-              unassignedQuantity: unassigned?.[key] ?? 0,
-            };
-          })
-        );
-
-        setAssignedAssetRows(
-          Object.entries(assigned).map(([key, val], i) => ({
-            id: i + 1,
-            assignedAsset: key.replace(/_/g, " ").toUpperCase(),
-            assignedQuantity: val,
+ useEffect(() => {
+  const loadDashboardData = async () => {
+    try {
+      const countsData = await getcountsByLocation(selectedLocation);
+      const formattedAssetData = Array.isArray(countsData)
+        ? countsData.map((item, idx) => ({
+            id: item.id ?? idx + 1,
+            type: item.type,
+            total: item.total ?? 0,
+            assigned: item.assigned ?? 0,
+            unassigned: item.unassigned ?? 0,
+            scrapped: item.scrapped ?? 0,
           }))
-        );
+        : [];
 
-        setUnassignedAssetRows(
-          Object.entries(unassigned).map(([key, val], i) => ({
-            id: i + 1,
-            unassignedAsset: key.replace(/_/g, " ").toUpperCase(),
-            unassignedQuantity: val,
-          }))
-        );
-      } catch (error) {
-        console.error("Error fetching asset data:", error);
+      if (!Array.isArray(countsData)) {
+        console.warn("Asset count response was not an array:", countsData);
       }
-    };
 
-    fetchAllAssetData();
-  }, [selectedLocation]);
+      setAssetCountData(formattedAssetData);
+
+      const [locations, assetTypes] = await Promise.all([
+        getLocations(),
+        getAssetTypes(),
+      ]);
+
+      setLocationOptions(locations);
+      setDeviceOptions(assetTypes);
+    } catch (err) {
+      console.error("Failed to load dashboard data:", err);
+    }
+  };
+
+  loadDashboardData();
+}, [selectedLocation]);
+
 
   const [pieDataChennai, setPieDataChennai] = useState([]);
   const [pieDataPune, setPieDataPune] = useState([]);
@@ -175,7 +131,6 @@ function Dashboard() {
         setDataFn([]);
       }
     };
-
     fetchPieDataForLocation("chennai", setPieDataChennai);
     fetchPieDataForLocation("pune", setPieDataPune);
   }, [selectedDevice]);
@@ -297,7 +252,6 @@ function Dashboard() {
                   </Select>
                 </FormControl>
               </Box>
-
               {/* Pie Chart - Pune */}
               <Card
                 className={classes.pieCard}
@@ -427,57 +381,68 @@ function Dashboard() {
             </Box>
 
             {/* Location Switch */}
-            <div>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  margin: "20px",
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    backgroundColor: "#fff",
-                    borderRadius: "10px 20px",
-                    padding: "2px 0px",
-                    boxShadow: "0 0 5px rgba(0,0,0,0.2)",
-                  }}
-                >
-                  {locationOptions.map((loc) => (
-                    <Box
-                      key={loc}
-                      onClick={() => setSelectedLocation(loc)}
-                      sx={{
-                        flex: 1,
-                        minWidth: 100,
-                        padding: "8px 18px",
-                        margin: "0 3px",
-                        borderRadius: "10px 20px",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        fontFamily: "'Racing Sans One', sans-serif",
-                        fontWeight: 600,
-                        letterSpacing: "1.2px",
-                        color: selectedLocation === loc ? "#fff" : "#083A40",
-                        backgroundColor:
-                          selectedLocation === loc ? "#2196f3" : "#e0f7fa",
-                        cursor: "pointer",
-                        transition: "all 0.3s ease",
-                        "&:hover": {
-                          backgroundColor:
-                            selectedLocation === loc ? "#1976d2" : "#b2ebf2",
-                        },
-                      }}
-                    >
-                      {loc.toUpperCase()}
-                    </Box>
-                  ))}
-                </Box>
-              </Box>
-            </div>
+           <div>
+  <Box
+    sx={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      margin: "20px",
+    }}
+  >
+    <Box
+      sx={{
+        display: "flex",
+        backgroundColor: "#fff",
+        borderRadius: "10px 20px",
+        padding: "2px 0px",
+        boxShadow: "0 0 5px rgba(0,0,0,0.2)",
+        maxWidth: "50vw", // Restrict width to half of screen
+        overflowX: "auto", // Enable horizontal scroll
+        scrollbarWidth: "thin", // Firefox
+        "&::-webkit-scrollbar": {
+          height: "6px",
+        },
+        "&::-webkit-scrollbar-thumb": {
+          backgroundColor: "#bbb",
+          borderRadius: "10px",
+        },
+      }}
+    >
+      {locationOptions.map((loc) => (
+        <Box
+          key={loc}
+          onClick={() => setSelectedLocation(loc)}
+          sx={{
+            flexShrink: 0,
+            minWidth: 100,
+            padding: "8px 18px",
+            margin: "0 3px",
+            borderRadius: "10px 20px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            fontFamily: "'Racing Sans One', sans-serif",
+            fontWeight: 600,
+            letterSpacing: "1.2px",
+            color: selectedLocation === loc ? "#fff" : "#083A40",
+            backgroundColor:
+              selectedLocation === loc ? "#2196f3" : "#e0f7fa",
+            cursor: "pointer",
+            transition: "all 0.3s ease",
+            "&:hover": {
+              backgroundColor:
+                selectedLocation === loc ? "#1976d2" : "#b2ebf2",
+            },
+          }}
+        >
+          {loc.toUpperCase()}
+        </Box>
+      ))}
+    </Box>
+  </Box>
+</div>
+
 
               {/* Asset Count DataGrid */}
               <Box
