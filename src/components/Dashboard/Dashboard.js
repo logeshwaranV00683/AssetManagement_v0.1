@@ -23,10 +23,12 @@ import {
 import { DataGrid } from "@mui/x-data-grid";
 import "../Style/font.css";
 import {
-  getAssetsByLocation,
+  getAssetTypes,
+  getLocations,
+  getcountsByLocation,
   getUnassignedAssetsByLocation,
   getAssignedAssetsByLocation,
-} from "../Services/DashboardService"; // adjust path if needed
+} from "../Services/DashboardService";
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -62,16 +64,14 @@ const useStyles = makeStyles((theme) => ({
 function Dashboard() {
   const classes = useStyles();
   const COLORS = ["#00e0ff", "#f72585"];
-  const locationOptions = ["chennai", "pune"];
+  const [locationOptions, setLocationOptions] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState("chennai");
-
   const [selectedDevice, setSelectedDevice] = useState("Laptop");
   const [filterValue, setFilterValue] = useState("");
-
+  const [assetCountData,setAssetCountData]= useState([]);
   const [allAssetRows, setAllAssetRows] = useState([]);
   const [assignedAssetRows, setAssignedAssetRows] = useState([]);
   const [unassignedAssetRows, setUnassignedAssetRows] = useState([]);
-
   const [deviceOptions, setDeviceOptions] = useState([]);
 
   const filteredAllAssets = allAssetRows.filter((row) =>
@@ -90,25 +90,31 @@ function Dashboard() {
     const fetchAllAssetData = async () => {
       try {
         const [all, assigned, unassigned] = await Promise.all([
-          getAssetsByLocation(selectedLocation),
+          getcountsByLocation(selectedLocation),
           getAssignedAssetsByLocation(selectedLocation),
           getUnassignedAssetsByLocation(selectedLocation),
         ]);
 
-        const dynamicDevices = Object.keys(all).map((key) =>
-          key.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase())
-        );
+          const rawData = await getcountsByLocation(selectedLocation);
+          if (Array.isArray(rawData)) {
+            const extractedAssets = rawData.map((item, index) => ({
+              id: item.id ?? index + 1,
+              type: item.type,
+              total: item.total ?? 0,
+              assigned: item.assigned ?? 0,
+              unassigned: item.unassigned ?? 0,
+              scrapped: item.scrapped ?? 0,
+            }));
 
+            setAssetCountData(extractedAssets);
+          } else {
+            console.error("Unexpected data format for asset count:", rawData);
+            setAssetCountData([]);
+          }
+        const uniqueLocations = await getLocations();
+        setLocationOptions(uniqueLocations);
+        const dynamicDevices = await getAssetTypes();
         setDeviceOptions(dynamicDevices);
-
-        // setAllAssetRows(
-        //   Object.entries(all).map(([key, val], i) => ({
-        //     id: i + 1,
-        //     assetName: key.replace(/_/g, ' ').toUpperCase(),
-        //     quantity: val,
-        //   }))
-        // );
-
         setAllAssetRows(
           Object.entries(all).map(([key, val], i) => {
             const formattedKey = key.replace(/_/g, " ").toUpperCase();
@@ -145,54 +151,6 @@ function Dashboard() {
 
     fetchAllAssetData();
   }, [selectedLocation]);
-
-  // const selectedKey = selectedDevice.toLowerCase().replace(/\s/g, '_');
-
-  const countTableColumns = [
-    { field: "id", headerName: "ID", width: 50, flex: 0.5, minWidth: 30 },
-    {
-      field: "assetName",
-      headerName: "Asset Name",
-      width: 200,
-      flex: 1,
-      minWidth: 120,
-    },
-    {
-      field: "quantity",
-      headerName: "Total Count",
-      width: 130,
-      flex: 1,
-      minWidth: 80,
-    },
-
-    {
-      field: "unassignedQuantity",
-      headerName: "Unassigned Count",
-      width: 130,
-      flex: 1,
-      minWidth: 80,
-    },
-    {
-      field: "assignedQuantity",
-      headerName: "Assigned Count",
-      width: 130,
-      flex: 1,
-      minWidth: 80,
-    },
-  ];
-
-  //   const unassignedTableColumns = [
-  //   { field: 'id', headerName: 'ID', width: 50, flex: 1, minWidth: 60 },
-  //   { field: 'unassignedAsset', headerName: 'UnAssigned Asset', width: 220, flex: 2, minWidth: 120  },
-  //   { field: 'unassignedQuantity', headerName: 'Count', width: 130, flex: 1, minWidth: 80  },
-
-  // ];
-
-  //   const assignedTableColumns = [
-  //     { field: 'id', headerName: 'ID', width: 50, flex: 1, minWidth: 60 },
-  //     { field: 'assignedAsset', headerName: 'Assigned Asset', width: 200, flex: 2, minWidth: 120  },
-  //     { field: 'assignedQuantity', headerName: 'Count', width: 130, flex: 1, minWidth: 80  },
-  //   ];
 
   const [pieDataChennai, setPieDataChennai] = useState([]);
   const [pieDataPune, setPieDataPune] = useState([]);
@@ -521,256 +479,113 @@ function Dashboard() {
               </Box>
             </div>
 
-            {/* DataGrid */}
-            {/* <Box
-              sx={{
-                display: 'flex',
-                flexDirection: { xs: 'column', md: 'row' },
-                flexWrap: 'wrap',
-                justifyContent: 'center',
-                alignItems: 'center',
-                mx: 'auto',
-                px: 2,
-                gap: 2,
-                mt: 6,
-                width: '10%',
-                maxWidth: '150%',
-                m: '0 auto',
-              }}
-            > */}
-            {/* First Table */}
-            <Box
-              sx={{
-                width: { xs: "100%", sm: "90%", md: "90%", lg: "100%" },
-                mx: "auto",
-                height: "100%",
-              }}
-            >
-              {/* <div 
-                  style={{
-                      width: 150 ,
-                      height: 40,
-                      color: '#083A40',
-                      display: 'flex',
-                      backgroundColor: '#fff',
-                      borderRadius: '10px',
-                      padding: '2px 0px',
-                      margin: '10px 3px',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      fontFamily: "'Racing Sans One', sans-serif",
-                      fontWeight: 50,
-                      fontSize: 16,
-                      letterSpacing: '1.2px',
-                      boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)',
-                        }}>
-                    Total Assets
-
-                </div> */}
-
-              <DataGrid
-                rows={filteredAllAssets}
-                columns={countTableColumns}
+              {/* Asset Count DataGrid */}
+              <Box
                 sx={{
                   width: "100%",
-                  height: "100%",
-                  borderRadius: "16px",
-                  overflow: "hidden",
-                  border: "2px solid #060a0bff",
-                  fontFamily: "'Racing Sans One', sans-serif",
-                  color: "#083A40",
-                  "& .MuiDataGrid-virtualScroller": {
-                    overflowX: "hidden",
-                  },
-                  "& .MuiDataGrid-main": {
-                    overflowX: "auto",
-                  },
-                  "& .MuiDataGrid-columnHeaders": {
-                    background: "linear-gradient(45deg, #6DE0FF, #2BC4F3)",
-                    color: "#083A40",
-                    fontSize: "16px",
-                    fontWeight: 700,
-                  },
-                  "& .MuiDataGrid-cell": {
-                    background: "#F0FBFF",
-                    color: "#083A40",
-                    fontSize: "15px",
-                    borderBottom: "1px solid #D0F0FF",
-                  },
-                  "& .MuiDataGrid-footerContainer": {
-                    background: "linear-gradient(45deg, #6DE0FF, #2BC4F3)",
-                    color: "#083A40",
-                    fontWeight: 600,
-                  },
-                  "& .MuiDataGrid-row:hover": {
-                    backgroundColor: "#E0F9FF",
-                  },
-                  "& .MuiDataGrid-selectedRowCount": {
-                    color: "#083A40",
-                  },
-                  "& .MuiCheckbox-root": {
-                    color: "#083A40",
-                  },
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  mt: 4,
                 }}
-              />
-            </Box>
-
-            {/* Second Table */}
-            {/* <Box sx={{ width: { xs: '90%', sm: '70%', md: '32%' }, height: 450 }}>
-
-                <div 
-                  style={{
-                      width: 200 ,
-                      height: 40,
-                      color: '#083A40',
-                      display: 'flex',
-                      backgroundColor: '#fff',
-                      borderRadius: '10px',
-                      padding: '2px 0px',
-                      margin: '10px 3px',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      fontFamily: "'Racing Sans One', sans-serif",
-                      fontWeight: 50,
-                      fontSize: 16,
-                      letterSpacing: '1.2px',
-                      boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)',
-                        }}>
-
-                   Unassigned Assets
-                </div>
-                <DataGrid
-                  rows={filteredUnassignedAssets}
-                  columns={unassignedTableColumns}
-                 sx={{
-                    width: { xs: '100%', sm: '80%', md: '32%' },
-                    minWidth: 350,
-                    maxWidth: 400,
-                    height: 450,
-                    flexGrow: 1,
-                    borderRadius: '16px',
-                    overflow: 'hidden',
-                    border: '2px solid #1FCBEA',
-                    boxShadow: '0 0 3px #6DE0FF, 0 0 4px #2BC4F3',
-                    fontFamily: "'Racing Sans One', sans-serif",
-                    color: '#083A40',
-                    '& .MuiDataGrid-virtualScroller': {
-                      overflowX: 'hidden',
-                    },
-                    '& .MuiDataGrid-main': {
-                      overflowX: 'auto',
-                    },
-                    '& .MuiDataGrid-columnHeaders': {
-                      background: 'linear-gradient(45deg, #6DE0FF, #2BC4F3)',
-                      color: '#083A40',
-                      fontSize: '16px',
-                      fontWeight: 700,
-                    },
-                    '& .MuiDataGrid-cell': {
-                      background: '#F0FBFF',
-                      color: '#083A40',
-                      fontSize: '15px',
-                      borderBottom: '1px solid #D0F0FF',
-                    },
-                    '& .MuiDataGrid-footerContainer': {
-                      background: 'linear-gradient(45deg, #6DE0FF, #2BC4F3)',
-                      color: '#083A40',
-                      fontWeight: 600,
-                    },
-                    '& .MuiDataGrid-row:hover': {
-                      backgroundColor: '#E0F9FF',
-                    },
-                    '& .MuiDataGrid-selectedRowCount': {
-                      color: '#083A40',
-                    },
-                    '& .MuiCheckbox-root': {
-                      color: '#083A40',
-                    },
+              >
+                <Box
+                  sx={{
+                    width: { xs: "100%", sm: "90%", md: "85%", lg: "80%" },
+                    borderRadius: "20px",
+                    overflow: "hidden",
+                    boxShadow: "0 10px 20px rgba(0, 0, 0, 0.1)",
+                    border: "2px solid #060a0bff",
                   }}
-                />
-              </Box> */}
-
-            {/* Third Table */}
-            {/* <Box sx={{ width: { xs: '90%', sm: '70%', md: '32%' }, height: 450 }}>
-
-                <div 
-                  style={{
-                      width: 180 ,
-                      height: 40,
-                      color: '#083A40',
-                      display: 'flex',
-                      backgroundColor: '#fff',
-                      borderRadius: '10px',
-                      padding: '2px 0px',
-                      margin: '10px 3px',
-                      justifyContent: 'center',
-                      alignItems: 'center',
+                >
+                  <DataGrid
+                    rows={assetCountData.filter((row) =>
+                      row.type.toLowerCase().includes(filterValue.toLowerCase())
+                    )}
+                    columns={[
+                      {
+                        field: "type",
+                        headerName: "Asset Type",
+                        flex: 1,
+                        headerAlign: "center",
+                        align: "center",
+                      },
+                      {
+                        field: "total",
+                        headerName: "Total Stock",
+                        type: "number",
+                        flex: 1,
+                        headerAlign: "center",
+                        align: "center",
+                      },
+                      {
+                        field: "assigned",
+                        headerName: "Assigned Stock",
+                        type: "number",
+                        flex: 1,
+                        headerAlign: "center",
+                        align: "center",
+                      },
+                      {
+                        field: "unassigned",
+                        headerName: "Unassigned Stock",
+                        type: "number",
+                        flex: 1,
+                        headerAlign: "center",
+                        align: "center",
+                      },
+                      {
+                        field: "scrapped",
+                        headerName: "Scrapped Stock",
+                        type: "number",
+                        flex: 1,
+                        headerAlign: "center",
+                        align: "center",
+                      },
+                    ]}
+                    getRowId={(row) => row.id}
+                    autoHeight
+                    disableSelectionOnClick
+                    sx={{
+                      width: "100%",
                       fontFamily: "'Racing Sans One', sans-serif",
-                      fontWeight: 50,
-                      fontSize: 16,
-                      letterSpacing: '1.2px',
-                      boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)',
-                        }}>
+                      color: "#083A40",
+                      "& .MuiDataGrid-virtualScroller": {
+                        overflowX: "hidden",
+                      },
+                      "& .MuiDataGrid-columnHeaders": {
+                        background: "linear-gradient(45deg, #6DE0FF, #2BC4F3)",
+                        color: "#083A40",
+                        fontSize: "16px",
+                        fontWeight: 700,
+                        textAlign: "center",
+                      },
+                      "& .MuiDataGrid-cell": {
+                        background: "#F0FBFF",
+                        color: "#083A40",
+                        fontSize: "15px",
+                        textAlign: "center",
+                        borderBottom: "1px solid #D0F0FF",
+                      },
+                      "& .MuiDataGrid-footerContainer": {
+                        background: "linear-gradient(45deg, #6DE0FF, #2BC4F3)",
+                        color: "#083A40",
+                        fontWeight: 600,
+                      },
+                      "& .MuiDataGrid-row:hover": {
+                        backgroundColor: "#E0F9FF",
+                      },
+                    }}
+                  />
+                </Box>
+              </Box>
 
-                      Assigned Assets
-                </div>
-                <DataGrid
-                  rows={filteredAssignedAssets}
-                  columns={assignedTableColumns}
-                 sx={{
-                    width: { xs: '100%', sm: '80%', md: '32%' },
-                    minWidth: 350,
-                    maxWidth: 400,
-                    height: 450,
-                    flexGrow: 1,
-                    borderRadius: '16px',
-                    overflow: 'hidden',
-                    border: '2px solid #1FCBEA',
-                    boxShadow: '0 0 3px #6DE0FF, 0 0 4px #2BC4F3',
-                    fontFamily: "'Racing Sans One', sans-serif",
-                    color: '#083A40',
-                    '& .MuiDataGrid-virtualScroller': {
-                      overflowX: 'hidden',
-                    },
-                    '& .MuiDataGrid-main': {
-                      overflowX: 'auto',
-                    },
-                    '& .MuiDataGrid-columnHeaders': {
-                      background: 'linear-gradient(45deg, #6DE0FF, #2BC4F3)',
-                      color: '#083A40',
-                      fontSize: '16px',
-                      fontWeight: 700,
-                    },
-                    '& .MuiDataGrid-cell': {
-                      background: '#F0FBFF',
-                      color: '#083A40',
-                      fontSize: '15px',
-                      borderBottom: '1px solid #D0F0FF',
-                    },
-                    '& .MuiDataGrid-footerContainer': {
-                      background: 'linear-gradient(45deg, #6DE0FF, #2BC4F3)',
-                      color: '#083A40',
-                      fontWeight: 600,
-                    },
-                    '& .MuiDataGrid-row:hover': {
-                      backgroundColor: '#E0F9FF',
-                    },
-                    '& .MuiDataGrid-selectedRowCount': {
-                      color: '#083A40',
-                    },
-                    '& .MuiCheckbox-root': {
-                      color: '#083A40',
-                    },
-                  }}
-                />
-              </Box> */}
+        </div>
+      </Container>
+    </main>
+  </div>
+);
 
-            {/* </Box> */}
-          </div>
-        </Container>
-      </main>
-    </div>
-  );
 }
 
 export default Dashboard;
