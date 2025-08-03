@@ -68,21 +68,33 @@ function Dashboard() {
   return (
     <div style={{ fontFamily: "'Racing Sans One', sans-serif" }}>
       <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Typography variant="h4" align="center" sx={{ color: "#00f0ff" }}>
-          Asset Overview - {selectedDevice} @ {selectedLocation.toUpperCase()}
+        <Typography variant="h4" align="center" sx={{ color: "#00f0ff", mb: 2 }}>
+          Asset Overview - {selectedDevice.toUpperCase()} At {selectedLocation.toUpperCase()}
         </Typography>
 
+        {/* Section Grid */}
         <Box
           sx={{
-            mt: 4,
+            mt: 2,
             display: "flex",
-            justifyContent: "space-between",
             flexDirection: { xs: "column", sm: "row" },
-            gap: 4,
+            gap: 3,
+            backdropFilter: "blur(8px)",
           }}
         >
-          <Box>
-            <Typography sx={{ mb: 1, color: "#00f0ff" }}>Select Location</Typography>
+          {/* Left: Locations */}
+          <Box
+            sx={{
+              flex: 1,
+              maxHeight: 400,
+              overflowY: "auto",
+              p: 2,
+              borderRadius: 2,
+              border: "1px solid rgba(0, 240, 255, 0.3)",
+              background: "rgba(255, 255, 255, 0.05)",
+            }}
+          >
+            <Typography sx={{ mb: 1, color: "#00f0ff", fontWeight: "bold" }}>Select Location</Typography>
             {locationOptions.map((loc) => (
               <Button
                 key={loc}
@@ -91,9 +103,13 @@ function Dashboard() {
                 sx={{
                   display: "block",
                   mb: 1,
-                  backgroundColor: selectedLocation === loc ? "#00e0ff" : "#ffffff",
-                  color: selectedLocation === loc ? "#fff" : "#083A40",
+                  backgroundColor: selectedLocation === loc ? "#00e0ff" : "transparent",
+                  color: selectedLocation === loc ? "#fff" : "#00f0ff",
+                  borderColor: "#00e0ff",
                   boxShadow: selectedLocation === loc ? "0 0 10px #00f0ff" : "none",
+                  width: "100%",
+                  fontWeight: 600,
+                  textTransform: "none",
                 }}
               >
                 {loc.toUpperCase()}
@@ -101,8 +117,36 @@ function Dashboard() {
             ))}
           </Box>
 
-          <Box>
-            <Typography sx={{ mb: 1, color: "#00f0ff" }}>Select Device</Typography>
+          {/* Center: 3D Chart */}
+          <Box
+            sx={{
+              flex: 3,
+              minHeight: 400,
+              p: 2,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: 2,
+              background: "rgba(255, 255, 255, 0.05)",
+              border: "1px solid rgba(0, 240, 255, 0.3)",
+            }}
+          >
+            <Interactive3DChart data={chartData} />
+          </Box>
+
+          {/* Right: Devices */}
+          <Box
+            sx={{
+              flex: 1.5,
+              maxHeight: 400,
+              overflowY: "auto",
+              p: 2,
+              borderRadius: 2,
+              background: "rgba(255, 255, 255, 0.05)",
+              border: "1px solid rgba(0, 240, 255, 0.3)",
+            }}
+          >
+            <Typography sx={{ mb: 1, color: "#00f0ff", fontWeight: "bold" }}>Select Device</Typography>
             {deviceOptions.map((type) => (
               <Button
                 key={type}
@@ -111,33 +155,32 @@ function Dashboard() {
                 sx={{
                   display: "block",
                   mb: 1,
-                  backgroundColor: selectedDevice === type ? "#00e0ff" : "#ffffff",
-                  color: selectedDevice === type ? "#fff" : "#083A40",
+                  backgroundColor: selectedDevice === type ? "#00e0ff" : "transparent",
+                  color: selectedDevice === type ? "#fff" : "#00f0ff",
+                  borderColor: "#00e0ff",
                   boxShadow: selectedDevice === type ? "0 0 10px #00f0ff" : "none",
+                  width: "100%",
+                  fontWeight: 600,
+                  textTransform: "none",
                 }}
               >
-                {type}
+                {type.toUpperCase()}
               </Button>
             ))}
           </Box>
         </Box>
 
-        {/* 3D Chart Placeholder - Will be replaced by Interactive3DChart component */}
-        <Box sx={{ mt: 6, height: 400 }}>
-          <Interactive3DChart data={chartData} />
-        </Box>
-
-
-        <Box sx={{ mt: 8, mb: 6 }}>
+        {/* Search Field */}
+        <Box sx={{ mt: 3, mb: 4 }}>
           <TextField
             label="Search"
             fullWidth
             value={filterValue}
             onChange={(e) => setFilterValue(e.target.value)}
             sx={{
-              background: "#ffffff",
+              backgroundColor: "#E0F9FF",
               borderRadius: "12px",
-              boxShadow: "0 0 8px rgba(0, 240, 255, 0.4)",
+              boxShadow: "0 0 6px rgba(0, 240, 255, 0.3)",
               input: {
                 fontFamily: "'Racing Sans One', sans-serif",
                 color: "#083A40",
@@ -146,6 +189,7 @@ function Dashboard() {
           />
         </Box>
 
+        {/* Data Table */}
         <DataGrid
           autoHeight
           rows={assetCountData.filter((row) =>
@@ -162,7 +206,7 @@ function Dashboard() {
           sx={{
             borderRadius: 2,
             boxShadow: "0 0 10px rgba(0,0,0,0.1)",
-            background: "#F0FBFF",
+            background: "#E0F9FF",
             color: "#083A40",
             fontFamily: "'Racing Sans One', sans-serif",
             "& .MuiDataGrid-columnHeaders": {
@@ -171,7 +215,7 @@ function Dashboard() {
               fontWeight: "bold",
               fontSize: "16px",
             },
-            "& .MuiDataGrid-row:hover": {
+            "& .MuiDataGrid-row": {
               backgroundColor: "#E0F9FF",
             },
             "& .MuiDataGrid-footerContainer": {
