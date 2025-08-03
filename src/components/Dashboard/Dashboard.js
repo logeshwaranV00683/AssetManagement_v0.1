@@ -6,7 +6,7 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-import Interactive3DChart from '../Utils/Interactive3DChart'
+import Interactive3DChart from '../Utils/Interactive3DChart';
 import { DataGrid } from "@mui/x-data-grid";
 import { getAssetTypes, getLocations, getcountsByLocation } from "../Services/DashboardService";
 import "../Style/font.css";
@@ -14,7 +14,7 @@ import "../Style/font.css";
 function Dashboard() {
   const [locationOptions, setLocationOptions] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState("chennai");
-  const [selectedDevice, setSelectedDevice] = useState("Laptop");
+  const [selectedDevice, setSelectedDevice] = useState("");
   const [filterValue, setFilterValue] = useState("");
   const [assetCountData, setAssetCountData] = useState([]);
   const [deviceOptions, setDeviceOptions] = useState([]);
@@ -37,6 +37,18 @@ function Dashboard() {
 
         setAssetCountData(formattedData);
 
+        const [locations, types] = await Promise.all([
+          getLocations(),
+          getAssetTypes(),
+        ]);
+
+        setLocationOptions(locations);
+        setDeviceOptions(types);
+
+        if (types.length > 0 && !types.includes(selectedDevice)) {
+          setSelectedDevice(types[0]);
+        }
+
         const pieData = formattedData.find(
           (d) => d.type.toLowerCase() === selectedDevice.toLowerCase()
         );
@@ -50,13 +62,6 @@ function Dashboard() {
         } else {
           setChartData([]);
         }
-
-        const [locations, types] = await Promise.all([
-          getLocations(),
-          getAssetTypes(),
-        ]);
-        setLocationOptions(locations);
-        setDeviceOptions(types);
       } catch (err) {
         console.error("Error fetching dashboard data:", err);
       }
@@ -85,7 +90,7 @@ function Dashboard() {
           {/* Left: Locations */}
           <Box
             sx={{
-              flex: 1,
+              flex: 1.5,
               maxHeight: 400,
               overflowY: "auto",
               p: 2,
