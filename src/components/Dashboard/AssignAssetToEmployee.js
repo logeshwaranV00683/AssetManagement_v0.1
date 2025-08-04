@@ -32,7 +32,6 @@ function AssignAssetToEmployee({ open, onClose, employee, refresh }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
 
-  // Fetch assets and assigned assets on modal open
   useEffect(() => {
     if (open && employee?.empId) {
       getAssetList()
@@ -59,13 +58,11 @@ function AssignAssetToEmployee({ open, onClose, employee, refresh }) {
     }
   }, [open, employee]);
 
-  // Handler: open dropdown
   const handleSelectClick = (event) => {
     setAnchorEl(event.currentTarget);
     setMenuOpen(true);
   };
 
-  // Handler: confirm selected assets from dropdown
   const handleOkClick = useCallback(() => {
     if (selectedAssets.length === 0) {
       showWarningAlert("No assets selected", "Please select at least one.");
@@ -75,7 +72,6 @@ function AssignAssetToEmployee({ open, onClose, employee, refresh }) {
     setMenuOpen(false);
   }, [selectedAssets]);
 
-  // Handle Enter key press to confirm asset selection
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (menuOpen && event.key === "Enter") {
@@ -90,7 +86,6 @@ function AssignAssetToEmployee({ open, onClose, employee, refresh }) {
     };
   }, [menuOpen, handleOkClick]);
 
-  // Assign confirmed assets
   const handleAssign = async () => {
     const user = JSON.parse(localStorage.getItem("user"));
     const assetData = confirmedAssets.map((serialNumber) => {
@@ -122,7 +117,6 @@ function AssignAssetToEmployee({ open, onClose, employee, refresh }) {
     }
   };
 
-  // Unassign selected assigned assets
   const handleUnassign = async () => {
     try {
       await unassignAsset(selectedUnassignAssets);
@@ -226,7 +220,11 @@ function AssignAssetToEmployee({ open, onClose, employee, refresh }) {
                 </MenuItem>
               ))}
               <Box textAlign="center" p={1}>
-                <Button variant="contained" size="small" onClick={handleOkClick}>
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={handleOkClick}
+                >
                   OK
                 </Button>
               </Box>

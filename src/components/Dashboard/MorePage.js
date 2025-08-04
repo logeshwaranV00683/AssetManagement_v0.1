@@ -8,11 +8,41 @@ const RecentAssignedAssetPage = () => {
   const [error, setError] = useState(null);
 
   const columns = [
-    { field: "empId", headerName: "Employee ID", flex: 1, headerAlign: "center", align: "center" },
-    { field: "firstName", headerName: "First Name", flex: 1, headerAlign: "center", align: "center" },
-    { field: "lastName", headerName: "Last Name", flex: 1, headerAlign: "center", align: "center" },
-    { field: "serialNumber", headerName: "Serial Number", flex: 1, headerAlign: "center", align: "center" },
-    { field: "assignedDate", headerName: "Assigned Date", flex: 1, headerAlign: "center", align: "center" },
+    {
+      field: "empId",
+      headerName: "Employee ID",
+      flex: 1,
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "firstName",
+      headerName: "First Name",
+      flex: 1,
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "lastName",
+      headerName: "Last Name",
+      flex: 1,
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "serialNumber",
+      headerName: "Serial Number",
+      flex: 1,
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "assignedDate",
+      headerName: "Assigned Date",
+      flex: 1,
+      headerAlign: "center",
+      align: "center",
+    },
   ];
 
   useEffect(() => {
@@ -45,7 +75,7 @@ const RecentAssignedAssetPage = () => {
         display: "flex",
         flexDirection: "column",
         alignItems: "flex",
-        marginLeft:"5%" 
+        marginLeft: "5%",
       }}
     >
       <h2
@@ -53,8 +83,8 @@ const RecentAssignedAssetPage = () => {
           marginBottom: "12px",
           fontFamily: "'Racing Sans One', sans-serif",
           color: "#0d9ee6ff",
-           marginLeft:"15%",
-              display:"flex"
+          marginLeft: "15%",
+          display: "flex",
         }}
       >
         Today Assigned Assets
@@ -89,7 +119,7 @@ const RecentAssignedAssetPage = () => {
               color: "#083A40",
             },
             "& .MuiDataGrid-cell": {
-              backgroundColor: "#E6F7FF", 
+              backgroundColor: "#E6F7FF",
               fontSize: "12px",
               textAlign: "center",
               fontFamily: "'Racing Sans One', sans-serif",

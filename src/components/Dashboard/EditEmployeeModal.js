@@ -1,17 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Modal from "@mui/material/Modal";
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import { IconButton } from "@mui/material";
+import {
+  Modal,
+  Box,
+  TextField,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  IconButton,
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { updateEmployee } from "../Services/EmployeeService";
-import { toast } from "react-hot-toast";
+import Autocomplete from "@mui/material/Autocomplete";
+import {
+  updateEmployee,
+  getLocations,
+  getDeparatment,
+  getDesignation,
+} from "../Services/EmployeeService";
+import toast from "react-hot-toast";
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -24,9 +32,7 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
     position: "relative",
-  },
-  formControl: {
-    marginTop: theme.spacing(2),
+    borderRadius: 8,
   },
   textCenter: {
     textAlign: "center",
@@ -35,6 +41,10 @@ const useStyles = makeStyles((theme) => ({
     display: "grid",
     gridTemplateColumns: "1fr 1fr",
     gap: theme.spacing(2),
+    alignItems: "center",
+    [theme.breakpoints.down("sm")]: {
+      gridTemplateColumns: "1fr",
+    },
   },
   cancelButton: {
     marginRight: theme.spacing(2),
@@ -60,65 +70,140 @@ function EditEmployeeModal({
   viewOnly,
 }) {
   const classes = useStyles();
-  const [empId, setEmpId] = useState(employee.empId);
-  const [firstName, setFirstName] = useState(employee.firstName);
-  const [lastName, setLastName] = useState(employee.lastName);
-  const [role, setRole] = useState(employee.role);
-  const [mail, setMail] = useState(employee.mail);
-  const [mobile, setMobile] = useState(employee.mobile);
-  const [location, setLocation] = useState(employee.location);
+
+  const [empId, setEmpId] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [role, setRole] = useState("");
+  const [mail, setMail] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [location, setLocation] = useState("");
   const [status, setStatus] = useState("Active");
-  const [department, setDepartment] = useState(employee.department);
-  const [designation, setDesignation] = useState(employee.designation);
+  const [department, setDepartment] = useState("");
+  const [designation, setDesignation] = useState("");
 
-  const handleSaveEmployee = async () => {
-    const updatedFields = { status };
-    if (firstName !== employee.firstName) updatedFields.firstName = firstName;
-    if (lastName !== employee.lastName) updatedFields.lastName = lastName;
-    if (role !== employee.role) updatedFields.role = role;
-    if (mail !== employee.mail) updatedFields.mail = mail;
-    if (mobile !== employee.mobile) updatedFields.mobile = mobile;
-    if (location !== employee.location) updatedFields.location = location;
-    if (status !== employee.status) updatedFields.status = status;
-    if (department !== employee.department)
-      updatedFields.department = department;
-    if (designation !== employee.designation)
-      updatedFields.designation = designation;
+  const [locationOptions, setLocationOptions] = useState([]);
+  const [departmentOptions, setDepartmentOptions] = useState([]);
+  const [designationOptions, setDesignationOptions] = useState([]);
 
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      fetchLocations();
+      fetchDepartments();
+      fetchDesignations();
+
+      if (employee) {
+        setEmpId(employee.empId || "");
+        setFirstName(employee.firstName || "");
+        setLastName(employee.lastName || "");
+        setRole(employee.role || "");
+        setMail(employee.mail || "");
+        setMobile(employee.mobile || "");
+        setLocation(employee.location || "");
+        setStatus(employee.status?.trim() || "Active");
+        setDepartment(employee.department || "");
+        setDesignation(employee.designation || "");
+      }
+    }
+  }, [open, employee]);
+
+  const fetchLocations = async () => {
     try {
-      const res = await updateEmployee(empId, updatedFields);
-      console.log("Employee updated:", res);
+      const locations = await getLocations();
+      setLocationOptions(locations || []);
+    } catch (err) {
+      console.error("Error fetching locations:", err);
+    }
+  };
+
+  const fetchDepartments = async () => {
+    try {
+      const departments = await getDeparatment();
+      setDepartmentOptions(departments || []);
+    } catch (err) {
+      console.error("Error fetching departments:", err);
+    }
+  };
+
+  const fetchDesignations = async () => {
+    try {
+      const designations = await getDesignation();
+      setDesignationOptions(designations || []);
+    } catch (err) {
+      console.error("Error fetching designations:", err);
+    }
+  };
+
+  // Add new options dynamically
+  const commitLocationOption = (value) => {
+    if (value && !locationOptions.includes(value)) {
+      setLocationOptions((prev) => [...prev, value]);
+    }
+  };
+
+  const commitDepartmentOption = (value) => {
+    if (value && !departmentOptions.includes(value)) {
+      setDepartmentOptions((prev) => [...prev, value]);
+    }
+  };
+
+  const commitDesignationOption = (value) => {
+    if (value && !designationOptions.includes(value)) {
+      setDesignationOptions((prev) => [...prev, value]);
+    }
+  };
+
+  const handleUpdateEmployee = async () => {
+    if (!employee) return;
+
+    const updatedFields = {};
+    const currentValues = {
+      empId,
+      firstName,
+      lastName,
+      role,
+      mail,
+      mobile,
+      location,
+      status,
+      department,
+      designation,
+    };
+
+    Object.entries(currentValues).forEach(([key, value]) => {
+      if (value !== (employee[key] || "")) {
+        updatedFields[key] = value;
+      }
+    });
+
+    if (Object.keys(updatedFields).length === 0) {
+      toast.error("No changes detected.");
+      return;
+    }
+
+    setIsUpdating(true);
+    try {
+      await updateEmployee(empId, updatedFields);
       toast.success(`Employee ${empId} updated successfully`);
       refreshEmployeeList();
       handleClose();
     } catch (error) {
       console.error("Error updating employee:", error);
-      toast.error("Failed to update employee");
+      if (error.status === 400 && typeof error.data === "object") {
+        Object.entries(error.data).forEach(([field, message]) => {
+          toast.error(`${field}: ${message}`);
+        });
+      } else if (error.status === 409) {
+        toast.error(error.data || "Employee mail or Mobile already exists");
+      } else {
+        toast.error("Unexpected error occurred while updating.");
+      }
+    } finally {
+      setIsUpdating(false);
     }
   };
-
-  useEffect(() => {
-    if (employee) {
-      setEmpId(employee.empId);
-      setFirstName(employee.firstName);
-      setLastName(employee.lastName);
-      if (employee.role) {
-        const normalizedRole =
-          employee.role.trim().charAt(0).toUpperCase() +
-          employee.role.trim().slice(1).toLowerCase();
-        setRole(normalizedRole);
-      } else {
-        setRole("");
-      }
-
-      setMail(employee.mail);
-      setMobile(employee.mobile);
-      setLocation(employee.location);
-      setStatus(employee.status?.trim() || "Active");
-      setDepartment(employee.department);
-      setDesignation(employee.designation);
-    }
-  }, [employee]);
 
   return (
     <Modal
@@ -126,43 +211,30 @@ function EditEmployeeModal({
       onClose={handleClose}
       className={classes.modal}
       aria-labelledby="edit-employee-modal-title"
-      aria-describedby="edit-employee-modal-description"
     >
       <Box className={classes.paper}>
         <IconButton
           edge="end"
           aria-label="close"
           onClick={handleClose}
-          sx={{
-            position: "absolute",
-            top: "8px",
-            right: "8px",
-          }}
+          sx={{ position: "absolute", top: 8, right: 8 }}
         >
           <CloseIcon />
         </IconButton>
-        <h2
-          id="edit-employee-modal-title"
-          className={classes.textCenter}
-          style={{ textAlign: "center", color: "#083A40" }}
-        >
+
+        <h2 className={classes.textCenter} style={{ color: "#083A40" }}>
           {viewOnly ? "View Employee" : "Edit Employee"}
         </h2>
+
         <form>
           <div className={classes.formGrid}>
-            <TextField
-              label="Employee ID"
-              value={empId}
-              fullWidth
-              margin="normal"
-              disabled
-            />
+            <TextField label="Employee ID" value={empId} fullWidth disabled />
+
             <TextField
               label="First Name"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               fullWidth
-              margin="normal"
               disabled={viewOnly}
             />
             <TextField
@@ -170,31 +242,26 @@ function EditEmployeeModal({
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               fullWidth
-              margin="normal"
               disabled={viewOnly}
             />
-            <FormControl
-              fullWidth
-              className={classes.formControl}
-              disabled={viewOnly}
-            >
+
+            <FormControl fullWidth disabled={viewOnly}>
               <InputLabel htmlFor="role">Role</InputLabel>
               <Select
-                label="Role"
-                value={role?.toLowerCase() || ""}
+                value={role}
                 onChange={(e) => setRole(e.target.value)}
-                disabled={viewOnly}
+                inputProps={{ name: "role", id: "role" }}
               >
-                <MenuItem value="employee">Employee</MenuItem>
-                <MenuItem value="admin">Admin</MenuItem>
+                <MenuItem value="Employee">Employee</MenuItem>
+                <MenuItem value="Admin">Admin</MenuItem>
               </Select>
             </FormControl>
+
             <TextField
               label="Email"
               value={mail}
               onChange={(e) => setMail(e.target.value)}
               fullWidth
-              margin="normal"
               disabled={viewOnly}
             />
             <TextField
@@ -202,77 +269,107 @@ function EditEmployeeModal({
               value={mobile}
               onChange={(e) => setMobile(e.target.value)}
               fullWidth
-              margin="normal"
               disabled={viewOnly}
             />
-            <TextField
-              label="Location"
+
+            {/* Location Autocomplete */}
+            <Autocomplete
+              freeSolo
+              options={locationOptions}
               value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              fullWidth
-              margin="normal"
-              disabled={viewOnly}
+              onChange={(event, newValue) => {
+                setLocation(newValue || "");
+                commitLocationOption(newValue);
+              }}
+              onInputChange={(event, newInputValue) => {
+                setLocation(newInputValue || "");
+              }}
+              onBlur={() => commitLocationOption(location)}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Location"
+                  fullWidth
+                  disabled={viewOnly}
+                />
+              )}
             />
-            <FormControl
-              fullWidth
-              className={classes.formControl}
-              disabled={viewOnly}
-            >
+
+            <FormControl fullWidth disabled={viewOnly}>
               <InputLabel htmlFor="status">Status</InputLabel>
               <Select
-                label="Status"
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                inputProps={{
-                  name: "status",
-                  id: "status",
-                }}
+                inputProps={{ name: "status", id: "status" }}
               >
                 <MenuItem value="Active">Active</MenuItem>
                 <MenuItem value="Inactive">Inactive</MenuItem>
               </Select>
             </FormControl>
-            <TextField
-              label="Department"
+
+            {/* Department Autocomplete */}
+            <Autocomplete
+              freeSolo
+              options={departmentOptions}
               value={department}
-              onChange={(e) => setDepartment(e.target.value)}
-              fullWidth
-              margin="normal"
-              disabled={viewOnly}
+              onChange={(event, newValue) => {
+                setDepartment(newValue || "");
+                commitDepartmentOption(newValue);
+              }}
+              onInputChange={(event, newInputValue) => {
+                setDepartment(newInputValue || "");
+              }}
+              onBlur={() => commitDepartmentOption(department)}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Department"
+                  fullWidth
+                  disabled={viewOnly}
+                />
+              )}
             />
-            <TextField
-              label="Designation"
+
+            {/* Designation Autocomplete */}
+            <Autocomplete
+              freeSolo
+              options={designationOptions}
               value={designation}
-              onChange={(e) => setDesignation(e.target.value)}
-              fullWidth
-              margin="normal"
-              disabled={viewOnly}
+              onChange={(event, newValue) => {
+                setDesignation(newValue || "");
+                commitDesignationOption(newValue);
+              }}
+              onInputChange={(event, newInputValue) => {
+                setDesignation(newInputValue || "");
+              }}
+              onBlur={() => commitDesignationOption(designation)}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Designation"
+                  fullWidth
+                  disabled={viewOnly}
+                />
+              )}
             />
           </div>
+
           {!viewOnly && (
             <div className={classes.actionsContainer}>
               <Button
                 variant="contained"
                 className={classes.cancelButton}
                 onClick={handleClose}
-                sx={{
-                  backgroundColor: "error.main",
-                  color: "error.contrastText",
-                  mr: 2,
-                }}
               >
                 Cancel
               </Button>
               <Button
                 variant="contained"
                 className={classes.saveButton}
-                onClick={handleSaveEmployee}
-                sx={{
-                  backgroundColor: "success.main",
-                  color: "success.contrastText",
-                }}
+                onClick={handleUpdateEmployee}
+                disabled={isUpdating}
               >
-                Update
+                {isUpdating ? "Updating..." : "Update"}
               </Button>
             </div>
           )}

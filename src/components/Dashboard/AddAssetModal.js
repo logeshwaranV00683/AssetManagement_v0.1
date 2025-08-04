@@ -1,18 +1,17 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
-import { getAssetTypes } from "../Services/AssetService";
-
+import React, { useState, useEffect } from "react";
+import {
+  getAssetTypes,
+  saveAsset,
+  getassetsourcedby,
+} from "../Services/AssetService";
+import { getLocations } from "../Services/DashboardService";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { saveAsset } from "../Services/AssetService";
+import Autocomplete from "@mui/material/Autocomplete";
 import { toast } from "react-hot-toast";
 
 function AddAssetModal({ open, handleClose, refreshAssetList }) {
@@ -21,38 +20,67 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
 
   const [assetName, setAssetName] = useState("");
   const [serialNumber, setSerialNumber] = useState("");
-  const [location, setLocation] = useState("");
   const [operatingSystem, setOperatingSystem] = useState("");
   const [modelName, setModelName] = useState("");
   const [purchaseDate, setPurchaseDate] = useState("");
   const [warrantyDate, setWarrantyDate] = useState("");
-  const [addedBy, setAddedBy] = useState(user.empId);
-  const [status, setStatus] = useState("Unassigned");
+  const [addedBy] = useState(user.empId);
+  const [status] = useState("Unassigned");
+
   const [type, setType] = useState("");
-  const [assetSourcedBy, setAssetSourcedBy] = useState("");
-
-
-  const [typeOptions, setTypeOptions] = useState([]);
   const [customType, setCustomType] = useState("");
+  const [typeOptions, setTypeOptions] = useState([]);
 
+  const [location, setLocation] = useState("");
+  const [locationOptions, setLocationOptions] = useState([]);
+
+  const [assetSourcedBy, setAssetSourcedBy] = useState("");
+  const [assetSourceOptions, setAssetSourceOptions] = useState([]);
 
   useEffect(() => {
-    fetchAssetTypes();
-  }, []);
+    if (open) {
+      fetchAssetTypes();
+      fetchLocations();
+      fetchAssetSourcedBy();
+    }
+  }, [open]);
 
   const fetchAssetTypes = async () => {
     try {
-      const types = await getAssetTypes(); // ✅ correct call
-      setTypeOptions(types);
+      const types = await getAssetTypes();
+      setTypeOptions(types || []);
     } catch (err) {
       console.error("Failed to fetch asset types:", err);
     }
   };
 
+  const fetchLocations = async () => {
+    try {
+      const locations = await getLocations();
+      setLocationOptions(locations || []);
+    } catch (err) {
+      console.error("Failed to fetch locations:", err);
+    }
+  };
 
+  const fetchAssetSourcedBy = async () => {
+    try {
+      const sourcedBy = await getassetsourcedby();
+      setAssetSourceOptions(sourcedBy || []);
+    } catch (err) {
+      console.error("Failed to fetch Asset Sourced By:", err);
+    }
+  };
+
+  const commitNewOption = (value, options, setOptions) => {
+    if (value && !options.includes(value)) {
+      setOptions((prev) => [...prev, value]);
+    }
+  };
 
   const handleAddAsset = async () => {
     const finalType = type === "__custom__" ? customType : type;
+
     const newAsset = {
       assetName,
       serialNumber,
@@ -65,13 +93,13 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
       warrantyDate,
       addedBy,
       assetSourcedBy,
-
     };
+
     console.log("Asset added:", newAsset);
     setIsAdding(true);
+
     try {
       await saveAsset(newAsset);
-      console.log("Asset added:", newAsset);
       refreshAssetList();
       toast.success(`${newAsset.serialNumber} Asset Added Successfully`);
       handleCloseModal();
@@ -88,7 +116,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
         );
       } else {
         toast.error(
-          `Adding ${newAsset.serialNumber} Warranty Date must not be before Purchase Date or Already Serial Number is exists `
+          `Adding ${newAsset.serialNumber} failed: Warranty Date must not be before Purchase Date or Serial Number already exists`
         );
       }
     } finally {
@@ -99,15 +127,14 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
   const resetForm = () => {
     setAssetName("");
     setSerialNumber("");
-    setLocation("");
-    setStatus("Unassigned");
     setOperatingSystem("");
     setModelName("");
     setType("");
+    setCustomType("");
+    setLocation("");
+    setAssetSourcedBy("");
     setPurchaseDate("");
     setWarrantyDate("");
-    setAddedBy(user.empId);
-    setAssetSourcedBy("");
   };
 
   const handleCloseModal = () => {
@@ -163,79 +190,97 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
             gap: 2,
           }}
         >
-          <FormControl fullWidth variant="outlined">
-            <InputLabel id="type-label">Type</InputLabel>
-            <Select
-              labelId="type-label"
-              id="type"
-              label="Type"
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-              displayEmpty
-              renderValue={(selected) =>
-                selected === "__custom__"
-                  ? "Other (Type manually)"
-                  : selected
-              }
-            >
-              {typeOptions.map((option, index) => (
-                <MenuItem key={index} value={option}>
-                  {option}
-                </MenuItem>
-              ))}
-              <MenuItem value="__custom__">Other (Type manually)</MenuItem>
-            </Select>
-          </FormControl>
-
-
-          {type === "__custom__" && (
-            <TextField
-              label="Enter Custom Type"
-              value={customType}
-              onChange={(e) => setCustomType(e.target.value)}
-              fullWidth
-            />
-          )}
-
-
-
-
+          {/* Asset Name */}
           <TextField
-            labelId="asset-name-label"
-            id="asset-name"
-            value={assetName}
             label="Asset Name"
+            value={assetName}
             onChange={(e) => setAssetName(e.target.value)}
             fullWidth
           />
 
+          {/* Serial Number */}
           <TextField
             label="Serial Number"
             value={serialNumber}
             onChange={(e) => setSerialNumber(e.target.value)}
             fullWidth
           />
-          <FormControl fullWidth>
-            <InputLabel id="location">Location</InputLabel>
-            <Select
-              labelId="location"
-              id="location-name"
-              value={location}
-              label="Location Code"
-              onChange={(e) => setLocation(e.target.value)}
-            >
-              <MenuItem value="Chennai">Chennai</MenuItem>
-              <MenuItem value="Pune">Pune</MenuItem>
-            </Select>
-          </FormControl>
 
+          {/* Location Autocomplete */}
+          <Autocomplete
+            freeSolo
+            options={locationOptions}
+            value={location}
+            onChange={(event, newValue) => {
+              setLocation(newValue || "");
+              commitNewOption(newValue, locationOptions, setLocationOptions);
+            }}
+            onInputChange={(event, newInputValue) => {
+              setLocation(newInputValue || "");
+            }}
+            onBlur={() =>
+              commitNewOption(location, locationOptions, setLocationOptions)
+            }
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Location"
+                placeholder="Enter Location Name (New if not in list)"
+                variant="outlined"
+                fullWidth
+              />
+            )}
+          />
 
+          {/* Asset Type Autocomplete */}
+          <Autocomplete
+            freeSolo
+            options={typeOptions}
+            value={customType || type}
+            onChange={(event, newValue) => {
+              if (newValue && !typeOptions.includes(newValue)) {
+                setTypeOptions((prev) => [...prev, newValue]);
+                setCustomType(newValue);
+                setType("__custom__");
+              } else {
+                setType(newValue || "");
+                setCustomType("");
+              }
+            }}
+            onInputChange={(event, newInputValue) => {
+              if (newInputValue && !typeOptions.includes(newInputValue)) {
+                setCustomType(newInputValue);
+                setType("__custom__");
+              } else {
+                setType(newInputValue);
+                setCustomType("");
+              }
+            }}
+            onBlur={() => {
+              if (customType && !typeOptions.includes(customType)) {
+                setTypeOptions((prev) => [...prev, customType]);
+              }
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Asset Type"
+                placeholder="Enter Asset Type (New if not in list)"
+                variant="outlined"
+                fullWidth
+              />
+            )}
+          />
+
+          {/* Operating System */}
           <TextField
             label="Operating System"
             value={operatingSystem}
             onChange={(e) => setOperatingSystem(e.target.value)}
             fullWidth
           />
+
+          {/* Model Name */}
           <TextField
             label="Model Name"
             value={modelName}
@@ -243,8 +288,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
             fullWidth
           />
 
-
-
+          {/* Purchase Date */}
           <TextField
             label="Purchase Date"
             type="date"
@@ -254,6 +298,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
             fullWidth
           />
 
+          {/* Warranty Date */}
           <TextField
             label="Warranty Date"
             type="date"
@@ -263,41 +308,39 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
             fullWidth
           />
 
-          <FormControl fullWidth>
-            <InputLabel id="asset-sourced-by-label">
-              Asset Sourced By
-            </InputLabel>
-            <Select
-              labelId="asset-sourced-by-label"
-              id="asset-sourced-by"
-              value={
-                ["Verinite", "Client Company", ""].includes(assetSourcedBy)
-                  ? assetSourcedBy
-                  : "Client Company"
-              }
-              label="Asset Sourced By"
-              onChange={(e) => {
-                const value = e.target.value;
-                if (value === "Verinite") {
-                  setAssetSourcedBy("Verinite");
-                } else {
-                  setAssetSourcedBy("");
-                }
-              }}
-            >
-              <MenuItem value="Verinite">Verinite</MenuItem>
-              <MenuItem value="Client Company">Client Company</MenuItem>
-            </Select>
-          </FormControl>
-
-          {assetSourcedBy !== "Verinite" && (
-            <TextField
-              label="Enter Client Company Name"
-              value={assetSourcedBy}
-              onChange={(e) => setAssetSourcedBy(e.target.value)}
-              fullWidth
-            />
-          )}
+          {/* Asset Sourced By Autocomplete */}
+          <Autocomplete
+            freeSolo
+            options={assetSourceOptions}
+            value={assetSourcedBy}
+            onChange={(event, newValue) => {
+              setAssetSourcedBy(newValue || "");
+              commitNewOption(
+                newValue,
+                assetSourceOptions,
+                setAssetSourceOptions
+              );
+            }}
+            onInputChange={(event, newInputValue) => {
+              setAssetSourcedBy(newInputValue || "");
+            }}
+            onBlur={() =>
+              commitNewOption(
+                assetSourcedBy,
+                assetSourceOptions,
+                setAssetSourceOptions
+              )
+            }
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Asset Sourced By"
+                placeholder="Enter Client Company Name (New if not in list)"
+                variant="outlined"
+                fullWidth
+              />
+            )}
+          />
         </Box>
 
         <Box

@@ -1,146 +1,154 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import {
-  Modal,
-  Box,
-  TextField,
-  Button,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  IconButton,
-} from "@mui/material";
+  getAssetTypes,
+  updateAsset,
+  getassetsourcedby,
+} from "../Services/AssetService";
+import { getLocations } from "../Services/DashboardService";
+import Modal from "@mui/material/Modal";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { updateAsset } from "../Services/AssetService";
+import Autocomplete from "@mui/material/Autocomplete";
 import { toast } from "react-hot-toast";
-import { showErrorAlert } from "../Utils/alerts";
 
 function EditAssetModal({
   open,
   handleClose,
-  refreshAssetList,
   asset,
+  refreshAssetList,
   viewOnly,
 }) {
-  const [fields, setFields] = useState({
-    assetName: "",
-    serialNumber: "",
-    location: "",
-    operatingSystem: "",
-    modelName: "",
-    purchaseDate: "",
-    warrantyDate: "",
-    addedBy: "",
-    assignedBy: "",
-    assignedDate: "",
-    returnDate: "",
-    type: "",
-    assetSourcedBy: "",
-    empId: "",
-    status: "",
-  });
+  const user = JSON.parse(localStorage.getItem("user"));
+
   const [isUpdating, setIsUpdating] = useState(false);
 
+  const [assetName, setAssetName] = useState("");
+  const [serialNumber, setSerialNumber] = useState("");
+  const [operatingSystem, setOperatingSystem] = useState("");
+  const [modelName, setModelName] = useState("");
+  const [purchaseDate, setPurchaseDate] = useState("");
+  const [warrantyDate, setWarrantyDate] = useState("");
+  const [status, setStatus] = useState("Unassigned");
+  const [addedBy] = useState(user.empId);
+
+  const [type, setType] = useState("");
+  const [customType, setCustomType] = useState("");
+  const [typeOptions, setTypeOptions] = useState([]);
+
+  const [location, setLocation] = useState("");
+  const [locationOptions, setLocationOptions] = useState([]);
+
+  const [assetSourcedBy, setAssetSourcedBy] = useState("");
+  const [assetSourceOptions, setAssetSourceOptions] = useState([]);
+
   useEffect(() => {
-    if (asset) {
-      setFields({
-        assetName: asset.assetName || "",
-        serialNumber: asset.serialNumber || "",
-        location: asset.location || "",
-        operatingSystem: asset.operatingSystem || "",
-        modelName: asset.modelName || "",
-        purchaseDate: asset.purchaseDate || "",
-        warrantyDate: asset.warrantyDate || "",
-        addedBy: asset.addedBy || "",
-        assignedBy: asset.assignedBy || "",
-        assignedDate: asset.assignedDate || "",
-        returnDate: asset.returnDate || "",
-        type: asset.type || "",
-        assetSourcedBy: asset.assetSourcedBy || "",
-        empId: asset.empId || "",
-        status: asset.status || "",
-      });
+    if (open) {
+      fetchAssetTypes();
+      fetchLocations();
+      fetchAssetSourcedBy();
+
+      if (asset) {
+        setAssetName(asset.assetName || "");
+        setSerialNumber(asset.serialNumber || "");
+        setOperatingSystem(asset.operatingSystem || "");
+        setModelName(asset.modelName || "");
+        setPurchaseDate(asset.purchaseDate || "");
+        setWarrantyDate(asset.warrantyDate || "");
+        setStatus(asset.status || "Unassigned");
+        setType(asset.type || "");
+        setLocation(asset.location || "");
+        setAssetSourcedBy(asset.assetSourcedBy || "");
+      }
     }
-  }, [asset]);
+  }, [open, asset]);
 
-  const isAssigned = useMemo(
-    () => fields.status === "Assigned",
-    [fields.status]
-  );
-  const isScrap = useMemo(() => fields.status === "Scrap", [fields.status]);
+  const fetchAssetTypes = async () => {
+    try {
+      const types = await getAssetTypes();
+      setTypeOptions(types || []);
+    } catch (err) {
+      console.error("Failed to fetch asset types:", err);
+    }
+  };
 
-  const handleChange = useCallback(
-    (field) => (e) => {
-      const value = e.target.value;
-      setFields((prev) => ({ ...prev, [field]: value }));
-    },
-    []
-  );
+  const fetchLocations = async () => {
+    try {
+      const locations = await getLocations();
+      setLocationOptions(locations || []);
+    } catch (err) {
+      console.error("Failed to fetch locations:", err);
+    }
+  };
 
-  const handleAssetSourcedByChange = useCallback((e) => {
-    const val = e.target.value;
-    setFields((prev) => ({
-      ...prev,
-      assetSourcedBy: val === "Verinite" ? "Verinite" : "",
-    }));
-  }, []);
+  const fetchAssetSourcedBy = async () => {
+    try {
+      const sourcedBy = await getassetsourcedby();
+      setAssetSourceOptions(sourcedBy || []);
+    } catch (err) {
+      console.error("Failed to fetch Asset Sourced By:", err);
+    }
+  };
 
-  const handleClientCompanyNameChange = useCallback((e) => {
-    const val = e.target.value;
-    setFields((prev) => ({
-      ...prev,
-      assetSourcedBy: val,
-    }));
-  }, []);
+  const commitNewOption = (value, options, setOptions) => {
+    if (value && !options.includes(value)) {
+      setOptions((prev) => [...prev, value]);
+    }
+  };
 
   const handleUpdateAsset = async () => {
     if (!asset) return;
 
-    const normalizeDate = (dateStr) => {
-      if (!dateStr) return null;
-      const d = new Date(dateStr);
-      return isNaN(d) ? null : d.toISOString().split("T")[0];
+    const finalType = type === "__custom__" ? customType : type;
+
+    const updatedFields = {
+      assetName,
+      serialNumber,
+      operatingSystem,
+      modelName,
+      purchaseDate,
+      warrantyDate,
+      status,
+      type: finalType,
+      location,
+      assetSourcedBy,
+      addedBy,
     };
 
-    const updatedFields = {};
-    for (const key in fields) {
-      let newVal = fields[key] ?? "";
-      let oldVal = asset[key] ?? "";
-
-      if (
-        ["purchaseDate", "warrantyDate", "assignedDate", "returnDate"].includes(
-          key
-        )
-      ) {
-        newVal = normalizeDate(newVal);
-        oldVal = normalizeDate(oldVal);
+    const changedFields = {};
+    Object.entries(updatedFields).forEach(([key, value]) => {
+      if (value !== (asset[key] || "")) {
+        changedFields[key] = value;
       }
+    });
 
-      if (newVal !== oldVal) {
-        updatedFields[key] = newVal;
-      }
-    }
-
-    console.log("Payload sent to backend:", updatedFields);
-
-    if (Object.keys(updatedFields).length === 0) {
-      handleClose();
-      showErrorAlert(
-        "No changes detected",
-        "Please update some fields before submitting."
-      );
+    if (Object.keys(changedFields).length === 0) {
+      toast.error("No changes detected.");
       return;
     }
 
     setIsUpdating(true);
     try {
+      await updateAsset(asset.serialNumber, changedFields);
+      refreshAssetList();
+      toast.success(`${serialNumber} Asset Updated Successfully`);
       handleClose();
-      await updateAsset(updatedFields, fields.serialNumber);
-      toast.success(`${fields.serialNumber} Updated Successfully`);
-      await refreshAssetList();
     } catch (error) {
       console.error("Error updating Asset:", error);
-      showErrorAlert("Update Failed", `${fields.serialNumber} Updation Failed`);
+
+      if (error.status === 400 && typeof error.data === "object") {
+        Object.entries(error.data).forEach(([field, message]) => {
+          toast.error(`${field}: ${message}`);
+        });
+      } else if (error.status === 409) {
+        toast.error(error.data || `Asset ${serialNumber} already exists`);
+      } else {
+        toast.error(
+          `Updating ${serialNumber} failed: Warranty Date must not be before Purchase Date or Serial Number already exists`
+        );
+      }
     } finally {
       setIsUpdating(false);
     }
@@ -152,11 +160,6 @@ function EditAssetModal({
       onClose={handleClose}
       aria-labelledby="edit-asset-modal-title"
       aria-describedby="edit-asset-modal-description"
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
     >
       <Box
         sx={{
@@ -165,10 +168,13 @@ function EditAssetModal({
           p: 4,
           width: "60%",
           maxWidth: 700,
-          borderRadius: 4,
-          position: "relative",
           maxHeight: "75%",
           overflowY: "auto",
+          borderRadius: 4,
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
         }}
       >
         <IconButton
@@ -196,189 +202,169 @@ function EditAssetModal({
             gap: 2,
           }}
         >
-          {/* Fields as you had them */}
+          {/* Asset Name */}
           <TextField
             label="Asset Name"
-            value={fields.assetName}
-            onChange={handleChange("assetName")}
+            value={assetName}
+            onChange={(e) => setAssetName(e.target.value)}
             fullWidth
             disabled={viewOnly}
           />
+
+          {/* Serial Number */}
           <TextField
             label="Serial Number"
-            value={fields.serialNumber}
-            onChange={handleChange("serialNumber")}
+            value={serialNumber}
             fullWidth
-            disabled={viewOnly}
+            disabled
           />
-          <TextField
-            label="Location"
-            value={fields.location}
-            onChange={handleChange("location")}
-            fullWidth
-            disabled={viewOnly}
+
+          {/* Location Autocomplete */}
+          <Autocomplete
+            freeSolo
+            options={locationOptions}
+            value={location}
+            onChange={(event, newValue) => {
+              setLocation(newValue || "");
+              commitNewOption(newValue, locationOptions, setLocationOptions);
+            }}
+            onInputChange={(event, newInputValue) => {
+              setLocation(newInputValue || "");
+            }}
+            onBlur={() =>
+              commitNewOption(location, locationOptions, setLocationOptions)
+            }
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Location"
+                fullWidth
+                disabled={viewOnly}
+              />
+            )}
           />
+
+          {/* Asset Type Autocomplete */}
+          <Autocomplete
+            freeSolo
+            options={typeOptions}
+            value={customType || type}
+            onChange={(event, newValue) => {
+              if (newValue && !typeOptions.includes(newValue)) {
+                setTypeOptions((prev) => [...prev, newValue]);
+                setCustomType(newValue);
+                setType("__custom__");
+              } else {
+                setType(newValue || "");
+                setCustomType("");
+              }
+            }}
+            onInputChange={(event, newInputValue) => {
+              if (newInputValue && !typeOptions.includes(newInputValue)) {
+                setCustomType(newInputValue);
+                setType("__custom__");
+              } else {
+                setType(newInputValue);
+                setCustomType("");
+              }
+            }}
+            onBlur={() => {
+              if (customType && !typeOptions.includes(customType)) {
+                setTypeOptions((prev) => [...prev, customType]);
+              }
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Asset Type"
+                fullWidth
+                disabled={viewOnly}
+              />
+            )}
+          />
+
+          {/* Operating System */}
           <TextField
             label="Operating System"
-            value={fields.operatingSystem}
-            onChange={handleChange("operatingSystem")}
+            value={operatingSystem}
+            onChange={(e) => setOperatingSystem(e.target.value)}
             fullWidth
             disabled={viewOnly}
           />
+
+          {/* Model Name */}
           <TextField
-            label="Variant"
-            value={fields.modelName}
-            onChange={handleChange("modelName")}
+            label="Model Name"
+            value={modelName}
+            onChange={(e) => setModelName(e.target.value)}
             fullWidth
             disabled={viewOnly}
           />
 
-          <FormControl fullWidth disabled={viewOnly}>
-            <InputLabel id="type-label">Type</InputLabel>
-            <Select
-              labelId="type-label"
-              value={fields.type}
-              label="Type"
-              onChange={handleChange("type")}
-            >
-              <MenuItem value="LAPTOP">LAPTOP</MenuItem>
-              <MenuItem value="MOUSE">MOUSE</MenuItem>
-              <MenuItem value="BAG">BAG</MenuItem>
-              <MenuItem value="TSHIRT">TSHIRT</MenuItem>
-              <MenuItem value="BOTTLE">BOTTLE</MenuItem>
-              <MenuItem value="HEADFONE">HEADFONE</MenuItem>
-              <MenuItem value="Note">Note</MenuItem>
-            </Select>
-          </FormControl>
-
-          <FormControl
-            fullWidth
-            disabled={viewOnly || fields.status === "Assigned"}
-          >
-            <InputLabel id="status-label">Status</InputLabel>
-            <Select
-              labelId="status-label"
-              value={fields.status}
-              label="Status"
-              onChange={handleChange("status")}
-            >
-              {fields.status === "Assigned" && (
-                <MenuItem value="Assigned">Assigned</MenuItem>
-              )}
-              <MenuItem value="UnAssigned">UnAssigned</MenuItem>
-              <MenuItem value="Scrap">Scrap</MenuItem>
-            </Select>
-          </FormControl>
-
-          {isAssigned && (
-            <TextField
-              label="Assigned To (Emp ID)"
-              value={fields.empId}
-              onChange={handleChange("empId")}
-              fullWidth
-              disabled={true}
-            />
-          )}
-
+          {/* Purchase Date */}
           <TextField
             label="Purchase Date"
             type="date"
-            value={fields.purchaseDate}
-            onChange={handleChange("purchaseDate")}
+            value={purchaseDate}
+            onChange={(e) => setPurchaseDate(e.target.value)}
             InputLabelProps={{ shrink: true }}
             fullWidth
             disabled={viewOnly}
           />
+
+          {/* Warranty Date */}
           <TextField
             label="Warranty Date"
             type="date"
-            value={fields.warrantyDate}
-            onChange={handleChange("warrantyDate")}
+            value={warrantyDate}
+            onChange={(e) => setWarrantyDate(e.target.value)}
             InputLabelProps={{ shrink: true }}
             fullWidth
             disabled={viewOnly}
           />
 
-          <TextField
-            label="Added By"
-            value={fields.addedBy}
-            onChange={handleChange("addedBy")}
-            fullWidth
-            disabled={viewOnly}
+          {/* Asset Sourced By Autocomplete */}
+          <Autocomplete
+            freeSolo
+            options={assetSourceOptions}
+            value={assetSourcedBy}
+            onChange={(event, newValue) => {
+              setAssetSourcedBy(newValue || "");
+              commitNewOption(
+                newValue,
+                assetSourceOptions,
+                setAssetSourceOptions
+              );
+            }}
+            onInputChange={(event, newInputValue) => {
+              setAssetSourcedBy(newInputValue || "");
+            }}
+            onBlur={() =>
+              commitNewOption(
+                assetSourcedBy,
+                assetSourceOptions,
+                setAssetSourceOptions
+              )
+            }
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Asset Sourced By"
+                fullWidth
+                disabled={viewOnly}
+              />
+            )}
           />
-
-          {(isAssigned || isScrap) && (
-            <TextField
-              label={isScrap ? "Scraped By" : "Assigned By"}
-              value={fields.assignedBy}
-              onChange={handleChange("assignedBy")}
-              fullWidth
-              disabled={true}
-            />
-          )}
-
-          {(isAssigned || isScrap) && (
-            <TextField
-              label={isScrap ? "Scraped Date" : "Assigned Date"}
-              type="date"
-              value={fields.assignedDate}
-              onChange={handleChange("assignedDate")}
-              InputLabelProps={{ shrink: true }}
-              fullWidth
-              disabled={true}
-            />
-          )}
-
-          {isAssigned && (
-            <TextField
-              label="Return Date"
-              type="date"
-              value={fields.returnDate}
-              InputLabelProps={{ shrink: true }}
-              fullWidth
-              disabled={true}
-            />
-          )}
-
-          <FormControl fullWidth disabled={viewOnly}>
-            <InputLabel id="asset-sourced-by-label">
-              Asset Sourced By
-            </InputLabel>
-            <Select
-              labelId="asset-sourced-by-label"
-              value={
-                fields.assetSourcedBy === "Verinite"
-                  ? "Verinite"
-                  : "Client Company"
-              }
-              label="Asset Sourced By"
-              onChange={handleAssetSourcedByChange}
-            >
-              <MenuItem value="Verinite">Verinite</MenuItem>
-              <MenuItem value="Client Company">Client Company</MenuItem>
-            </Select>
-          </FormControl>
-
-          {fields.assetSourcedBy !== "Verinite" && (
-            <TextField
-              label="Enter Client Company Name"
-              value={fields.assetSourcedBy}
-              onChange={handleClientCompanyNameChange}
-              fullWidth
-              disabled={viewOnly}
-            />
-          )}
         </Box>
 
         {!viewOnly && (
-          <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}>
+          <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
             <Button
               variant="contained"
               onClick={handleClose}
               sx={{
                 backgroundColor: "error.main",
                 color: "error.contrastText",
-                mr: 2,
               }}
             >
               Cancel

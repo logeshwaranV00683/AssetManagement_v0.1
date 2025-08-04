@@ -229,17 +229,47 @@ export const getAssetTypes = async () => {
 
 export const RecentAssignedAssetDetails = async () => {
   try {
-    const response = await fetch(`${apiUrl}/assetManager/v1/admin/get-recent-assigned`, {
+    const response = await fetch(
+      `${apiUrl}/assetManager/v1/admin/get-recent-assigned`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (!response.ok) throw new Error("Failed to fetch More page data");
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching More page data:", error);
+    throw error;
+  }
+};
+
+export const getassetsourcedby = async () => {
+  const url = `${apiUrl}/assetManager/v1/asset/getUniqueAssetSourcedBy`;
+
+  try {
+    const response = await fetch(url, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
     });
-    if (!response.ok) throw new Error("Failed to fetch More page data");
-    return await response.json();
+
+    const data = await response.json();
+    console.log("AssetSourcedBy API response:", data);
+
+    if (!Array.isArray(data)) {
+      console.error("Expected an array, but got:", data);
+      return [];
+    }
+
+    return data;
   } catch (error) {
-    console.error("Error fetching More page data:", error);
-    throw error;
+    console.error("Error fetching assetSourcedBy:", error);
+    return [];
   }
 };

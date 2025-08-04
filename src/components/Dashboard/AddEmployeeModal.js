@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
@@ -10,8 +10,14 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import { IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { saveEmployee } from "../Services/EmployeeService";
+import {
+  saveEmployee,
+  getLocations,
+  getDeparatment,
+  getDesignation,
+} from "../Services/EmployeeService";
 import toast from "react-hot-toast";
+import Autocomplete from "@mui/material/Autocomplete";
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -24,6 +30,7 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
     position: "relative",
+    borderRadius: 8,
   },
   formControl: {
     marginTop: theme.spacing(2),
@@ -58,15 +65,11 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "space-between",
     marginTop: theme.spacing(2),
   },
-  textFieldFix: {
-    "& .MuiInputBase-root": {
-      height: "56px",
-    },
-  },
 }));
 
 function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
   const classes = useStyles();
+
   const [empId, setEmpId] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -74,9 +77,67 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
   const [mail, setMail] = useState("");
   const [mobile, setMobile] = useState("");
   const [location, setLocation] = useState("");
+  const [locationOptions, setLocationOptions] = useState([]);
   const [status, setStatus] = useState("");
+
   const [department, setDepartment] = useState("");
+  const [departmentOptions, setDepartmentOptions] = useState([]);
+
   const [designation, setDesignation] = useState("");
+  const [designationOptions, setDesignationOptions] = useState([]);
+
+  useEffect(() => {
+    if (open) {
+      fetchLocations();
+      fetchDepartments();
+      fetchDesignations();
+    }
+  }, [open]);
+
+  const fetchLocations = async () => {
+    try {
+      const locations = await getLocations();
+      setLocationOptions(locations || []);
+    } catch (err) {
+      console.error("Error fetching locations:", err);
+    }
+  };
+
+  const fetchDepartments = async () => {
+    try {
+      const departments = await getDeparatment();
+      setDepartmentOptions(departments || []);
+    } catch (err) {
+      console.error("Error fetching departments:", err);
+    }
+  };
+
+  const fetchDesignations = async () => {
+    try {
+      const designations = await getDesignation();
+      setDesignationOptions(designations || []);
+    } catch (err) {
+      console.error("Error fetching designations:", err);
+    }
+  };
+
+  const commitLocationOption = (value) => {
+    if (value && !locationOptions.includes(value)) {
+      setLocationOptions((prev) => [...prev, value]);
+    }
+  };
+
+  const commitDepartmentOption = (value) => {
+    if (value && !departmentOptions.includes(value)) {
+      setDepartmentOptions((prev) => [...prev, value]);
+    }
+  };
+
+  const commitDesignationOption = (value) => {
+    if (value && !designationOptions.includes(value)) {
+      setDesignationOptions((prev) => [...prev, value]);
+    }
+  };
 
   const handleAddEmployee = async () => {
     const newEmployee = {
@@ -96,6 +157,7 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
       await saveEmployee(newEmployee);
       toast.success("Employee added successfully!");
       refreshEmployeeList();
+
       setEmpId("");
       setFirstName("");
       setLastName("");
@@ -106,6 +168,7 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
       setRole("");
       setDepartment("");
       setDesignation("");
+
       handleClose();
     } catch (error) {
       if (error.status === 400 && typeof error.data === "object") {
@@ -127,28 +190,21 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
       onClose={handleClose}
       className={classes.modal}
       aria-labelledby="add-employee-modal-title"
-      aria-describedby="add-employee-modal-description"
     >
       <Box className={classes.paper}>
         <IconButton
           edge="end"
           aria-label="close"
           onClick={handleClose}
-          sx={{
-            position: "absolute",
-            top: "8px",
-            right: "8px",
-          }}
+          sx={{ position: "absolute", top: 8, right: 8 }}
         >
           <CloseIcon />
         </IconButton>
-        <h2
-          id="add-employee-modal-title"
-          className={classes.textCenter}
-          style={{ textAlign: "center", color: "#083A40" }}
-        >
+
+        <h2 className={classes.textCenter} style={{ color: "#083A40" }}>
           Add Employee
         </h2>
+
         <form>
           <div className={classes.formGrid}>
             <TextField
@@ -156,93 +212,131 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
               value={empId}
               onChange={(e) => setEmpId(e.target.value)}
               fullWidth
-              margin="normal"
             />
             <TextField
               label="First Name"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               fullWidth
-              margin="normal"
             />
             <TextField
               label="Last Name"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               fullWidth
-              margin="normal"
             />
             <TextField
               label="Email"
               value={mail}
               onChange={(e) => setMail(e.target.value)}
               fullWidth
-              margin="normal"
             />
             <TextField
               label="Mobile"
               value={mobile}
               onChange={(e) => setMobile(e.target.value)}
               fullWidth
-              margin="normal"
             />
-            <TextField
-              label="Location"
+
+            {/* Location Autocomplete */}
+            <Autocomplete
+              freeSolo
+              options={locationOptions}
               value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              fullWidth
-              margin="normal"
+              onChange={(event, newValue) => {
+                setLocation(newValue || "");
+                commitLocationOption(newValue);
+              }}
+              onInputChange={(event, newInputValue) => {
+                setLocation(newInputValue || "");
+              }}
+              onBlur={() => commitLocationOption(location)}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Location"
+                  placeholder="Enter Location Name (New if not in list)"
+                  variant="outlined"
+                  fullWidth
+                />
+              )}
             />
+
             <FormControl fullWidth className={classes.formControl}>
               <InputLabel htmlFor="status">Status</InputLabel>
               <Select
-                label="Status"
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                inputProps={{
-                  name: "status",
-                  id: "status",
-                }}
+                inputProps={{ name: "status", id: "status" }}
               >
                 <MenuItem value="Active">Active</MenuItem>
                 <MenuItem value="Inactive">Inactive</MenuItem>
               </Select>
             </FormControl>
-            <TextField
-              label="Department"
+
+            {/* Department Autocomplete */}
+            <Autocomplete
+              freeSolo
+              options={departmentOptions}
               value={department}
-              onChange={(e) => setDepartment(e.target.value)}
-              fullWidth
-              margin="dense"
-              className={classes.alignFix}
+              onChange={(event, newValue) => {
+                setDepartment(newValue || "");
+                commitDepartmentOption(newValue);
+              }}
+              onInputChange={(event, newInputValue) => {
+                setDepartment(newInputValue || "");
+              }}
+              onBlur={() => commitDepartmentOption(department)}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Department"
+                  placeholder="Enter Department Name (New if not in list)"
+                  variant="outlined"
+                  fullWidth
+                />
+              )}
             />
+
             <FormControl fullWidth className={classes.formControl}>
               <InputLabel htmlFor="role">Role</InputLabel>
               <Select
-                label="Role"
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
-                inputProps={{
-                  name: "role",
-                  id: "role",
-                }}
+                inputProps={{ name: "role", id: "role" }}
               >
                 <MenuItem value="Employee">Employee</MenuItem>
                 <MenuItem value="Admin">Admin</MenuItem>
               </Select>
             </FormControl>
-            <TextField
-              label="Designation"
+
+            {/* Designation Autocomplete */}
+            <Autocomplete
+              freeSolo
+              options={designationOptions}
               value={designation}
-              onChange={(e) => setDesignation(e.target.value)}
-              fullWidth
-              margin="dense"
-              className={classes.alignFix}
+              onChange={(event, newValue) => {
+                setDesignation(newValue || "");
+                commitDesignationOption(newValue);
+              }}
+              onInputChange={(event, newInputValue) => {
+                setDesignation(newInputValue || "");
+              }}
+              onBlur={() => commitDesignationOption(designation)}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Designation"
+                  placeholder="Enter Designation Name (New if not in list)"
+                  variant="outlined"
+                  fullWidth
+                />
+              )}
             />
           </div>
+
           <div className={classes.actionsContainer}>
             <Button
-              type="button"
               variant="contained"
               className={classes.cancelButton}
               onClick={handleClose}
@@ -254,8 +348,6 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
               Cancel
             </Button>
             <Button
-              type="button"
-              data-id="add-employee-button"
               variant="contained"
               className={classes.addButton}
               onClick={handleAddEmployee}

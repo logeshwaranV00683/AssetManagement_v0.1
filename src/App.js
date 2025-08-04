@@ -12,11 +12,10 @@ import AdminProfile from "./components/Dashboard/AdminProfile";
 import Header from "./components/Header/Header";
 import Sidebar from "./components/Dashboard/SideBar";
 import Employee from "./components/Dashboard/Employee";
-import AssetsToEmployee from "./components/Dashboard/AssetsToEmployee";
 import SidebarAssets from "./components/Dashboard/SideBarAssets";
 import SidebarEmployee from "./components/Dashboard/SideBarEmployee";
 import PrivateRoute from "./components/Dashboard/PrivateRoute";
-import RecentAssignedAsset from "./components/Dashboard/RecentAssignedAsset"; 
+import MorePage from "./components/Dashboard/MorePage"; 
 
 function App() {
   return (
@@ -67,19 +66,6 @@ function App() {
               </PrivateRoute>
             }
           />
-
-          <Route
-            path="/assetstoemployee"
-            element={
-              <PrivateRoute>
-                <div className="dashboard-config">
-                  <Sidebar />
-                  <Header />
-                  <AssetsToEmployee />
-                </div>
-              </PrivateRoute>
-            }
-          />
           <Route
   path="/more"
   element={
@@ -87,7 +73,7 @@ function App() {
       <div className="dashboard-config">
         <Sidebar />
         <Header />
-        <RecentAssignedAsset />  {/* ✅ Your More Page component */}
+        <MorePage />  
       </div>
     </PrivateRoute>
   }

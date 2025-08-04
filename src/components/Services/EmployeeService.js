@@ -119,3 +119,84 @@ export const deleteEmployee = async (empId) => {
     throw error;
   }
 };
+
+export const getLocations = async () => {
+  const url = `${apiUrl}/assetManager/v1/employee/getAllUniqueLocation`;
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+    console.log("Employee Location API response:", data);
+
+    if (!Array.isArray(data)) {
+      console.error("Expected an array, but got:", data);
+      return [];
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching Locations:", error);
+    return [];
+  }
+};
+
+export const getDeparatment = async () => {
+  const url = `${apiUrl}/assetManager/v1/employee/getAllUniqueDepartment`;
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+    console.log("Employee Department API response:", data);
+
+    if (!Array.isArray(data)) {
+      console.error("Expected an array, but got:", data);
+      return [];
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching Department:", error);
+    return [];
+  }
+};
+
+export const getDesignation = async () => {
+  const url = `${apiUrl}/assetManager/v1/employee/getAllUniqueDesignation`;
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+    console.log("Employee Designation API response:", data);
+
+    if (!Array.isArray(data)) {
+      console.error("Expected an array, but got:", data);
+      return [];
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching Designations:", error);
+    return [];
+  }
+};
