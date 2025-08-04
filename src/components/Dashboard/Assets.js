@@ -200,54 +200,53 @@ function Assets() {
     {
       field: "actions",
       headerName: "Actions",
-      flex: 1.2,
-      minWidth: 220,
+      minWidth: 150,
+      flex: 2,
       sortable: false,
       renderCell: (params) => (
-        <Box display="flex" alignItems="center" gap={1}>
+        <Box
+          display="flex"
+          flexWrap="wrap"
+          justifyContent="center"
+          alignItems="center"
+          gap={1}
+        >
           <Tooltip title="View">
             <IconButton
-              color="inherit"
               sx={{
                 transition: "transform 0.2s",
                 "&:hover": {
                   transform: "scale(1.3)",
-                  color: "primary.main",
-                  filter: "drop-shadow(0 0 4px rgba(25, 118, 210, 0.8))",
+                  color: "info.main",
+                  filter: "drop-shadow(0 0 4px #2196f3)",
                 },
               }}
               onClick={() => handleOpenEditModal(params.row, true)}
             >
-              <VisibilityIcon fontSize="small" />
+              <VisibilityIcon />
             </IconButton>
           </Tooltip>
 
           <Tooltip title={params.row.empId ? "Unassign" : "Assign"}>
             <IconButton
-              color="inherit"
               sx={{
                 transition: "transform 0.2s",
                 "&:hover": {
                   transform: "scale(1.3)",
                   color: params.row.empId ? "error.main" : "success.main",
                   filter: params.row.empId
-                    ? "drop-shadow(0 0 4px rgba(211, 47, 47, 0.8))"
-                    : "drop-shadow(0 0 4px rgba(23, 206, 29, 0.8))",
+                    ? "drop-shadow(0 0 4px rgb(246, 102, 59))"
+                    : "drop-shadow(0 0 4px rgb(30, 237, 68))",
                 },
               }}
               onClick={() => handleAssign(params.row)}
             >
-              {params.row.empId ? (
-                <PersonRemoveIcon fontSize="small" />
-              ) : (
-                <PersonAddIcon fontSize="small" />
-              )}
+              {params.row.empId ? <PersonRemoveIcon /> : <PersonAddIcon />}
             </IconButton>
           </Tooltip>
 
           <Tooltip title="History">
             <IconButton
-              color="inherit"
               sx={{
                 transition: "transform 0.2s",
                 "&:hover": {
@@ -258,41 +257,39 @@ function Assets() {
               }}
               onClick={() => handleOpenHistoryModal(params.row)}
             >
-              <HistoryIcon fontSize="small" />
+              <HistoryIcon />
             </IconButton>
           </Tooltip>
 
           <Tooltip title="Edit">
             <IconButton
-              color="inherit"
               sx={{
                 transition: "transform 0.2s",
                 "&:hover": {
                   transform: "scale(1.3)",
-                  color: "secondary.main",
-                  filter: "drop-shadow(0 0 4px rgba(156, 39, 176, 0.8))",
+                  color: "primary.main",
+                  filter: "drop-shadow(0 0 4px #1976d2)",
                 },
               }}
               onClick={() => handleOpenEditModal(params.row)}
             >
-              <EditIcon fontSize="small" />
+              <EditIcon />
             </IconButton>
           </Tooltip>
 
           <Tooltip title="Scrap">
             <IconButton
-              color="inherit"
               sx={{
                 transition: "transform 0.2s",
                 "&:hover": {
                   transform: "scale(1.3)",
                   color: "error.main",
-                  filter: "drop-shadow(0 0 4px rgba(211, 47, 47, 0.8))",
+                  filter: "drop-shadow(0 0 4px red)",
                 },
               }}
               onClick={() => handleDelete(params.row)}
             >
-              <DeleteIcon fontSize="small" />
+              <DeleteIcon />
             </IconButton>
           </Tooltip>
         </Box>
@@ -377,6 +374,7 @@ function Assets() {
                     onChange={handleSearch}
                     value={filterValue}
                     fullWidth
+
                     sx={{
                       "& .MuiOutlinedInput-root": {
                         background: "#ffffff",
@@ -390,21 +388,21 @@ function Assets() {
                           fontFamily: "'Racing Sans One', sans-serif",
                           fontSize: "0.9rem",
                           color: "#083A40",
-                          paddingTop: "20px",
+                          paddingTop: "20px", // space for label
                         },
                       },
                       "& .MuiInputLabel-root": {
                         fontFamily: "'Racing Sans One', sans-serif",
                         fontSize: "1rem",
                         color: "#083A40",
-                        transform: "translate(14px, 16px) scale(1)",
+                        transform: "translate(14px, 16px) scale(1)", // default position
                         transition: "all 0.2s ease",
                       },
                       "& .MuiInputLabel-root.Mui-focused": {
-                        transform: "translate(14px, -25px) scale(0.85)",
+                        transform: "translate(14px, -25px) scale(0.85)", // lifted position
                         fontSize: "1.3rem",
                         padding: "0 4px",
-                        color: "#fff",
+                        color: "#fff"
                       },
                     }}
                   />
@@ -474,12 +472,10 @@ function Assets() {
               <DataGrid
                 rows={filteredRows}
                 columns={columns}
-                disableRowSelectionOnClick
-                autoHeight={false}
                 sx={{
                   borderRadius: "16px",
                   overflowX: "auto",
-                  border: "2px solid #020405ff",
+                  border: "2px solid #0a1113ff",
                   fontFamily: "'Racing Sans One', sans-serif",
                   color: "#083A40",
                   "& .MuiDataGrid-columnHeaders": {
