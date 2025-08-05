@@ -17,7 +17,7 @@ import HistoryIcon from "@mui/icons-material/History";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import {
   getAssetList,
-  scrapAsset,
+  deleteAsset,
   unassignAsset,
 } from "../Services/AssetService";
 import EditAssetModal from "./EditAssetModal";
@@ -85,26 +85,26 @@ function Assets() {
   const handleDelete = async (asset) => {
     const confirmDelete = await showConfirmAlert(
       "Are you sure?",
-      "Do you want to Scrap this asset?"
+      "Do you want to Permanently delet this asset? you can't recover"
     );
     if (!confirmDelete) return;
 
     try {
-      const success = await scrapAsset(asset.assetId);
+      const success = await deleteAsset(asset.serialNumber);
       if (success) {
         toast.success(
-          `Scrapped the Asset with Serial Number: ${asset.serialNumber}`
+          `Permanently deleted the Asset with Serial Number: ${asset.serialNumber}`
         );
         fetchAssets();
       }
     } catch (error) {
       if (error.status === 406) {
         toast.error(
-          error.message || "Cannot scrap asset due to invalid status."
+          error.message || "Cannot Permanently delete asset due to invalid status."
         );
       } else {
         toast.error(
-          `Cannot Scrap the Asset with Serial Number: ${asset.serialNumber}`
+          `Cannot Permanently delete the Asset with Serial Number: ${asset.serialNumber}`
         );
       }
     }
@@ -277,7 +277,7 @@ function Assets() {
             </IconButton>
           </Tooltip>
 
-          <Tooltip title="Scrap">
+          <Tooltip title="Delete">
             <IconButton
               sx={{
                 transition: "transform 0.2s",

@@ -1,4 +1,5 @@
 const token = localStorage.getItem("authToken");
+const userData = JSON.parse(localStorage.getItem("user"));
 const apiUrl = process.env.REACT_APP_API_URL;
 
 export const getAssetList = async () => {
@@ -90,11 +91,11 @@ export const updateAsset = async (asset, serialNumber) => {
   }
 };
 
-export const scrapAsset = async (assetId) => {
-  console.log(`Scrapping Asset with ID: ${assetId}`);
+export const deleteAsset = async (serialNo) => {
   try {
+    const empId = userData.empId;
     const response = await fetch(
-      `${apiUrl}/assetManager/v1/asset/delete/${assetId}`,
+      `${apiUrl}/assetManager/v1/deletedAsset/permananteDelete/${empId}/${serialNo}`,
       {
         method: "DELETE",
         headers: {
@@ -106,12 +107,12 @@ export const scrapAsset = async (assetId) => {
 
     if (!response.ok) {
       const errorText = await response.text();
-
-      const error = new Error(errorText || "Failed to scrap asset");
+      const error = new Error(errorText || "Failed to delete asset");
       error.status = response.status;
       throw error;
     }
 
+    console.log("Asset deleted successfully.");
     return true;
   } catch (error) {
     console.error("Error deleting asset:", error);
