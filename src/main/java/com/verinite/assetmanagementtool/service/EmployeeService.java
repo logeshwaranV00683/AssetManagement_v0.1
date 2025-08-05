@@ -29,4 +29,10 @@ public interface EmployeeService {
     ResponseEntity<?> importEmployeeFromExcel(InputStream inputStream) throws IOException;
 
     void exportEmployeesToExcel(List<EmployeeExportDto> data, OutputStream outputStream) throws IOException;
+
+    List<String> getUniqueEmployeeLocation();
+
+    List<String> getUniqueEmployeeDesignation();
+
+    List<String> getUniqueEmployeeDepartment();
 }

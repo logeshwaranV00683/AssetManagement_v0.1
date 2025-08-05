@@ -380,4 +380,16 @@ public class EmployeeServiceImpl implements EmployeeService {
         return style;
     }
 
+    public List<String> getUniqueEmployeeLocation(){
+        return employeeRepo.getUniqueEmployeeLocation();
+    }
+
+    public List<String> getUniqueEmployeeDesignation(){
+        return employeeRepo.getUniqueEmployeeDesignation();
+    }
+
+    public List<String> getUniqueEmployeeDepartment(){
+        return employeeRepo.getUniqueEmployeeDepartment();
+    }
+
 }

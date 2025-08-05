@@ -130,4 +130,22 @@ public class EmployeeController {
     public ResponseEntity<?> getUserForAdmin(@PathVariable String empId) {
         return employeeService.getByIdForAdmin(empId);
     }
+
+    @GetMapping("/employee/getAllUniqueLocation")
+    public ResponseEntity<List<String>> getUniqueEmployeeLocation(){
+        List<String> EmployeeLocation=employeeService.getUniqueEmployeeLocation();
+        return ResponseEntity.ok(EmployeeLocation);
+    }
+
+    @GetMapping("employee/getAllUniqueDesignation")
+    public ResponseEntity<List<String>> getUniqueEmployeeDesignation(){
+        List<String> employeeDesignation=employeeService.getUniqueEmployeeDesignation();
+        return ResponseEntity.ok(employeeDesignation);
+    }
+
+    @GetMapping("employee/getAllUniqueDepartment")
+    public ResponseEntity<List<String>> getUniqueEmployeeDepartment(){
+        List<String> employeeDepartment=employeeService.getUniqueEmployeeDepartment();
+        return ResponseEntity.ok(employeeDepartment);
+    }
 }

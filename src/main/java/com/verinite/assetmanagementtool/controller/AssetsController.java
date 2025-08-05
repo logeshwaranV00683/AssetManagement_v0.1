@@ -110,4 +110,10 @@ public class AssetsController implements ApplicationRunner {
         }
     }
 
+    @GetMapping("asset/getUniqueAssetSourcedBy")
+    public ResponseEntity<List<String>> getUniqueAssetSourcedBy(){
+        List<String> assetSourcedBy= assetService.getUniqueAssetSourcedBy();
+        return ResponseEntity.ok(assetSourcedBy);
+    }
+
 }

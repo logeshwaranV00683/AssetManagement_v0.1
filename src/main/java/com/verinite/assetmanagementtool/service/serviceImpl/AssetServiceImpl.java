@@ -756,4 +756,8 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             }
         }
     }
+
+    public List<String> getUniqueAssetSourcedBy(){
+        return assetRepo.getUniqueAssetSourcedBy();
+    }
 }
