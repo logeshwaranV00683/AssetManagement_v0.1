@@ -3,13 +3,20 @@ import { DataGrid } from "@mui/x-data-grid";
 import { motion } from "framer-motion";
 import { Box, Tooltip, IconButton } from "@mui/material";
 import HistoryIcon from "@mui/icons-material/History";
+import PersonIcon from "@mui/icons-material/Person";
+import LaptopChromebookIcon from "@mui/icons-material/LaptopChromebook";
 import { toast } from "react-hot-toast";
-import { fetchAssetHistory } from "../Services/HistoryServices";
+
 import {
   RecentAssignedAssetDetails,
-  getDeletedAssets,
+  getDeletedAssets
 } from "../Services/AssetService";
+import {
+  fetchAssetHistory
+} from "../Services/HistoryServices";
 import AssetHistoryPopup from "./AssetHistoryPop";
+import EditAssetModal from "./EditAssetModal";
+import EditEmployeeModal from "./EditEmployeeModal";
 
 const ToggleButton = ({ showDeleted, setShowDeleted }) => (
   <motion.div
@@ -33,11 +40,19 @@ const RecentAssignedAssetPage = () => {
   const [showDeleted, setShowDeleted] = useState(false);
 
   const [selectedAsset, setSelectedAsset] = useState(null);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+
   const [historyData, setHistoryData] = useState([]);
   const [openHistoryModal, setOpenHistoryModal] = useState(false);
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [viewing, setViewing] = useState(""); // 'asset' or 'employee'
 
   const handleClose = () => {
     setOpenHistoryModal(false);
+    setOpenEditModal(false);
+    setSelectedAsset(null);
+    setSelectedEmployee(null);
+    setViewing("");
   };
 
   const handleOpenHistoryModal = async (asset) => {
@@ -50,9 +65,21 @@ const RecentAssignedAssetPage = () => {
       } else {
         toast.error("No history found for this asset.");
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to load asset history.");
     }
+  };
+
+  const handleViewAsset = (asset) => {
+    setSelectedAsset(asset);
+    setViewing("asset");
+    setOpenEditModal(true);
+  };
+
+  const handleViewEmployee = (employee) => {
+    setSelectedEmployee(employee);
+    setViewing("employee");
+    setOpenEditModal(true);
   };
 
   useEffect(() => {
@@ -70,6 +97,7 @@ const RecentAssignedAssetPage = () => {
             employeeName: `${item?.firstName || ""} ${item?.lastName || ""}`.trim(),
             serialNumber: item?.serialNumber || "-",
             assignedDate: item?.assignedDate || "-",
+            raw: item,
           }))
         );
 
@@ -101,6 +129,48 @@ const RecentAssignedAssetPage = () => {
     { field: "employeeName", headerName: "Employee Name", flex: 1 },
     { field: "serialNumber", headerName: "Serial Number", flex: 1 },
     { field: "assignedDate", headerName: "Assigned Date", flex: 1 },
+    {
+      field: "actions",
+      headerName: "Actions",
+      minWidth: 150,
+      flex: 2,
+      sortable: false,
+      renderCell: (params) => (
+        <Box display="flex" justifyContent="center" alignItems="center" gap={1}>
+          <Tooltip title="View Employee">
+            <IconButton
+              onClick={() => handleViewEmployee(params.row.raw)}
+              sx={{
+                transition: "transform 0.2s",
+                "&:hover": {
+                  transform: "scale(1.3)",
+                  color: "info.main",
+                  filter: "drop-shadow(0 0 4px skyblue)",
+                },
+              }}
+            >
+              <PersonIcon />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="View Asset">
+            <IconButton
+              onClick={() => handleViewAsset(params.row.raw)}
+              sx={{
+                transition: "transform 0.2s",
+                "&:hover": {
+                  transform: "scale(1.3)",
+                  color: "warning.main",
+                  filter: "drop-shadow(0 0 4px orange)",
+                },
+              }}
+            >
+              <LaptopChromebookIcon />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      ),
+    },
   ];
 
   const deletedColumns = [
@@ -120,8 +190,9 @@ const RecentAssignedAssetPage = () => {
       sortable: false,
       renderCell: (params) => (
         <Box display="flex" justifyContent="center" alignItems="center" gap={1}>
-          <Tooltip title="History">
+          <Tooltip title="Asset History">
             <IconButton
+              onClick={() => handleOpenHistoryModal(params.row)}
               sx={{
                 transition: "transform 0.2s",
                 "&:hover": {
@@ -130,7 +201,6 @@ const RecentAssignedAssetPage = () => {
                   filter: "drop-shadow(0 0 4px orange)",
                 },
               }}
-              onClick={() => handleOpenHistoryModal(params.row)}
             >
               <HistoryIcon />
             </IconButton>
@@ -171,6 +241,26 @@ const RecentAssignedAssetPage = () => {
             asset={selectedAsset}
             history={historyData}
           />
+
+          {viewing === "employee" && selectedEmployee && (
+            <EditEmployeeModal
+              open={openEditModal}
+              handleClose={handleClose}
+              employee={selectedEmployee}
+              refreshEmployeeList={() => {}}
+              viewOnly={true}
+            />
+          )}
+
+          {viewing === "asset" && selectedAsset && (
+            <EditAssetModal
+              open={openEditModal}
+              handleClose={handleClose}
+              asset={selectedAsset}
+              refreshAssetList={() => {}}
+              viewOnly={true}
+            />
+          )}
         </div>
       </div>
     </div>
