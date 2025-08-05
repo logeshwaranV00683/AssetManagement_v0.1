@@ -198,103 +198,118 @@ function Assets() {
       flex: 0.7,
     },
     {
-      field: "actions",
-      headerName: "Actions",
-      minWidth: 150,
-      flex: 2,
-      sortable: false,
-      renderCell: (params) => (
-        <Box
-          display="flex"
-          flexWrap="wrap"
-          justifyContent="center"
-          alignItems="center"
-          gap={1}
+  field: "actions",
+  headerName: "Actions",
+  minWidth: 180,        
+  flex: 2,
+  sortable: false,
+  headerAlign: "center", 
+  align: "center",       
+  renderCell: (params) => (
+    <Box
+      display="flex"
+      flexDirection="row"
+      alignItems="center"
+      justifyContent="center"
+      gap={0.5}
+      sx={{
+        overflow: "visible",
+        minWidth: "180px",  
+      }}
+    >
+      <Tooltip title="View">
+        <IconButton
+          sx={{
+            transition: "transform 0.2s",
+            color: "inherit",
+            "&:hover": {
+              transform: "scale(1.3)",
+              color: "info.main",
+              filter: "drop-shadow(0 0 4px #2196f3)",
+            },
+          }}
+          onClick={() => handleOpenEditModal(params.row, true)}
         >
-          <Tooltip title="View">
-            <IconButton
-              sx={{
-                transition: "transform 0.2s",
-                "&:hover": {
-                  transform: "scale(1.3)",
-                  color: "info.main",
-                  filter: "drop-shadow(0 0 4px #2196f3)",
-                },
-              }}
-              onClick={() => handleOpenEditModal(params.row, true)}
-            >
-              <VisibilityIcon />
-            </IconButton>
-          </Tooltip>
+          <VisibilityIcon fontSize="medium" />
+        </IconButton>
+      </Tooltip>
 
-          <Tooltip title={params.row.empId ? "Unassign" : "Assign"}>
-            <IconButton
-              sx={{
-                transition: "transform 0.2s",
-                "&:hover": {
-                  transform: "scale(1.3)",
-                  color: params.row.empId ? "error.main" : "success.main",
-                  filter: params.row.empId
-                    ? "drop-shadow(0 0 4px rgb(246, 102, 59))"
-                    : "drop-shadow(0 0 4px rgb(30, 237, 68))",
-                },
-              }}
-              onClick={() => handleAssign(params.row)}
-            >
-              {params.row.empId ? <PersonRemoveIcon /> : <PersonAddIcon />}
-            </IconButton>
-          </Tooltip>
+      <Tooltip title={params.row.empId ? "Unassign" : "Assign"}>
+        <IconButton
+          sx={{
+            transition: "transform 0.2s",
+            color: "inherit",
+            "&:hover": {
+              transform: "scale(1.3)",
+              color: params.row.empId ? "error.main" : "success.main",
+              filter: params.row.empId
+                ? "drop-shadow(0 0 4px rgb(246, 102, 59))"
+                : "drop-shadow(0 0 4px rgb(30, 237, 68))",
+            },
+          }}
+          onClick={() => handleAssign(params.row)}
+        >
+          {params.row.empId ? (
+            <PersonRemoveIcon fontSize="medium" />
+          ) : (
+            <PersonAddIcon fontSize="medium" />
+          )}
+        </IconButton>
+      </Tooltip>
 
-          <Tooltip title="History">
-            <IconButton
-              sx={{
-                transition: "transform 0.2s",
-                "&:hover": {
-                  transform: "scale(1.3)",
-                  color: "warning.main",
-                  filter: "drop-shadow(0 0 4px orange)",
-                },
-              }}
-              onClick={() => handleOpenHistoryModal(params.row)}
-            >
-              <HistoryIcon />
-            </IconButton>
-          </Tooltip>
+      <Tooltip title="History">
+        <IconButton
+          sx={{
+            transition: "transform 0.2s",
+            color: "inherit",
+            "&:hover": {
+              transform: "scale(1.3)",
+              color: "warning.main",
+              filter: "drop-shadow(0 0 4px orange)",
+            },
+          }}
+          onClick={() => handleOpenHistoryModal(params.row)}
+        >
+          <HistoryIcon fontSize="medium" />
+        </IconButton>
+      </Tooltip>
 
-          <Tooltip title="Edit">
-            <IconButton
-              sx={{
-                transition: "transform 0.2s",
-                "&:hover": {
-                  transform: "scale(1.3)",
-                  color: "primary.main",
-                  filter: "drop-shadow(0 0 4px #1976d2)",
-                },
-              }}
-              onClick={() => handleOpenEditModal(params.row)}
-            >
-              <EditIcon />
-            </IconButton>
-          </Tooltip>
+      <Tooltip title="Edit">
+        <IconButton
+          sx={{
+            transition: "transform 0.2s",
+            color: "inherit",
+            "&:hover": {
+              transform: "scale(1.3)",
+              color: "primary.main",
+              filter: "drop-shadow(0 0 4px #1976d2)",
+            },
+          }}
+          onClick={() => handleOpenEditModal(params.row)}
+        >
+          <EditIcon fontSize="medium" />
+        </IconButton>
+      </Tooltip>
 
-          <Tooltip title="Delete">
-            <IconButton
-              sx={{
-                transition: "transform 0.2s",
-                "&:hover": {
-                  transform: "scale(1.3)",
-                  color: "error.main",
-                  filter: "drop-shadow(0 0 4px red)",
-                },
-              }}
-              onClick={() => handleDelete(params.row)}
-            >
-              <DeleteIcon />
-            </IconButton>
-          </Tooltip>
-        </Box>
-      ),
-    },
+      <Tooltip title="Scrap">
+        <IconButton
+          sx={{
+            transition: "transform 0.2s",
+            color: "inherit",
+            "&:hover": {
+              transform: "scale(1.3)",
+              color: "error.main",
+              filter: "drop-shadow(0 0 4px red)",
+            },
+          }}
+          onClick={() => handleDelete(params.row)}
+        >
+          <DeleteIcon fontSize="medium" />
+        </IconButton>
+      </Tooltip>
+    </Box>
+  ),
+},
   ];
 
   return (
@@ -374,7 +389,6 @@ function Assets() {
                     onChange={handleSearch}
                     value={filterValue}
                     fullWidth
-
                     sx={{
                       "& .MuiOutlinedInput-root": {
                         background: "#ffffff",
@@ -388,21 +402,21 @@ function Assets() {
                           fontFamily: "'Racing Sans One', sans-serif",
                           fontSize: "0.9rem",
                           color: "#083A40",
-                          paddingTop: "20px", // space for label
+                          paddingTop: "20px", 
                         },
                       },
                       "& .MuiInputLabel-root": {
                         fontFamily: "'Racing Sans One', sans-serif",
                         fontSize: "1rem",
                         color: "#083A40",
-                        transform: "translate(14px, 16px) scale(1)", // default position
+                        transform: "translate(14px, 16px) scale(1)",
                         transition: "all 0.2s ease",
                       },
                       "& .MuiInputLabel-root.Mui-focused": {
-                        transform: "translate(14px, -25px) scale(0.85)", // lifted position
+                        transform: "translate(14px, -25px) scale(0.85)",
                         fontSize: "1.3rem",
                         padding: "0 4px",
-                        color: "#fff"
+                        color: "#fff",
                       },
                     }}
                   />
