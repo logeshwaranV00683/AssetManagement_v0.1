@@ -2,7 +2,6 @@ package com.verinite.assetmanagementtool.service.serviceImpl;
 
 import com.verinite.assetmanagementtool.entity.AssetsEntity;
 import com.verinite.assetmanagementtool.repository.AssetsRepository;
-import com.verinite.assetmanagementtool.repository.LocationRepository;
 import com.verinite.assetmanagementtool.service.AssetService;
 import com.verinite.assetmanagementtool.service.DashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,18 +19,8 @@ public class DashboardServiceImpl implements DashboardService {
     @Autowired
     private AssetsRepository assetRepo;
 
-    @Autowired
-    private LocationRepository locationRepo;
-
-    @Autowired
-    private AssetService assetService;
-
-    @Autowired
-    private DashboardService dashboardService;
-
     public List<AssetsEntity> getAssetCountsWithLocation() {
-        List<AssetsEntity> all = assetRepo.findAll();
-        return all;
+        return assetRepo.findAll();
     }
 
     public ResponseEntity<?> getFormattedAssetCounts(List<String> locations) {
@@ -59,12 +48,10 @@ public class DashboardServiceImpl implements DashboardService {
             assetData.put("assignedCount", assignedCount);
             assetData.put("totalCount", totalCount);
 
-            // Check if location is already in the map
             if (!locationDataMap.containsKey(location)) {
                 locationDataMap.put(location, new HashMap<>());
             }
 
-            // Add or update asset data for the location
             locationDataMap.get(location).put(assetName, assetData);
         }
 
@@ -88,13 +75,9 @@ public class DashboardServiceImpl implements DashboardService {
                 assetData.put("assignedCount", assignedCount);
                 assetData.put("totalCount", totalCount);
 
-                // Check if location is already in the map
                 if (!locationDataMap.containsKey(location)) {
                     locationDataMap.put(location, assetData);
                 } else {
-                    // Update the existing data if needed (optional, depending on your logic)
-                    // For example, you can add counts together if multiple records exist for the
-                    // same location
                     Map<String, Object> existingAssetData = locationDataMap.get(location);
                     existingAssetData.put("unassignedCount",
                             (Long) existingAssetData.get("unassignedCount") + unassignedCount);
@@ -106,7 +89,6 @@ public class DashboardServiceImpl implements DashboardService {
         } catch (Exception e) {
 
             System.err.println("An error occurred while fetching asset counts: " + e.getMessage());
-            // Optionally, rethrow the exception or return an empty map/partial data
             throw new RuntimeException("Failed to fetch asset counts", e);
         }
 

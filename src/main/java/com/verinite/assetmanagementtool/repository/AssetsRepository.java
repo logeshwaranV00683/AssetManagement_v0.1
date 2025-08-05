@@ -47,4 +47,6 @@ public interface AssetsRepository extends JpaRepository<AssetsEntity, Number> {
     List<Object[]> findAggregatedAssetCountsByAssetTypeAndLocation(@Param("assetType") String assetType);
 
     boolean existsBySerialNumber(String serialNumber);
+
+    void deleteBySerialNumber(String serialNumber);
 }

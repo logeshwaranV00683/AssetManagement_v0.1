@@ -16,4 +16,6 @@ public interface AssetsHistoryServices {
     public void saveHistory(AssignedAssetsEntity assignedAssetsEntity);
 
     List<AssetsHistoryEntity> getAssetsHistoryBySerialNumberSorted(String serialNumber);
+
+    void updateHistory(AssignedAssetsEntity assignedAssets, String serialNumber);
 }

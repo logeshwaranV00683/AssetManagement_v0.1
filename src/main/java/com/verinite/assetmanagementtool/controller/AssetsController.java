@@ -4,7 +4,6 @@ import com.verinite.assetmanagementtool.dto.AssetExportDto;
 import com.verinite.assetmanagementtool.dto.AssetsDto;
 import com.verinite.assetmanagementtool.response.SaveAssetResponse;
 import com.verinite.assetmanagementtool.service.AssetService;
-import com.verinite.assetmanagementtool.service.serviceImpl.AssetNameServiceImpl;
 import com.verinite.assetmanagementtool.service.serviceImpl.AssetServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -31,17 +30,12 @@ import java.util.List;
 @RequestMapping("/assetManager/v1/")
 public class AssetsController implements ApplicationRunner {
 
-    AssetNameServiceImpl assetNameServiceImpl;
 
     @Autowired
     AssetService assetService2;
     @Autowired
     AssetServiceImpl assetService;
 
-    public AssetsController(AssetNameServiceImpl assetNameServiceImpl) {
-        super();
-        this.assetNameServiceImpl = assetNameServiceImpl;
-    }
 
     @GetMapping("asset/listOfAssets")
     public ResponseEntity<List<AssetsDto>> getAllAssets() {
@@ -73,12 +67,6 @@ public class AssetsController implements ApplicationRunner {
         SaveAssetResponse updateAsset = assetService.updateAsset(saveAssetResponse);
 
         return new ResponseEntity<>(updateAsset == null ? "Cannot Update the given details" : updateAsset, HttpStatus.OK);
-    }
-
-    @DeleteMapping("asset/delete/{id}")
-    public ResponseEntity<?> delete(@PathVariable int id) {
-        assetService.deleteAsset(id);
-        return new ResponseEntity<>("Asset Scrapped successfully. ",HttpStatus.OK);
     }
 
     @Override

@@ -17,7 +17,7 @@ public interface AssetService {
 
     public SaveAssetResponse updateAsset(SaveAssetResponse asset);
 
-    public void deleteAsset(int id);
+    public void scrapAsset(int id);
 
     public List<AssetsEntity> getThroughStatus(String str);
 
@@ -30,8 +30,6 @@ public interface AssetService {
     public List<AssetsEntity> getAssigned();
 
     public AssetsDto getAssetsDetails(Integer assetId);
-
-    String deleteAsset(Integer assetId);
 
     List<AssetsDto> listOfAllAsset();
 

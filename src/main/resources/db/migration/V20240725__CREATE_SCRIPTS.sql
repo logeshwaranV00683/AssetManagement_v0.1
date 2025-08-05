@@ -30,26 +30,6 @@ CREATE TABLE `tbl_admin` (
 INSERT INTO `tbl_admin` (`emp_id`, `first_name`, `last_name`, `location`, `mail`, `password`, `role`, `status`)
 VALUES ('V00000', 'admin', '', 'Pune', 'logeshwaran.s@verinite.com', '$2a$10$.KSwveJZ.bG2f4FsPfWe7eavi9cEjj305v6RzDyh/yAEfCbd46cfS', 'admin', 'Active');
 
-
-CREATE TABLE `asset_types` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `asset_type` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-CREATE TABLE `designation` (
-  `desc_id` bigint NOT NULL,
-  `position` varchar(255) DEFAULT NULL,
-  `title` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`desc_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-CREATE TABLE `tbl_asset_names` (
-  `asset_name_id` bigint NOT NULL,
-  `asset_name` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`asset_name_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 CREATE TABLE `tbl_assets` (
   `asset_id` int NOT NULL AUTO_INCREMENT,
   `added_by` varchar(255) DEFAULT NULL,
@@ -103,26 +83,14 @@ CREATE TABLE `tbl_count` (
   UNIQUE KEY `unique_location_type` (`location`, `type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-
-CREATE TABLE `tbl_location` (
-  `loc_code` int NOT NULL AUTO_INCREMENT,
-  `country` varchar(255) NOT NULL,
-  `loc_name` varchar(255) DEFAULT NULL,
-  `state` varchar(255) NOT NULL,
-  PRIMARY KEY (`loc_code`)
+CREATE TABLE `tbl_deleted_asset` (
+  `serial_no` VARCHAR(255) NOT NULL,
+  `asset_name` VARCHAR(255) DEFAULT NULL,
+  `purchase_date` DATE DEFAULT NULL,
+  `deleted_date` DATE DEFAULT NULL,
+  `type` VARCHAR(255) DEFAULT NULL,
+  `location` VARCHAR(255) DEFAULT NULL,
+  `asset_sourced_by` VARCHAR(255) DEFAULT NULL,
+  `deleted_by` VARCHAR(255) DEFAULT NULL,
+  PRIMARY KEY (`serial_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-CREATE TABLE `tbl_scraptable` (
-  `scrap_id` int NOT NULL AUTO_INCREMENT,
-  `assetname` varchar(255) DEFAULT NULL,
-  `serial_no` varchar(255) DEFAULT NULL,
-  `asset_id` int NOT NULL,
-  `purchase_date` datetime(6) DEFAULT NULL,
-  `status` varchar(255) DEFAULT NULL,
-  `type` varchar(255) DEFAULT NULL,
-  `users` varchar(255) DEFAULT NULL,
-  `warranty_date` datetime(6) DEFAULT NULL,
-  PRIMARY KEY (`scrap_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-

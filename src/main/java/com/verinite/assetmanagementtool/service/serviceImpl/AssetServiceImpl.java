@@ -6,10 +6,12 @@ import com.verinite.assetmanagementtool.dto.AssignableAssetDto;
 import com.verinite.assetmanagementtool.entity.AssetsEntity;
 import com.verinite.assetmanagementtool.entity.AssignedAssetsEntity;
 import com.verinite.assetmanagementtool.entity.CountOfAssetsEntity;
+import com.verinite.assetmanagementtool.entity.DeletedAssetEntity;
 import com.verinite.assetmanagementtool.repository.*;
 import com.verinite.assetmanagementtool.response.SaveAssetResponse;
 import com.verinite.assetmanagementtool.service.AssetService;
 import com.verinite.assetmanagementtool.service.AssetsHistoryServices;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -17,9 +19,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
@@ -58,6 +60,8 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
     AssignedAssetsServiceImpl assignedAssetsService;
     @Autowired
     private Validator validator;
+    @Autowired
+    private DeletedAssetRepository deletedAssetRepository;
 
 
     public ResponseEntity<AssetsDto> saveAsset(AssetsDto assetDto) {
@@ -211,7 +215,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
     }
 
     @Override
-    public void deleteAsset(int id) {
+    public void scrapAsset(int id) {
         Optional<AssetsEntity> optionalAsset = assetRepo.findById(id);
         if (optionalAsset.isEmpty()) {
             throw new IllegalArgumentException("Invalid asset ID: " + id);
@@ -304,19 +308,6 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
 
         AssetsEntity assetsEntity = optionalAssetsEntity.get();
         return modelMapper.map(assetsEntity, AssetsDto.class);
-    }
-
-    @Override
-    public String deleteAsset(Integer assetId) {
-        Optional<AssetsEntity> optionalAssetsEntity = assetRepo.findByAssetId(assetId);
-
-        if (optionalAssetsEntity.isEmpty()) {
-            throw new RuntimeException("Asset not found for ID: " + assetId);
-        }
-
-        assetRepo.deleteById(assetId);
-
-        return "Asset with ID " + assetId + " has been successfully deleted.";
     }
 
     @Override
@@ -694,7 +685,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             if (assetsEntity != null) {
                 if (assetsEntity.getAssetName().equalsIgnoreCase(asset.getAssetName()) && assetsEntity.getPurchaseDate().isEqual(asset.getPurchaseDate())) {
                     try{
-                        deleteAsset(assetsEntity.getAssetId());
+                        scrapAsset(assetsEntity.getAssetId());
                     }catch (IllegalArgumentException e)
                     {
                         skippedData.put(asset.getSerialNumber(), e.getMessage());
@@ -727,7 +718,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                 continue;
             }
             try {
-                deleteAsset(Objects.requireNonNull(saveAsset(asset).getBody()).getAssetId());
+                scrapAsset(Objects.requireNonNull(saveAsset(asset).getBody()).getAssetId());
             } catch (IllegalArgumentException e) {
                 skippedData.put(asset.getSerialNumber(), e.getMessage());
             }
