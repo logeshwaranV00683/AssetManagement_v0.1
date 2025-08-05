@@ -52,27 +52,22 @@ function AssignAsset({ open, handleClose, asset, fetchAssets }) {
     };
 
     try {
-      const result = await assignAsset([assetData]);
-      showSuccessAlert("Asset Assigned!", result);
-      fetchAssets();
-      handleCloseDialog();
-    } catch (error) {
-      if (error.status === 406) {
-        return showWarningAlert(
-          "Already Assigned",
-          "This asset has already been assigned."
-        );
-      } else if (error.status === 400) {
-        return showWarningAlert(
-          "Asset Was In Scrap",
-          "Please check the asset data and try again."
-        );
-      } else if (error.status === 404) {
-        return showWarningAlert("Employee Status Was In InActive");
-      } else {
-        return showErrorAlert("Assigning Failed", "An error occurred.");
-      }
-    }
+          const result = await assignAsset([assetData]);
+          showSuccessAlert("Asset Assigned!", result);
+          fetchAssets();
+          handleCloseDialog();
+        } catch (error) {
+          if (error.status === 406 && typeof error.message === "object") {
+            const [serialNo, reason] = Object.entries(error.message)[0] || [];
+            return showWarningAlert(
+              `Failed to Assign: ${serialNo}`,
+              `${reason}`
+            );
+  } else {
+    return showErrorAlert("Assigning Failed", "An error occurred.");
+  }
+}
+
   };
 
   const handleCloseDialog = () => {
