@@ -10,6 +10,7 @@ import {
   FormControl,
   InputLabel,
   IconButton,
+  FormHelperText,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -30,9 +31,15 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3),
+    padding: theme.spacing(3, 4, 3),
     position: "relative",
-    borderRadius: 8,
+    borderRadius: 12,
+    width: "60%",
+    maxWidth: 700,
+    maxHeight: "75%",
+    overflowY: "auto",
+    scrollbarWidth: "none",
+    "&::-webkit-scrollbar": { display: "none" },
   },
   textCenter: {
     textAlign: "center",
@@ -41,19 +48,16 @@ const useStyles = makeStyles((theme) => ({
     display: "grid",
     gridTemplateColumns: "1fr 1fr",
     gap: theme.spacing(2),
-    alignItems: "center",
+    alignItems: "flex-start",
     [theme.breakpoints.down("sm")]: {
       gridTemplateColumns: "1fr",
     },
   },
-  cancelButton: {
-    marginRight: theme.spacing(2),
-    backgroundColor: theme.palette.error.main,
-    color: theme.palette.error.contrastText,
-  },
-  saveButton: {
-    backgroundColor: theme.palette.success.main,
-    color: theme.palette.success.contrastText,
+  errorText: {
+    color: "red",
+    fontSize: "0.8rem",
+    marginBottom: 2,
+    minHeight: 18,
   },
   actionsContainer: {
     display: "flex",
@@ -88,6 +92,18 @@ function EditEmployeeModal({
 
   const [isUpdating, setIsUpdating] = useState(false);
 
+  const [touched, setTouched] = useState({
+    firstName: false,
+    lastName: false,
+    role: false,
+    mail: false,
+    mobile: false,
+    location: false,
+    status: false,
+    department: false,
+    designation: false,
+  });
+
   useEffect(() => {
     if (open) {
       fetchLocations();
@@ -106,6 +122,18 @@ function EditEmployeeModal({
         setDepartment(employee.department || "");
         setDesignation(employee.designation || "");
       }
+
+      setTouched({
+        firstName: false,
+        lastName: false,
+        role: false,
+        mail: false,
+        mobile: false,
+        location: false,
+        status: false,
+        department: false,
+        designation: false,
+      });
     }
   }, [open, employee]);
 
@@ -136,31 +164,43 @@ function EditEmployeeModal({
     }
   };
 
-  // Add new options dynamically
-  const commitLocationOption = (value) => {
-    if (value && !locationOptions.includes(value)) {
-      setLocationOptions((prev) => [...prev, value]);
-    }
-  };
-
-  const commitDepartmentOption = (value) => {
-    if (value && !departmentOptions.includes(value)) {
-      setDepartmentOptions((prev) => [...prev, value]);
-    }
-  };
-
-  const commitDesignationOption = (value) => {
-    if (value && !designationOptions.includes(value)) {
-      setDesignationOptions((prev) => [...prev, value]);
+  const commitOption = (value, options, setOptions) => {
+    if (value && !options.includes(value)) {
+      setOptions((prev) => [...prev, value]);
     }
   };
 
   const handleUpdateEmployee = async () => {
-    if (!employee) return;
+    if (viewOnly || !employee) return;
+
+    if (
+      !firstName ||
+      !lastName ||
+      !role ||
+      !mail ||
+      !mobile ||
+      !location ||
+      !status ||
+      !department ||
+      !designation
+    ) {
+      setTouched({
+        firstName: true,
+        lastName: true,
+        role: true,
+        mail: true,
+        mobile: true,
+        location: true,
+        status: true,
+        department: true,
+        designation: true,
+      });
+      toast.error("Please fill all required fields!");
+      return;
+    }
 
     const updatedFields = {};
     const currentValues = {
-      empId,
       firstName,
       lastName,
       role,
@@ -205,6 +245,28 @@ function EditEmployeeModal({
     }
   };
 
+  const renderFieldWithError = (label, value, setValue, key, type = "text") => (
+    <Box sx={{ display: "flex", flexDirection: "column" }}>
+      <span
+        className={classes.errorText}
+        style={{
+          visibility: touched[key] && !value ? "visible" : "hidden",
+        }}
+      >
+        This field is required *
+      </span>
+      <TextField
+        label={label}
+        value={value}
+        type={type}
+        onChange={(e) => setValue(e.target.value)}
+        onBlur={() => setTouched((prev) => ({ ...prev, [key]: true }))}
+        fullWidth
+        disabled={viewOnly}
+      />
+    </Box>
+  );
+
   return (
     <Modal
       open={open}
@@ -228,146 +290,220 @@ function EditEmployeeModal({
 
         <form>
           <div className={classes.formGrid}>
+            {/* Employee ID (readonly) */}
             <TextField label="Employee ID" value={empId} fullWidth disabled />
 
-            <TextField
-              label="First Name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              fullWidth
-              disabled={viewOnly}
-            />
-            <TextField
-              label="Last Name"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              fullWidth
-              disabled={viewOnly}
-            />
+            {renderFieldWithError(
+              "First Name",
+              firstName,
+              setFirstName,
+              "firstName"
+            )}
+            {renderFieldWithError(
+              "Last Name",
+              lastName,
+              setLastName,
+              "lastName"
+            )}
 
-            <FormControl fullWidth disabled={viewOnly}>
-              <InputLabel htmlFor="role">Role</InputLabel>
-              <Select
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                inputProps={{ name: "role", id: "role" }}
+            {/* Role */}
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <span
+                className={classes.errorText}
+                style={{
+                  visibility: touched.role && !role ? "visible" : "hidden",
+                }}
               >
-                <MenuItem value="Employee">Employee</MenuItem>
-                <MenuItem value="Admin">Admin</MenuItem>
-              </Select>
-            </FormControl>
-
-            <TextField
-              label="Email"
-              value={mail}
-              onChange={(e) => setMail(e.target.value)}
-              fullWidth
-              disabled={viewOnly}
-            />
-            <TextField
-              label="Mobile"
-              value={mobile}
-              onChange={(e) => setMobile(e.target.value)}
-              fullWidth
-              disabled={viewOnly}
-            />
-
-            {/* Location Autocomplete */}
-            <Autocomplete
-              freeSolo
-              options={locationOptions}
-              value={location}
-              onChange={(event, newValue) => {
-                setLocation(newValue || "");
-                commitLocationOption(newValue);
-              }}
-              onInputChange={(event, newInputValue) => {
-                setLocation(newInputValue || "");
-              }}
-              onBlur={() => commitLocationOption(location)}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Location"
-                  fullWidth
-                  disabled={viewOnly}
-                />
-              )}
-            />
-
-            <FormControl fullWidth disabled={viewOnly}>
-              <InputLabel htmlFor="status">Status</InputLabel>
-              <Select
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                inputProps={{ name: "status", id: "status" }}
+                This field is required *
+              </span>
+              <FormControl
+                fullWidth
+                size="medium"
+                error={touched.role && !role}
+                onBlur={() => setTouched((prev) => ({ ...prev, role: true }))}
+                disabled={viewOnly}
               >
-                <MenuItem value="Active">Active</MenuItem>
-                <MenuItem value="Inactive">Inactive</MenuItem>
-              </Select>
-            </FormControl>
+                <InputLabel>Role</InputLabel>
+                <Select
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  label="Role"
+                >
+                  <MenuItem value="Employee">Employee</MenuItem>
+                  <MenuItem value="Admin">Admin</MenuItem>
+                </Select>
+                <FormHelperText>
+                  {touched.role && !role ? "This field is required *" : " "}
+                </FormHelperText>
+              </FormControl>
+            </Box>
 
-            {/* Department Autocomplete */}
-            <Autocomplete
-              freeSolo
-              options={departmentOptions}
-              value={department}
-              onChange={(event, newValue) => {
-                setDepartment(newValue || "");
-                commitDepartmentOption(newValue);
-              }}
-              onInputChange={(event, newInputValue) => {
-                setDepartment(newInputValue || "");
-              }}
-              onBlur={() => commitDepartmentOption(department)}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Department"
-                  fullWidth
-                  disabled={viewOnly}
-                />
-              )}
-            />
+            {renderFieldWithError("Email", mail, setMail, "mail")}
+            {renderFieldWithError("Mobile", mobile, setMobile, "mobile")}
 
-            {/* Designation Autocomplete */}
-            <Autocomplete
-              freeSolo
-              options={designationOptions}
-              value={designation}
-              onChange={(event, newValue) => {
-                setDesignation(newValue || "");
-                commitDesignationOption(newValue);
-              }}
-              onInputChange={(event, newInputValue) => {
-                setDesignation(newInputValue || "");
-              }}
-              onBlur={() => commitDesignationOption(designation)}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Designation"
-                  fullWidth
-                  disabled={viewOnly}
-                />
-              )}
-            />
+            {/* Location */}
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <span
+                className={classes.errorText}
+                style={{
+                  visibility:
+                    touched.location && !location ? "visible" : "hidden",
+                }}
+              >
+                This field is required *
+              </span>
+              <Autocomplete
+                freeSolo
+                options={locationOptions}
+                value={location}
+                onChange={(event, newValue) => {
+                  setLocation(newValue || "");
+                  commitOption(newValue, locationOptions, setLocationOptions);
+                }}
+                onInputChange={(event, newInputValue) =>
+                  setLocation(newInputValue || "")
+                }
+                onBlur={() =>
+                  setTouched((prev) => ({ ...prev, location: true }))
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Location"
+                    fullWidth
+                    disabled={viewOnly}
+                  />
+                )}
+              />
+            </Box>
+
+            {/* Status */}
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <span
+                className={classes.errorText}
+                style={{
+                  visibility: touched.status && !status ? "visible" : "hidden",
+                }}
+              >
+                This field is required *
+              </span>
+              <FormControl
+                fullWidth
+                size="medium"
+                error={touched.status && !status}
+                onBlur={() => setTouched((prev) => ({ ...prev, status: true }))}
+                disabled={viewOnly}
+              >
+                <InputLabel>Status</InputLabel>
+                <Select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                  label="Status"
+                >
+                  <MenuItem value="Active">Active</MenuItem>
+                  <MenuItem value="Inactive">Inactive</MenuItem>
+                </Select>
+                <FormHelperText>
+                  {touched.status && !status ? "This field is required *" : " "}
+                </FormHelperText>
+              </FormControl>
+            </Box>
+
+            {/* Department */}
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <span
+                className={classes.errorText}
+                style={{
+                  visibility:
+                    touched.department && !department ? "visible" : "hidden",
+                }}
+              >
+                This field is required *
+              </span>
+              <Autocomplete
+                freeSolo
+                options={departmentOptions}
+                value={department}
+                onChange={(event, newValue) => {
+                  setDepartment(newValue || "");
+                  commitOption(
+                    newValue,
+                    departmentOptions,
+                    setDepartmentOptions
+                  );
+                }}
+                onInputChange={(event, newInputValue) =>
+                  setDepartment(newInputValue || "")
+                }
+                onBlur={() =>
+                  setTouched((prev) => ({ ...prev, department: true }))
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Department"
+                    fullWidth
+                    disabled={viewOnly}
+                  />
+                )}
+              />
+            </Box>
+
+            {/* Designation */}
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <span
+                className={classes.errorText}
+                style={{
+                  visibility:
+                    touched.designation && !designation ? "visible" : "hidden",
+                }}
+              >
+                This field is required *
+              </span>
+              <Autocomplete
+                freeSolo
+                options={designationOptions}
+                value={designation}
+                onChange={(event, newValue) => {
+                  setDesignation(newValue || "");
+                  commitOption(
+                    newValue,
+                    designationOptions,
+                    setDesignationOptions
+                  );
+                }}
+                onInputChange={(event, newInputValue) =>
+                  setDesignation(newInputValue || "")
+                }
+                onBlur={() =>
+                  setTouched((prev) => ({ ...prev, designation: true }))
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Designation"
+                    fullWidth
+                    disabled={viewOnly}
+                  />
+                )}
+              />
+            </Box>
           </div>
 
           {!viewOnly && (
             <div className={classes.actionsContainer}>
               <Button
                 variant="contained"
-                className={classes.cancelButton}
                 onClick={handleClose}
+                sx={{ backgroundColor: "error.main", color: "white" }}
               >
                 Cancel
               </Button>
               <Button
                 variant="contained"
-                className={classes.saveButton}
                 onClick={handleUpdateEmployee}
                 disabled={isUpdating}
+                sx={{ backgroundColor: "success.main", color: "white" }}
               >
                 {isUpdating ? "Updating..." : "Update"}
               </Button>

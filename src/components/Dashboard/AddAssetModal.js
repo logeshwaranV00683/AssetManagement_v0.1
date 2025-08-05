@@ -20,8 +20,8 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
 
   const [assetName, setAssetName] = useState("");
   const [serialNumber, setSerialNumber] = useState("");
-  const [operatingSystem, setOperatingSystem] = useState("");
-  const [modelName, setModelName] = useState("");
+  const [operatingSystem, setOperatingSystem] = useState("Nill");
+  const [modelName, setModelName] = useState("Nill");
   const [purchaseDate, setPurchaseDate] = useState("");
   const [warrantyDate, setWarrantyDate] = useState("");
   const [addedBy] = useState(user.empId);
@@ -36,6 +36,24 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
 
   const [assetSourcedBy, setAssetSourcedBy] = useState("");
   const [assetSourceOptions, setAssetSourceOptions] = useState([]);
+
+  const [touched, setTouched] = useState({
+    assetName: false,
+    serialNumber: false,
+    location: false,
+    type: false,
+    purchaseDate: false,
+    warrantyDate: false,
+    assetSourcedBy: false,
+  });
+
+  const errorStyle = (visible) => ({
+    color: "red",
+    fontSize: "0.8rem",
+    minHeight: "16px",
+    marginBottom: "2px",
+    visibility: visible ? "visible" : "hidden",
+  });
 
   useEffect(() => {
     if (open) {
@@ -135,6 +153,15 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
     setAssetSourcedBy("");
     setPurchaseDate("");
     setWarrantyDate("");
+    setTouched({
+      assetName: false,
+      serialNumber: false,
+      location: false,
+      type: false,
+      purchaseDate: false,
+      warrantyDate: false,
+      assetSourcedBy: false,
+    });
   };
 
   const handleCloseModal = () => {
@@ -163,6 +190,11 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
+
+          scrollbarWidth: "none",
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
         }}
       >
         <IconButton
@@ -191,88 +223,101 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
           }}
         >
           {/* Asset Name */}
-          <TextField
-            label="Asset Name"
-            value={assetName}
-            onChange={(e) => setAssetName(e.target.value)}
-            fullWidth
-          />
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <span style={errorStyle(!assetName && touched.assetName)}>
+              This field is required *
+            </span>
+            <TextField
+              label="Asset Name"
+              value={assetName}
+              onChange={(e) => setAssetName(e.target.value)}
+              onBlur={() =>
+                setTouched((prev) => ({ ...prev, assetName: true }))
+              }
+              fullWidth
+              required
+            />
+          </Box>
 
           {/* Serial Number */}
-          <TextField
-            label="Serial Number"
-            value={serialNumber}
-            onChange={(e) => setSerialNumber(e.target.value)}
-            fullWidth
-          />
-
-          {/* Location Autocomplete */}
-          <Autocomplete
-            freeSolo
-            options={locationOptions}
-            value={location}
-            onChange={(event, newValue) => {
-              setLocation(newValue || "");
-              commitNewOption(newValue, locationOptions, setLocationOptions);
-            }}
-            onInputChange={(event, newInputValue) => {
-              setLocation(newInputValue || "");
-            }}
-            onBlur={() =>
-              commitNewOption(location, locationOptions, setLocationOptions)
-            }
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Location"
-                placeholder="Enter Location Name (New if not in list)"
-                variant="outlined"
-                fullWidth
-              />
-            )}
-          />
-
-          {/* Asset Type Autocomplete */}
-          <Autocomplete
-            freeSolo
-            options={typeOptions}
-            value={customType || type}
-            onChange={(event, newValue) => {
-              if (newValue && !typeOptions.includes(newValue)) {
-                setTypeOptions((prev) => [...prev, newValue]);
-                setCustomType(newValue);
-                setType("__custom__");
-              } else {
-                setType(newValue || "");
-                setCustomType("");
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <span style={errorStyle(!serialNumber && touched.serialNumber)}>
+              This field is required *
+            </span>
+            <TextField
+              label="Serial Number"
+              value={serialNumber}
+              onChange={(e) => setSerialNumber(e.target.value)}
+              onBlur={() =>
+                setTouched((prev) => ({ ...prev, serialNumber: true }))
               }
-            }}
-            onInputChange={(event, newInputValue) => {
-              if (newInputValue && !typeOptions.includes(newInputValue)) {
-                setCustomType(newInputValue);
-                setType("__custom__");
-              } else {
-                setType(newInputValue);
-                setCustomType("");
-              }
-            }}
-            onBlur={() => {
-              if (customType && !typeOptions.includes(customType)) {
-                setTypeOptions((prev) => [...prev, customType]);
-              }
-            }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Asset Type"
-                placeholder="Enter Asset Type (New if not in list)"
-                variant="outlined"
-                fullWidth
-              />
-            )}
-          />
+              fullWidth
+              required
+            />
+          </Box>
 
-          {/* Operating System */}
+          {/* Location */}
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <span style={errorStyle(!location && touched.location)}>
+              This field is required *
+            </span>
+            <Autocomplete
+              freeSolo
+              options={locationOptions}
+              value={location}
+              onChange={(event, newValue) => {
+                setLocation(newValue || "");
+                commitNewOption(newValue, locationOptions, setLocationOptions);
+              }}
+              onInputChange={(event, newInputValue) => {
+                setLocation(newInputValue || "");
+              }}
+              onBlur={() => {
+                setTouched((prev) => ({ ...prev, location: true }));
+                commitNewOption(location, locationOptions, setLocationOptions);
+              }}
+              renderInput={(params) => (
+                <TextField {...params} label="Location" fullWidth required />
+              )}
+            />
+          </Box>
+
+          {/* Asset Type */}
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <span style={errorStyle(!type && !customType && touched.type)}>
+              This field is required *
+            </span>
+            <Autocomplete
+              freeSolo
+              options={typeOptions}
+              value={customType || type}
+              onChange={(event, newValue) => {
+                if (newValue && !typeOptions.includes(newValue)) {
+                  setTypeOptions((prev) => [...prev, newValue]);
+                  setCustomType(newValue);
+                  setType("__custom__");
+                } else {
+                  setType(newValue || "");
+                  setCustomType("");
+                }
+              }}
+              onInputChange={(event, newInputValue) => {
+                if (newInputValue && !typeOptions.includes(newInputValue)) {
+                  setCustomType(newInputValue);
+                  setType("__custom__");
+                } else {
+                  setType(newInputValue);
+                  setCustomType("");
+                }
+              }}
+              onBlur={() => setTouched((prev) => ({ ...prev, type: true }))}
+              renderInput={(params) => (
+                <TextField {...params} label="Asset Type" fullWidth required />
+              )}
+            />
+          </Box>
+
+          {/* Operating System - Optional */}
           <TextField
             label="Operating System"
             value={operatingSystem}
@@ -289,58 +334,81 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
           />
 
           {/* Purchase Date */}
-          <TextField
-            label="Purchase Date"
-            type="date"
-            value={purchaseDate}
-            onChange={(e) => setPurchaseDate(e.target.value)}
-            InputLabelProps={{ shrink: true }}
-            fullWidth
-          />
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <span style={errorStyle(!purchaseDate && touched.purchaseDate)}>
+              This field is required *
+            </span>
+            <TextField
+              label="Purchase Date"
+              type="date"
+              value={purchaseDate}
+              onChange={(e) => setPurchaseDate(e.target.value)}
+              onBlur={() =>
+                setTouched((prev) => ({ ...prev, purchaseDate: true }))
+              }
+              InputLabelProps={{ shrink: true }}
+              fullWidth
+              required
+            />
+          </Box>
 
           {/* Warranty Date */}
-          <TextField
-            label="Warranty Date"
-            type="date"
-            value={warrantyDate}
-            onChange={(e) => setWarrantyDate(e.target.value)}
-            InputLabelProps={{ shrink: true }}
-            fullWidth
-          />
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <span style={errorStyle(!warrantyDate && touched.warrantyDate)}>
+              This field is required *
+            </span>
+            <TextField
+              label="Warranty Date"
+              type="date"
+              value={warrantyDate}
+              onChange={(e) => setWarrantyDate(e.target.value)}
+              onBlur={() =>
+                setTouched((prev) => ({ ...prev, warrantyDate: true }))
+              }
+              InputLabelProps={{ shrink: true }}
+              fullWidth
+              required
+            />
+          </Box>
 
-          {/* Asset Sourced By Autocomplete */}
-          <Autocomplete
-            freeSolo
-            options={assetSourceOptions}
-            value={assetSourcedBy}
-            onChange={(event, newValue) => {
-              setAssetSourcedBy(newValue || "");
-              commitNewOption(
-                newValue,
-                assetSourceOptions,
-                setAssetSourceOptions
-              );
-            }}
-            onInputChange={(event, newInputValue) => {
-              setAssetSourcedBy(newInputValue || "");
-            }}
-            onBlur={() =>
-              commitNewOption(
-                assetSourcedBy,
-                assetSourceOptions,
-                setAssetSourceOptions
-              )
-            }
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Asset Sourced By"
-                placeholder="Enter Client Company Name (New if not in list)"
-                variant="outlined"
-                fullWidth
-              />
-            )}
-          />
+          {/* Asset Sourced By */}
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <span style={errorStyle(!assetSourcedBy && touched.assetSourcedBy)}>
+              This field is required *
+            </span>
+            <Autocomplete
+              freeSolo
+              options={assetSourceOptions}
+              value={assetSourcedBy}
+              onChange={(event, newValue) => {
+                setAssetSourcedBy(newValue || "");
+                commitNewOption(
+                  newValue,
+                  assetSourceOptions,
+                  setAssetSourceOptions
+                );
+              }}
+              onInputChange={(event, newInputValue) => {
+                setAssetSourcedBy(newInputValue || "");
+              }}
+              onBlur={() => {
+                setTouched((prev) => ({ ...prev, assetSourcedBy: true }));
+                commitNewOption(
+                  assetSourcedBy,
+                  assetSourceOptions,
+                  setAssetSourceOptions
+                );
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Asset Sourced By"
+                  fullWidth
+                  required
+                />
+              )}
+            />
+          </Box>
         </Box>
 
         <Box
