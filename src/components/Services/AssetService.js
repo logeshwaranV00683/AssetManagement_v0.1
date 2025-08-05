@@ -275,3 +275,30 @@ export const getassetsourcedby = async () => {
     return [];
   }
 };
+export const getDeletedAssets = async () => {
+  const url = `${apiUrl}/assetManager/v1/deletedAsset/getAll`;
+  try {
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok: " + response.statusText);
+    }
+
+    let data = await response.json();
+
+    let filteredData = data.map((asset, index) => ({
+      id: index + 1, // Assigning a row id (optional, required by DataGrid)
+      ...asset,
+    }));
+
+    console.log("Deleted Assets:", filteredData);
+    return filteredData;
+  } catch (error) {
+    console.error("Error fetching deleted assets:", error);
+    throw error;
+  }
+};
