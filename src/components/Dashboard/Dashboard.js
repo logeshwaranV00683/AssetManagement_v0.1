@@ -11,6 +11,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { getAssetTypes, getLocations, getcountsByLocation } from "../Services/DashboardService";
 import "../Style/font.css";
 
+
 function Dashboard() {
   const [locationOptions, setLocationOptions] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState("chennai");
@@ -21,7 +22,7 @@ function Dashboard() {
   const [chartData, setChartData] = useState([]);
 
   const handleSearch = (event) => {
-    const value = event.target.value.toLowerCase();
+    event.target.value.toLowerCase();
     setFilterValue(event.target.value);
   };
 
@@ -108,7 +109,6 @@ function Dashboard() {
               borderRadius: 2,
               border: "1px solid rgba(0, 240, 255, 0.3)",
               background: "rgba(255, 255, 255, 0.05)",
-              overflowY: "auto",
               "&::-webkit-scrollbar": {
                 width: 0,
               },
@@ -172,7 +172,6 @@ function Dashboard() {
               borderRadius: 2,
               background: "rgba(255, 255, 255, 0.05)",
               border: "1px solid rgba(0, 240, 255, 0.3)",
-              overflowY: "auto",
               "&::-webkit-scrollbar": {
                 width: 0,
               },

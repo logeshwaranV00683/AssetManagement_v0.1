@@ -12,7 +12,10 @@ import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 import "../Style/font.css";
-import "../Dashboard/AdminProfile";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import AdminProfile from "../Dashboard/AdminProfile"; 
+
 
 const Header = ({ onLogout }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -41,9 +44,17 @@ const Header = ({ onLogout }) => {
     navigate("/login");
   };
 
+  const [openAdminProfile, setOpenAdminProfile] = useState(false);
+
   const handleAdminProfile = () => {
-    navigate("/AdminProfile");
+    setOpenAdminProfile(true); 
+    // handleMenuClose(); 
   };
+
+  const handleProfileClose = () => {
+    setOpenAdminProfile(false);
+  };
+
 
   return (
     <>
@@ -135,6 +146,22 @@ const Header = ({ onLogout }) => {
                 <LockResetIcon style={{ marginRight: "8px" }} />
                 Profile
               </MenuItem>
+
+              <Dialog
+              key={openAdminProfile ? "open" : "closed"}
+                open={openAdminProfile}
+                onClose={handleProfileClose}
+                fullWidth
+                maxWidth="md" 
+              >
+                <DialogContent sx={{ p: 0 }}>
+                  <AdminProfile
+                    onClose={handleProfileClose} // if you want to close from inside
+                  />
+                </DialogContent>
+              </Dialog>
+
+
 
               <MenuItem
                 onClick={handleLogout}

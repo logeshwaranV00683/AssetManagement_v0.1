@@ -70,7 +70,7 @@ const riseFadeInStyle = `
 }
 `;
 
-const ChartScene = ({ data }) => {
+const ChartScene = ({ data, hideLabels  }) => {
   useEffect(() => {
     const style = document.createElement("style");
     style.innerHTML = riseFadeInStyle;
@@ -99,7 +99,7 @@ const ChartScene = ({ data }) => {
           key={idx}
           height={bar.value / 10}
           color={bar.color}
-          label={`${bar.name}: ${bar.value}`}
+          label={hideLabels ? "" : `${bar.name}: ${bar.value}`}
           position={bar.position}
         />
       ))}
@@ -107,6 +107,7 @@ const ChartScene = ({ data }) => {
       <OrbitControls enableZoom={true} />
     </Canvas>
   );
+  
 };
 
 export default ChartScene;

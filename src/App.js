@@ -15,7 +15,7 @@ import Employee from "./components/Dashboard/Employee";
 import SidebarAssets from "./components/Dashboard/SideBarAssets";
 import SidebarEmployee from "./components/Dashboard/SideBarEmployee";
 import PrivateRoute from "./components/Dashboard/PrivateRoute";
-import MorePage from "./components/Dashboard/MorePage"; 
+import MorePage from "./components/Dashboard/MorePage";
 
 function App() {
   return (
@@ -67,19 +67,17 @@ function App() {
             }
           />
           <Route
-  path="/more"
-  element={
-    <PrivateRoute>
-      <div className="dashboard-config">
-        <Sidebar />
-        <Header />
-        <MorePage />  
-      </div>
-    </PrivateRoute>
-  }
-/>
-
-
+            path="/more"
+            element={
+              <PrivateRoute>
+                <div className="dashboard-config">
+                  <Sidebar />
+                  <Header />
+                  <MorePage />
+                </div>
+              </PrivateRoute>
+            }
+          />
           <Route
             path="/adminprofile"
             element={
