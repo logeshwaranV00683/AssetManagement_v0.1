@@ -17,6 +17,7 @@ import {
 import AssetHistoryPopup from "./AssetHistoryPop";
 import EditAssetModal from "./EditAssetModal";
 import EditEmployeeModal from "./EditEmployeeModal";
+import { blueGrey } from "@material-ui/core/colors";
 
 const ToggleButton = ({ showDeleted, setShowDeleted }) => (
   <motion.div
@@ -26,9 +27,20 @@ const ToggleButton = ({ showDeleted, setShowDeleted }) => (
     animate={{ opacity: 1, y: 0 }}
     transition={{ type: "spring", stiffness: 200, damping: 12 }}
     onClick={() => setShowDeleted((prev) => !prev)}
-    style={toggleButtonStyle}
   >
-    {showDeleted ? "Show Assigned Assets" : "Show Deleted Assets"}
+  <div
+    style={{
+    backgroundColor: showDeleted ? "red" : "green",
+    color: "white",
+    padding: "8px 16px",
+    borderRadius: "8px",
+    display: "inline-block",
+    fontWeight: "bold",
+    cursor: "pointer"
+  }}
+>
+  {showDeleted ? "Show Deleted Assets" : "Show Assigned Assets"}
+</div>
   </motion.div>
 );
 
@@ -125,16 +137,17 @@ const RecentAssignedAssetPage = () => {
   }, []);
 
   const assignedColumns = [
-    { field: "empId", headerName: "Employee ID", flex: 1 },
-    { field: "employeeName", headerName: "Employee Name", flex: 1 },
-    { field: "serialNumber", headerName: "Serial Number", flex: 1 },
-    { field: "assignedDate", headerName: "Assigned Date", flex: 1 },
+    { field: "empId", headerName: "Employee ID",  headerAlign: "center", align: "center",flex: 1 },
+    { field: "employeeName", headerName: "Employee Name", headerAlign: "center", align: "center",flex: 1 },
+    { field: "serialNumber", headerName: "Serial Number",  headerAlign: "center", align: "center",flex: 1 },
+    { field: "assignedDate", headerName: "Assigned Date",  headerAlign: "center", align: "center",flex: 1 },
     {
       field: "actions",
       headerName: "Actions",
-      minWidth: 150,
-      flex: 2,
+      flex: 1,
       sortable: false,
+      headerAlign: "center", 
+      align: "center",
       renderCell: (params) => (
         <Box display="flex" justifyContent="center" alignItems="center" gap={1}>
           <Tooltip title="View Employee">
@@ -174,19 +187,19 @@ const RecentAssignedAssetPage = () => {
   ];
 
   const deletedColumns = [
-    { field: "serialNo", headerName: "Serial Number", flex: 1 },
-    { field: "assetName", headerName: "Asset Name", flex: 1 },
-    { field: "purchaseDate", headerName: "Purchase Date", flex: 1 },
-    { field: "deletedDate", headerName: "Deleted Date", flex: 1 },
-    { field: "type", headerName: "Type", flex: 1 },
-    { field: "location", headerName: "Location", flex: 1 },
-    { field: "assetSourcedBy", headerName: "Sourced By", flex: 1 },
-    { field: "deletedBy", headerName: "Deleted By", flex: 1 },
+    { field: "serialNo", headerName: "Serial Number", headerAlign: "center", align: "center", flex: 1,},
+    { field: "assetName", headerName: "Asset Name", headerAlign: "center", align: "center", flex: 1,},
+    { field: "purchaseDate", headerName: "Purchase Date", headerAlign: "center", align: "center", flex: 1,},
+    { field: "deletedDate", headerName: "Deleted Date", headerAlign: "center", align: "center", flex: 1,},
+    { field: "type", headerName: "Type", headerAlign: "center", align: "center", flex: 1,},
+    { field: "location", headerName: "Location", headerAlign: "center", align: "center", flex: 1,},
+    { field: "assetSourcedBy", headerName: "Sourced By", headerAlign: "center", align: "center", flex: 1,},
+    { field: "deletedBy", headerName: "Deleted By", headerAlign: "center", align: "center", flex: 1,},
     {
-      field: "actions",
-      headerName: "Actions",
-      minWidth: 150,
-      flex: 2,
+      field: "history",
+      headerName: "History",
+      headerAlign: "center", align: "center",
+      flex: 1,
       sortable: false,
       renderCell: (params) => (
         <Box display="flex" justifyContent="center" alignItems="center" gap={1}>
@@ -221,20 +234,69 @@ const RecentAssignedAssetPage = () => {
           <ToggleButton showDeleted={showDeleted} setShowDeleted={setShowDeleted} />
         </div>
 
-        <h2 style={titleStyle}>
-          {showDeleted ? "Permanently Deleted Assets" : "Today Assigned Assets"}
-        </h2>
+        <h2>
+  {showDeleted ? "Permanently Deleted Assets" : "Today Assigned Assets"}
+</h2>
+
 
         <div style={scrollWrapperStyle}>
           <style>{`div::-webkit-scrollbar { display: none; }`}</style>
           <DataGrid
-            rows={showDeleted ? deletedRows : assignedRows}
-            columns={showDeleted ? deletedColumns : assignedColumns}
-            pageSize={5}
-            rowsPerPageOptions={[5]}
-            disableSelectionOnClick
-            sx={dataGridStyles}
-          />
+  rows={showDeleted ? deletedRows : assignedRows}
+  columns={showDeleted ? deletedColumns : assignedColumns}
+  pageSize={5}
+  rowsPerPageOptions={[5]}
+  autoHeight
+  disableSelectionOnClick
+  sx={{
+    maxHeight: "70vh",  
+    overflow: "hidden",
+    borderRadius: "16px",
+    border: "2px solid #0a1113ff",
+    fontFamily: "'Racing Sans One', sans-serif",
+    color: "#083A40",
+
+    // Hide scrollbar
+    "& .MuiDataGrid-main": {
+      scrollbarWidth: "none",
+      msOverflowStyle: "none",
+    },
+    "& .MuiDataGrid-main::-webkit-scrollbar": {
+      display: "none",
+    },
+    "& .MuiDataGrid-virtualScroller": {
+      scrollbarWidth: "none",
+    },
+    "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": {
+      display: "none",
+    },
+
+    // Styling headers
+    "& .MuiDataGrid-columnHeaders": {
+      background: "linear-gradient(45deg, #6DE0FF, #2BC4F3)",
+      color: "#083A40",
+      fontSize: "16px",
+      fontWeight: 700,
+    },
+    // Cell styling
+    "& .MuiDataGrid-cell": {
+      background: "#F0FBFF",
+      color: "#083A40",
+      fontSize: "15px",
+      borderBottom: "1px solid #D0F0FF",
+    },
+    // Footer styling
+    "& .MuiDataGrid-footerContainer": {
+      background: "linear-gradient(45deg, #6DE0FF, #2BC4F3)",
+      color: "#083A40",
+      fontWeight: 600,
+    },
+    // Hover row effect
+    "& .MuiDataGrid-row:hover": {
+      backgroundColor: "#E0F9FF",
+    },
+  }}
+/>
           <AssetHistoryPopup
             open={openHistoryModal}
             onClose={handleClose}

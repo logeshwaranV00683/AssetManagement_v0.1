@@ -486,12 +486,27 @@ function Assets() {
               <DataGrid
                 rows={filteredRows}
                 columns={columns}
+                autoHeight
                 sx={{
+                  maxHeight: "70vh",  
+                  overflow: "hidden",
                   borderRadius: "16px",
-                  overflowX: "auto",
                   border: "2px solid #0a1113ff",
                   fontFamily: "'Racing Sans One', sans-serif",
                   color: "#083A40",
+                  "& .MuiDataGrid-main": {
+                   scrollbarWidth: "none",
+                   msOverflowStyle: "none",
+                },
+                  "& .MuiDataGrid-main::-webkit-scrollbar": {
+                   display: "none",
+                },
+                  "& .MuiDataGrid-virtualScroller": {
+                   scrollbarWidth: "none",
+                },
+                  "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": {
+                   display: "none",
+                },
                   "& .MuiDataGrid-columnHeaders": {
                     background: "linear-gradient(45deg, #6DE0FF, #2BC4F3)",
                     color: "#083A40",
