@@ -200,3 +200,30 @@ export const getDesignation = async () => {
     return [];
   }
 };
+
+export const getEmployeeById = async (empId) => {
+  const url = `${apiUrl}/assetManager/v1/getEmployee/${empId}`;
+  try {
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok " + response.statusText);
+    }
+
+    const employee = await response.json();
+    const formattedEmployee = {
+      ...employee,
+      id: employee.empId,
+      name: employee.firstName + " " + employee.lastName,
+    };
+
+    return formattedEmployee;
+  } catch (error) {
+    console.error("Error fetching employee:", error);
+    throw error;
+  }
+};

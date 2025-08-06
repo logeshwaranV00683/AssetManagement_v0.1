@@ -6,7 +6,8 @@ import HistoryIcon from "@mui/icons-material/History";
 import PersonIcon from "@mui/icons-material/Person";
 import LaptopChromebookIcon from "@mui/icons-material/LaptopChromebook";
 import { toast } from "react-hot-toast";
-
+import { getEmployeeById } from "../Services/EmployeeService";
+import { getAssetBySerialNumber } from "../Services/AssetService";
 import {
   RecentAssignedAssetDetails,
   getDeletedAssets,
@@ -83,17 +84,29 @@ const RecentAssignedAssetPage = () => {
     }
   };
 
-  const handleViewAsset = (asset) => {
-    setSelectedAsset(asset);
+ const handleViewAsset = async (asset) => {
+  try {
+    const fullAsset = await getAssetBySerialNumber(asset.serialNumber);
+    setSelectedAsset(fullAsset);
     setViewing("asset");
     setOpenEditModal(true);
-  };
+  } catch (error) {
+    console.error("Error fetching asset:", error);
+  }
+};
 
-  const handleViewEmployee = (employee) => {
-    setSelectedEmployee(employee);
+
+  const handleViewEmployee = async (employee) => {
+  try {
+    const fullEmployee = await getEmployeeById(employee.empId);
+    setSelectedEmployee(fullEmployee);
     setViewing("employee");
     setOpenEditModal(true);
-  };
+  } catch (error) {
+    console.error("Error fetching employee:", error);
+  }
+};
+
 
   useEffect(() => {
     const fetchData = async () => {

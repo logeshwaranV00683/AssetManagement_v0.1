@@ -302,3 +302,33 @@ export const getDeletedAssets = async () => {
     throw error;
   }
 };
+export const getAssetBySerialNumber = async (serialNumber) => {
+  const url = `${apiUrl}/assetManager/v1/asset/id/${serialNumber}`;
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      const error = new Error(errorText || "Failed to fetch asset");
+      error.status = response.status;
+      throw error;
+    }
+
+    const asset = await response.json();
+
+    return {
+      ...asset,
+      id: asset.assetId,
+    };
+  } catch (error) {
+    console.error("Error fetching asset by serial number:", error);
+    throw error;
+  }
+};
