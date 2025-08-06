@@ -1,59 +1,63 @@
 import React, { useRef, useMemo, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Html } from '@react-three/drei';
-import { useSpring, a } from '@react-spring/three';
+import * as THREE from 'three';
 
-const ChartBar = ({ height, color, label, position }) => {
+const PieSlice = ({ startAngle, endAngle, radius, height, color, label, total, index }) => {
   const meshRef = useRef();
-  const groupRef = useRef();
-  const labelRef = useRef();
-  const floatStart = useRef(Math.random() * 1000);
 
-  const { scaleY } = useSpring({
-    from: { scaleY: 0 },
-    to: { scaleY: height },
-    config: { mass: 1, tension: 120, friction: 20 },
-  });
+  const shape = useMemo(() => {
+    const shape = new THREE.Shape();
+    shape.moveTo(0, 0);
+    const epsilon = 0.001;
+    shape.absarc(0, 0, radius + epsilon, startAngle, endAngle + epsilon, false);
+    shape.lineTo(0, 0);
+    return shape;
+  }, [startAngle, endAngle, radius]);
 
-  useFrame((state) => {
-    const elapsed = state.clock.getElapsedTime();
-    const floatY = Math.sin(elapsed + floatStart.current) * 0.1;
+  const geometry = useMemo(() => {
+    const extrudeSettings = {
+      steps: 1,
+      depth: height,
+      bevelEnabled: false,
+    };
+    return new THREE.ExtrudeGeometry(shape, extrudeSettings);
+  }, [shape, height]);
 
-    if (groupRef.current) {
-      groupRef.current.position.y = position[1] - 1.2 + floatY;
-    }
 
+  const centerAngle = (startAngle + endAngle) / 2;
+  const labelX = (radius / 1.5) * Math.cos(centerAngle);
+  const labelY = height + 0.2;
+  const labelZ = (radius / 1.5) * Math.sin(centerAngle);
+
+  useFrame(() => {
     if (meshRef.current) {
-      meshRef.current.rotation.y += 0.003;
-    }
-
-    if (labelRef.current) {
-      labelRef.current.style.transform = `translateY(${5 + floatY * 10}px)`;
+      meshRef.current.rotation.y += 0.001;
     }
   });
 
   return (
-    <group ref={groupRef} position={[position[0], position[1] - 1.2, position[2]]}>
-      <a.mesh
-        ref={meshRef}
-        position-y={scaleY.to(h => h / 2)}
-        scale-y={scaleY}
-      >
-        <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color={color} />
-      </a.mesh>
+    <group rotation={[-Math.PI / 2, 0, 0]}> {/* Rotate to stand vertically */}
+      <mesh ref={meshRef} geometry={geometry} >
+        <meshStandardMaterial
+          color={color}
+          emissiveIntensity={0.4}
+          roughness={0.4}
+          metalness={0.1}
+        />
+      </mesh>
 
-      <Html position={[0, height + 0.5, 0]} center>
+      <Html position={[labelX, labelY, labelZ]} center style={{ pointerEvents: 'none' }} zIndexRange={[0, 0]}  >
         <div
-          ref={labelRef}
           style={{
-            color: '#00f0ff',
-            fontWeight: 550,
-            fontSize: '16px',
-            transition: 'opacity 1s',
-            animation: 'riseFadeIn 1s ease-out forwards',
-            transform: 'translateY(5px)',
-            willChange: 'transform',
+            color: color,
+            textShadow: '0 0 3px rgba(0,0,0,0.6)',
+            fontSize: '14px',
+            letterSpacing: '1.5px',
+            background: 'transparent',
+            padding: '4px 8px',
+            borderRadius: '8px',
+            whiteSpace: 'nowrap'
           }}
         >
           {label}
@@ -63,51 +67,49 @@ const ChartBar = ({ height, color, label, position }) => {
   );
 };
 
-const riseFadeInStyle = `
-@keyframes riseFadeIn {
-  from { transform: translateY(10px); opacity: 0; }
-  to { transform: translateY(0px); opacity: 1; }
-}
-`;
+const PieChart3D = ({ data }) => {
+  const total = useMemo(() => data.reduce((acc, item) => acc + item.value, 0), [data]);
+  const colors = useMemo(() => ['#f72585', '#ffaf40', '#7209b7', '#3a0ca3', '#4361ee', '#4cc9f0'], []);
 
-const ChartScene = ({ data, hideLabels  }) => {
-  useEffect(() => {
-    const style = document.createElement("style");
-    style.innerHTML = riseFadeInStyle;
-    document.head.appendChild(style);
-    return () => document.head.removeChild(style);
-  }, []);
+  const slices = useMemo(() => {
+    let startAngle = 0;
+    return data.map((item, i) => {
+      const angle = (item.value / total) * Math.PI * 2;
+      const endAngle = startAngle + angle;
+      const slice = {
+        startAngle,
+        endAngle,
+        color: colors[i % colors.length],
+        label: `${item.name}: ${item.value}`,
+      };
+      startAngle = endAngle;
+      return slice;
+    });
+  }, [data, total, colors]);
 
-  const spacing = 2;
-  const colors = useMemo(() => ['#00e0ff', '#f72585', '#ffd166'], []);
-
-  const bars = useMemo(() => {
-    return data.map((d, i) => ({
-      ...d,
-      position: [i * spacing - spacing, 0, 0],
-      color: colors[i % colors.length],
-    }));
-  }, [data, colors]);
 
   return (
-    <Canvas camera={{ position: [0, 5, 10], fov: 25 }} shadows>
-      <ambientLight intensity={0.5} />
-      <spotLight position={[10, 15, 10]} angle={0.3} penumbra={1} castShadow />
-
-      {bars.map((bar, idx) => (
-        <ChartBar
-          key={idx}
-          height={bar.value / 10}
-          color={bar.color}
-          label={hideLabels ? "" : `${bar.name}: ${bar.value}`}
-          position={bar.position}
-        />
-      ))}
-
+    <Canvas camera={{ position: [0, 4, 10], fov: 50 }}>
+      <ambientLight intensity={0.6} />
+      <directionalLight position={[5, 10, 7]} intensity={1} castShadow />
+      <group position={[0, -1.5, 0]}>
+        {slices.map((slice, index) => (
+          <PieSlice
+            key={index}
+            index={index}
+            startAngle={slice.startAngle}
+            endAngle={slice.endAngle}
+            radius={3}
+            height={1.2}
+            color={slice.color}
+            label={slice.label}
+            total={total}
+          />
+        ))}
+      </group>
       <OrbitControls enableZoom={true} />
     </Canvas>
   );
-  
 };
 
-export default ChartScene;
+export default PieChart3D;
