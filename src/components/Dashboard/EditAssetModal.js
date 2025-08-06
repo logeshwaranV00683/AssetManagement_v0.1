@@ -38,6 +38,8 @@ function EditAssetModal({
   const [purchaseDate, setPurchaseDate] = useState("");
   const [warrantyDate, setWarrantyDate] = useState("");
   const [status, setStatus] = useState("UnAssigned");
+  const [assignedDate, setAssignedDate] = useState("");
+  const [scrapDate, setScrapDate] = useState("");
   const [addedBy] = useState(user.empId);
   const [assignedBy, setAssignedBy] = useState("");
   const [empId, setEmpId] = useState("");
@@ -97,6 +99,8 @@ function EditAssetModal({
       setPurchaseDate(asset.purchaseDate || "");
       setWarrantyDate(asset.warrantyDate || "");
       setStatus(asset.status || "UnAssigned");
+      setAssignedDate(asset.assignedDate || "");
+      setScrapDate(asset.scrapDate || "");
       setType(asset.type || "");
       setLocation(asset.location || "");
       setAssetSourcedBy(asset.assetSourcedBy || "");
@@ -143,7 +147,6 @@ function EditAssetModal({
         hasError = true;
 
         if (!firstInvalidElement) {
-          // Scroll to first invalid field
           firstInvalidElement = document.querySelector(`[name="${key}"]`);
         }
       }
@@ -154,9 +157,11 @@ function EditAssetModal({
       setShakeForm(true);
       setTimeout(() => setShakeForm(false), 500);
 
-      // 🔹 Scroll smoothly to first invalid input
       if (firstInvalidElement) {
-        firstInvalidElement.scrollIntoView({ behavior: "smooth", block: "center" });
+        firstInvalidElement.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
       }
 
       return;
@@ -180,6 +185,8 @@ function EditAssetModal({
       addedBy,
       assignedBy,
       empId,
+      assignedDate: status === "Assigned" ? assignedDate : null,
+      scrapDate: status === "Scrap" ? scrapDate : null,
     };
 
     const changedFields = {};
@@ -252,7 +259,6 @@ function EditAssetModal({
           {viewOnly ? "View Asset" : "Edit Asset"}
         </h2>
 
-        {/* Form */}
         <Box
           component="form"
           noValidate
@@ -262,6 +268,7 @@ function EditAssetModal({
             display: "grid",
             gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
             gap: 2,
+            alignItems: "center",
           }}
         >
           {/* Asset Name */}
@@ -270,7 +277,7 @@ function EditAssetModal({
               This field is required *
             </span>
             <TextField
-              name="assetName"    // 🔹 Added for scroll
+              name="assetName"
               label="Asset Name"
               value={assetName}
               onChange={(e) => setAssetName(e.target.value)}
@@ -287,7 +294,7 @@ function EditAssetModal({
           <Box sx={{ display: "flex", flexDirection: "column" }}>
             <span style={errorStyle(false)}> </span>
             <TextField
-              name="serialNumber" // 🔹 Added for scroll
+              name="serialNumber"
               label="Serial Number"
               value={serialNumber}
               fullWidth
@@ -315,7 +322,7 @@ function EditAssetModal({
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  name="location"  // 🔹 Added for scroll
+                  name="location"
                   label="Location"
                   fullWidth
                   disabled={viewOnly}
@@ -403,7 +410,7 @@ function EditAssetModal({
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  name="type"  // 🔹 Added for scroll
+                  name="type"
                   label="Asset Type"
                   fullWidth
                   disabled={viewOnly}
@@ -413,6 +420,37 @@ function EditAssetModal({
             />
           </Box>
 
+          {/* Assigned Date */}
+          {isAssigned && (
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <span style={errorStyle(false)}> </span>
+              <TextField
+                label="Assigned Date"
+                type="date"
+                value={assignedDate}
+                onChange={(e) => setAssignedDate(e.target.value)}
+                InputLabelProps={{ shrink: true }}
+                fullWidth
+                disabled={true}
+              />
+            </Box>
+          )}
+
+          {/* Scrap Date */}
+          {isScrap && (
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <span style={errorStyle(false)}> </span>
+              <TextField
+                label="Scrap Date"
+                type="date"
+                value={scrapDate}
+                onChange={(e) => setScrapDate(e.target.value)}
+                InputLabelProps={{ shrink: true }}
+                fullWidth
+                disabled={true}
+              />
+            </Box>
+          )}
           {/* Operating System */}
           <Box sx={{ display: "flex", flexDirection: "column" }}>
             <span style={errorStyle(false)}> </span>
@@ -452,7 +490,7 @@ function EditAssetModal({
               This field is required *
             </span>
             <TextField
-              name="purchaseDate" // 🔹 Added for scroll
+              name="purchaseDate"
               label="Purchase Date"
               type="date"
               value={purchaseDate}
@@ -473,7 +511,7 @@ function EditAssetModal({
               This field is required *
             </span>
             <TextField
-              name="warrantyDate" // 🔹 Added for scroll
+              name="warrantyDate"
               label="Warranty Date"
               type="date"
               value={warrantyDate}
@@ -514,7 +552,7 @@ function EditAssetModal({
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  name="assetSourcedBy" // 🔹 Added for scroll
+                  name="assetSourcedBy"
                   label="Asset Sourced By"
                   fullWidth
                   disabled={viewOnly}

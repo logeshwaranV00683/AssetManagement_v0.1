@@ -1,12 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react";
 import "../Style/Assets.css";
 import {
-  FormControl,
-  InputLabel,
   MenuItem,
   Checkbox,
   ListItemText,
-  OutlinedInput,
+  TextField,
   Menu,
   Button,
   Box,
@@ -183,14 +181,17 @@ function AssignAssetToEmployee({ open, onClose, employee, refresh }) {
             <div className="import-3d-title">
               Assign Assets to {employee?.name}
             </div>
-            <FormControl fullWidth>
-              <InputLabel>Add Assets</InputLabel>
-              <OutlinedInput
-                readOnly
-                value={selectedAssets.join(", ")}
-                onClick={handleSelectClick}
-              />
-            </FormControl>
+            <TextField
+              label="Add Assets"
+              value={selectedAssets.join(", ")}
+              placeholder="Select Assets"
+              onClick={handleSelectClick}
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+              variant="outlined"
+            />
 
             {/* Dropdown menu */}
             <Menu

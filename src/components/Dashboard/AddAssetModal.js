@@ -13,7 +13,6 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Autocomplete from "@mui/material/Autocomplete";
 import { toast } from "react-hot-toast";
-import "../Style/Assets.css";
 
 function AddAssetModal({ open, handleClose, refreshAssetList }) {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -48,18 +47,6 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
     assetSourcedBy: false,
   });
 
-  const [shakeField, setShakeField] = useState(null);
-
-  const errorStyle = (visible) => ({
-    color: "red",
-    fontSize: "0.8rem",
-    minHeight: "16px",
-    marginBottom: "2px",
-    visibility: visible ? "visible" : "hidden",
-  });
-  const blinkClass = (condition, field) =>
-    condition && shakeField === field ? "error-blink" : "";
-
   const fieldRefs = {
     assetName: useRef(null),
     serialNumber: useRef(null),
@@ -69,6 +56,15 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
     warrantyDate: useRef(null),
     assetSourcedBy: useRef(null),
   };
+
+  const errorStyle = (visible) => ({
+    color: "red",
+    fontSize: "0.8rem",
+    minHeight: "16px",
+    marginBottom: "2px",
+    visibility: visible ? "visible" : "hidden",
+  });
+  const blinkClass = (condition) => (condition ? "error-blink" : "");
 
   useEffect(() => {
     if (open) {
@@ -110,6 +106,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
       setOptions((prev) => [...prev, value]);
     }
   };
+  const [shakeForm, setShakeForm] = useState(false);
 
   const handleAddAsset = async () => {
     const requiredFields = {
@@ -123,27 +120,27 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
     };
 
     const newTouched = { ...touched };
+    let hasError = false;
     let firstInvalidKey = null;
 
     Object.entries(requiredFields).forEach(([key, value]) => {
       if (!value) {
         newTouched[key] = true;
         if (!firstInvalidKey) firstInvalidKey = key;
+        hasError = true;
       }
     });
-
     setTouched(newTouched);
 
-    if (firstInvalidKey) {
-      setShakeField(firstInvalidKey);
-      setTimeout(() => setShakeField(null), 600);
-
-      fieldRefs[firstInvalidKey]?.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-
+    if (hasError) {
+      setShakeForm(true);
+      setTimeout(() => setShakeForm(false), 500);
       toast.error("Please fill all required fields!");
+
+      const firstInvalidRef = fieldRefs[firstInvalidKey]?.current;
+      if (firstInvalidRef) {
+        firstInvalidRef.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
       return;
     }
 
@@ -163,6 +160,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
       assetSourcedBy,
     };
 
+    console.log("Asset added:", newAsset);
     setIsAdding(true);
 
     try {
@@ -239,6 +237,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
+
           scrollbarWidth: "none",
           "&::-webkit-scrollbar": {
             display: "none",
@@ -264,6 +263,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
           component="form"
           noValidate
           autoComplete="off"
+          className={shakeForm ? "form-shake" : ""}
           sx={{
             display: "grid",
             gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
@@ -287,10 +287,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
               }
               fullWidth
               required
-              className={blinkClass(
-                !assetName && touched.assetName,
-                "assetName"
-              )}
+              className={blinkClass(!assetName && touched.assetName)}
             />
           </Box>
 
@@ -311,10 +308,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
               }
               fullWidth
               required
-              className={blinkClass(
-                !serialNumber && touched.serialNumber,
-                "serialNumber"
-              )}
+              className={blinkClass(!serialNumber && touched.serialNumber)}
             />
           </Box>
 
@@ -347,10 +341,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
                   label="Location"
                   fullWidth
                   required
-                  className={blinkClass(
-                    !location && touched.location,
-                    "location"
-                  )}
+                  className={blinkClass(!location && touched.location)}
                 />
               )}
             />
@@ -394,7 +385,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
                   label="Asset Type"
                   fullWidth
                   required
-                  className={blinkClass(!type && touched.type, "type")}
+                  className={blinkClass(!type && touched.type)}
                 />
               )}
             />
@@ -435,10 +426,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
               InputLabelProps={{ shrink: true }}
               fullWidth
               required
-              className={blinkClass(
-                !purchaseDate && touched.purchaseDate,
-                "purchaseDate"
-              )}
+              className={blinkClass(!purchaseDate && touched.purchaseDate)}
             />
           </Box>
 
@@ -461,10 +449,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
               InputLabelProps={{ shrink: true }}
               fullWidth
               required
-              className={blinkClass(
-                !warrantyDate && touched.warrantyDate,
-                "warrantyDate"
-              )}
+              className={blinkClass(!warrantyDate && touched.warrantyDate)}
             />
           </Box>
 
@@ -506,8 +491,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
                   fullWidth
                   required
                   className={blinkClass(
-                    !assetSourcedBy && touched.assetSourcedBy,
-                    "assetSourcedBy"
+                    !assetSourcedBy && touched.assetSourcedBy
                   )}
                 />
               )}

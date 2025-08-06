@@ -355,15 +355,17 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
               >
                 This field is required *
               </span>
-              <FormControl fullWidth>
+
+              <FormControl fullWidth variant="outlined">
                 <InputLabel id="status-label">Status</InputLabel>
                 <Select
-                labelId="status-label" 
+                  labelId="status-label"
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
                   onBlur={() =>
                     setTouched((prev) => ({ ...prev, status: true }))
                   }
+                  label="Status"
                   className={touched.status && !status ? "error-blink" : ""}
                 >
                   <MenuItem value="Active">Active</MenuItem>
@@ -430,12 +432,13 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
               >
                 This field is required *
               </span>
-              <FormControl fullWidth>
-                <InputLabel>Role</InputLabel>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel id="role-label">Role</InputLabel>
                 <Select
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
                   onBlur={() => setTouched((prev) => ({ ...prev, role: true }))}
+                  label="Role"
                   className={touched.role && !role ? "error-blink" : ""}
                 >
                   <MenuItem value="Employee">Employee</MenuItem>
