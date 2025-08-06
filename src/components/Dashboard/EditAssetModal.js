@@ -20,13 +20,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { toast } from "react-hot-toast";
 
-function EditAssetModal({
-  open,
-  handleClose,
-  asset,
-  refreshAssetList,
-  viewOnly,
-}) {
+function EditAssetModal({ open, handleClose, asset, refreshAssetList, viewOnly }) {
   const user = JSON.parse(localStorage.getItem("user"));
 
   const [isUpdating, setIsUpdating] = useState(false);
@@ -62,10 +56,11 @@ function EditAssetModal({
     assetSourcedBy: false,
   });
 
+  // Utility for error text style
   const errorStyle = (show) => ({
     color: show ? "red" : "transparent",
     fontSize: "0.8rem",
-    minHeight: "16px",
+    minHeight: "16px", // Reserve space
     marginBottom: "2px",
   });
 
@@ -187,9 +182,9 @@ function EditAssetModal({
           backgroundColor: "background.paper",
           boxShadow: 24,
           p: 4,
-          width: "70%",
-          maxWidth: 800,
-          maxHeight: "80%",
+          width: "70%",          // Increased width
+          maxWidth: 800,         // Larger modal
+          maxHeight: "80%",      // Taller modal
           overflowY: "auto",
           borderRadius: 4,
           position: "absolute",
@@ -232,9 +227,7 @@ function EditAssetModal({
               label="Asset Name"
               value={assetName}
               onChange={(e) => setAssetName(e.target.value)}
-              onBlur={() =>
-                setTouched((prev) => ({ ...prev, assetName: true }))
-              }
+              onBlur={() => setTouched((prev) => ({ ...prev, assetName: true }))}
               fullWidth
               disabled={viewOnly}
             />
@@ -243,12 +236,7 @@ function EditAssetModal({
           {/* Serial Number */}
           <Box sx={{ display: "flex", flexDirection: "column" }}>
             <span style={errorStyle(false)}> </span>
-            <TextField
-              label="Serial Number"
-              value={serialNumber}
-              fullWidth
-              disabled
-            />
+            <TextField label="Serial Number" value={serialNumber} fullWidth disabled />
           </Box>
 
           {/* Location */}
@@ -264,22 +252,17 @@ function EditAssetModal({
                 setLocation(newValue || "");
                 commitNewOption(newValue, locationOptions, setLocationOptions);
               }}
-              onInputChange={(event, newInputValue) =>
-                setLocation(newInputValue || "")
-              }
+              onInputChange={(event, newInputValue) => setLocation(newInputValue || "")}
               onBlur={() => setTouched((prev) => ({ ...prev, location: true }))}
               renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Location"
-                  fullWidth
-                  disabled={viewOnly}
-                />
+                <TextField {...params} label="Location" fullWidth disabled={viewOnly} />
               )}
             />
           </Box>
 
           {/* Status */}
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <span style={errorStyle(false)}> </span>
           <FormControl fullWidth disabled={viewOnly || status === "Assigned"}>
             <InputLabel id="status-label">Status</InputLabel>
             <Select
@@ -295,6 +278,33 @@ function EditAssetModal({
                   <MenuItem value="Scrap">Scrap</MenuItem>
             </Select>
           </FormControl>
+          </Box>
+
+          {/* Assigned By */}
+          {(isAssigned || isScrap) && (
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <span style={errorStyle(false)}> </span>
+              <TextField
+                label={isScrap ? "Scraped By" : "Assigned By"}
+                value={assignedBy}
+                fullWidth
+                disabled
+              />
+            </Box>
+          )}
+
+          {/* Assigned To */}
+          {isAssigned && (
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <span style={errorStyle(false)}> </span>
+              <TextField
+                label="Assigned To (Emp ID)"
+                value={empId}
+                fullWidth
+                disabled
+              />
+            </Box>
+          )}
 
           {/* Asset Type */}
           <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -326,12 +336,7 @@ function EditAssetModal({
               }}
               onBlur={() => setTouched((prev) => ({ ...prev, type: true }))}
               renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Asset Type"
-                  fullWidth
-                  disabled={viewOnly}
-                />
+                <TextField {...params} label="Asset Type" fullWidth disabled={viewOnly} />
               )}
             />
           </Box>
@@ -355,9 +360,7 @@ function EditAssetModal({
               label="Model Name"
               value={modelName}
               onChange={(e) => setModelName(e.target.value)}
-              onBlur={() =>
-                setTouched((prev) => ({ ...prev, modelName: true }))
-              }
+              onBlur={() => setTouched((prev) => ({ ...prev, modelName: true }))}
               fullWidth
               disabled={viewOnly}
             />
@@ -379,9 +382,7 @@ function EditAssetModal({
               type="date"
               value={purchaseDate}
               onChange={(e) => setPurchaseDate(e.target.value)}
-              onBlur={() =>
-                setTouched((prev) => ({ ...prev, purchaseDate: true }))
-              }
+              onBlur={() => setTouched((prev) => ({ ...prev, purchaseDate: true }))}
               InputLabelProps={{ shrink: true }}
               fullWidth
               disabled={viewOnly}
@@ -398,9 +399,7 @@ function EditAssetModal({
               type="date"
               value={warrantyDate}
               onChange={(e) => setWarrantyDate(e.target.value)}
-              onBlur={() =>
-                setTouched((prev) => ({ ...prev, warrantyDate: true }))
-              }
+              onBlur={() => setTouched((prev) => ({ ...prev, warrantyDate: true }))}
               InputLabelProps={{ shrink: true }}
               fullWidth
               disabled={viewOnly}
@@ -418,11 +417,7 @@ function EditAssetModal({
               value={assetSourcedBy}
               onChange={(event, newValue) => {
                 setAssetSourcedBy(newValue || "");
-                commitNewOption(
-                  newValue,
-                  assetSourceOptions,
-                  setAssetSourceOptions
-                );
+                commitNewOption(newValue, assetSourceOptions, setAssetSourceOptions);
               }}
               onInputChange={(event, newInputValue) =>
                 setAssetSourcedBy(newInputValue || "")
@@ -431,12 +426,7 @@ function EditAssetModal({
                 setTouched((prev) => ({ ...prev, assetSourcedBy: true }))
               }
               renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Asset Sourced By"
-                  fullWidth
-                  disabled={viewOnly}
-                />
+                <TextField {...params} label="Asset Sourced By" fullWidth disabled={viewOnly} />
               )}
             />
           </Box>
