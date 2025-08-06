@@ -149,6 +149,7 @@ function Employee() {
       flex: 0.6,
       minWidth: 80,
       sortable: true,
+      headerAlign: "center",
     },
     {
       field: "name",
@@ -156,6 +157,7 @@ function Employee() {
       flex: 1,
       minWidth: 140,
       sortable: true,
+      headerAlign: "center",
     },
     {
       field: "mail",
@@ -163,6 +165,7 @@ function Employee() {
       flex: 2,
       minWidth: 200,
       sortable: true,
+      headerAlign: "center",
     },
     {
       field: "designation",
@@ -170,6 +173,7 @@ function Employee() {
       flex: 1,
       minWidth: 150,
       sortable: true,
+      headerAlign: "center",
     },
     {
       field: "department",
@@ -177,6 +181,7 @@ function Employee() {
       flex: 1,
       minWidth: 120,
       sortable: true,
+      headerAlign: "center",
     },
     {
       field: "location",
@@ -184,6 +189,7 @@ function Employee() {
       flex: 1,
       minWidth: 120,
       sortable: true,
+      headerAlign: "center",
     },
     {
       field: "status",
@@ -191,6 +197,7 @@ function Employee() {
       flex: 0.6,
       minWidth: 80,
       sortable: true,
+      headerAlign: "center",
     },
     {
       field: "actions",
@@ -198,6 +205,8 @@ function Employee() {
       flex: 1.2,
       minWidth: 200,
       sortable: false,
+      headerAlign: "center",
+
       renderCell: (params) => (
         <Box display="flex" alignItems="center" flexWrap="wrap">
           <Tooltip title="View">
@@ -453,18 +462,18 @@ function Employee() {
                   fontFamily: "'Racing Sans One', sans-serif",
                   color: "#083A40",
                   "& .MuiDataGrid-main": {
-                   scrollbarWidth: "none",
-                   msOverflowStyle: "none",
-                },
+                    scrollbarWidth: "none",
+                    msOverflowStyle: "none",
+                  },
                   "& .MuiDataGrid-main::-webkit-scrollbar": {
-                   display: "none",
-                },
+                    display: "none",
+                  },
                   "& .MuiDataGrid-virtualScroller": {
-                   scrollbarWidth: "none",
-                },
+                    scrollbarWidth: "none",
+                  },
                   "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": {
-                   display: "none",
-                },
+                    display: "none",
+                  },
                   "& .MuiDataGrid-columnHeaders": {
                     background: "linear-gradient(45deg, #6DE0FF, #2BC4F3)",
                     color: "#083A40",

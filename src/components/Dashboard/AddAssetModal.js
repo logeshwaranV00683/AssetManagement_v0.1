@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   getAssetTypes,
   saveAsset,
@@ -13,6 +13,7 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Autocomplete from "@mui/material/Autocomplete";
 import { toast } from "react-hot-toast";
+import "../Style/Assets.css";
 
 function AddAssetModal({ open, handleClose, refreshAssetList }) {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -47,6 +48,8 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
     assetSourcedBy: false,
   });
 
+  const [shakeField, setShakeField] = useState(null);
+
   const errorStyle = (visible) => ({
     color: "red",
     fontSize: "0.8rem",
@@ -54,7 +57,19 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
     marginBottom: "2px",
     visibility: visible ? "visible" : "hidden",
   });
-  const blinkClass = (condition) => (condition ? "error-blink" : "");
+  const blinkClass = (condition, field) =>
+    condition && shakeField === field ? "error-blink" : "";
+
+  const fieldRefs = {
+    assetName: useRef(null),
+    serialNumber: useRef(null),
+    location: useRef(null),
+    type: useRef(null),
+    purchaseDate: useRef(null),
+    warrantyDate: useRef(null),
+    assetSourcedBy: useRef(null),
+  };
+
   useEffect(() => {
     if (open) {
       fetchAssetTypes();
@@ -95,7 +110,6 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
       setOptions((prev) => [...prev, value]);
     }
   };
-  const [shakeForm, setShakeForm] = useState(false);
 
   const handleAddAsset = async () => {
     const requiredFields = {
@@ -109,21 +123,30 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
     };
 
     const newTouched = { ...touched };
-    let hasError = false;
+    let firstInvalidKey = null;
 
     Object.entries(requiredFields).forEach(([key, value]) => {
       if (!value) {
         newTouched[key] = true;
-        hasError = true;
+        if (!firstInvalidKey) firstInvalidKey = key;
       }
     });
+
     setTouched(newTouched);
-    if (hasError) {
-      setShakeForm(true);
-      setTimeout(() => setShakeForm(false), 500);
+
+    if (firstInvalidKey) {
+      setShakeField(firstInvalidKey);
+      setTimeout(() => setShakeField(null), 600);
+
+      fieldRefs[firstInvalidKey]?.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+
       toast.error("Please fill all required fields!");
       return;
     }
+
     const finalType = type === "__custom__" ? customType : type;
 
     const newAsset = {
@@ -140,7 +163,6 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
       assetSourcedBy,
     };
 
-    console.log("Asset added:", newAsset);
     setIsAdding(true);
 
     try {
@@ -217,7 +239,6 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-
           scrollbarWidth: "none",
           "&::-webkit-scrollbar": {
             display: "none",
@@ -243,7 +264,6 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
           component="form"
           noValidate
           autoComplete="off"
-          className={shakeForm ? "form-shake" : ""}
           sx={{
             display: "grid",
             gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
@@ -251,7 +271,10 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
           }}
         >
           {/* Asset Name */}
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <Box
+            sx={{ display: "flex", flexDirection: "column" }}
+            ref={fieldRefs.assetName}
+          >
             <span style={errorStyle(!assetName && touched.assetName)}>
               This field is required *
             </span>
@@ -264,12 +287,18 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
               }
               fullWidth
               required
-              className={blinkClass(!assetName && touched.assetName)}
+              className={blinkClass(
+                !assetName && touched.assetName,
+                "assetName"
+              )}
             />
           </Box>
 
           {/* Serial Number */}
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <Box
+            sx={{ display: "flex", flexDirection: "column" }}
+            ref={fieldRefs.serialNumber}
+          >
             <span style={errorStyle(!serialNumber && touched.serialNumber)}>
               This field is required *
             </span>
@@ -282,12 +311,18 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
               }
               fullWidth
               required
-              className={blinkClass(!serialNumber && touched.serialNumber)}
+              className={blinkClass(
+                !serialNumber && touched.serialNumber,
+                "serialNumber"
+              )}
             />
           </Box>
 
           {/* Location */}
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <Box
+            sx={{ display: "flex", flexDirection: "column" }}
+            ref={fieldRefs.location}
+          >
             <span style={errorStyle(!location && touched.location)}>
               This field is required *
             </span>
@@ -312,14 +347,20 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
                   label="Location"
                   fullWidth
                   required
-                  className={blinkClass(!location && touched.location)}
+                  className={blinkClass(
+                    !location && touched.location,
+                    "location"
+                  )}
                 />
               )}
             />
           </Box>
 
           {/* Asset Type */}
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <Box
+            sx={{ display: "flex", flexDirection: "column" }}
+            ref={fieldRefs.type}
+          >
             <span style={errorStyle(!type && !customType && touched.type)}>
               This field is required *
             </span>
@@ -353,7 +394,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
                   label="Asset Type"
                   fullWidth
                   required
-                  className={blinkClass(!type && touched.type)}
+                  className={blinkClass(!type && touched.type, "type")}
                 />
               )}
             />
@@ -376,7 +417,10 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
           />
 
           {/* Purchase Date */}
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <Box
+            sx={{ display: "flex", flexDirection: "column" }}
+            ref={fieldRefs.purchaseDate}
+          >
             <span style={errorStyle(!purchaseDate && touched.purchaseDate)}>
               This field is required *
             </span>
@@ -391,12 +435,18 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
               InputLabelProps={{ shrink: true }}
               fullWidth
               required
-              className={blinkClass(!purchaseDate && touched.purchaseDate)}
+              className={blinkClass(
+                !purchaseDate && touched.purchaseDate,
+                "purchaseDate"
+              )}
             />
           </Box>
 
           {/* Warranty Date */}
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <Box
+            sx={{ display: "flex", flexDirection: "column" }}
+            ref={fieldRefs.warrantyDate}
+          >
             <span style={errorStyle(!warrantyDate && touched.warrantyDate)}>
               This field is required *
             </span>
@@ -411,12 +461,18 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
               InputLabelProps={{ shrink: true }}
               fullWidth
               required
-              className={blinkClass(!warrantyDate && touched.warrantyDate)}
+              className={blinkClass(
+                !warrantyDate && touched.warrantyDate,
+                "warrantyDate"
+              )}
             />
           </Box>
 
           {/* Asset Sourced By */}
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <Box
+            sx={{ display: "flex", flexDirection: "column" }}
+            ref={fieldRefs.assetSourcedBy}
+          >
             <span style={errorStyle(!assetSourcedBy && touched.assetSourcedBy)}>
               This field is required *
             </span>
@@ -450,7 +506,8 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
                   fullWidth
                   required
                   className={blinkClass(
-                    !assetSourcedBy && touched.assetSourcedBy
+                    !assetSourcedBy && touched.assetSourcedBy,
+                    "assetSourcedBy"
                   )}
                 />
               )}

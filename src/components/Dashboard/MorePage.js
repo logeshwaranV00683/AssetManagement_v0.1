@@ -9,15 +9,12 @@ import { toast } from "react-hot-toast";
 
 import {
   RecentAssignedAssetDetails,
-  getDeletedAssets
+  getDeletedAssets,
 } from "../Services/AssetService";
-import {
-  fetchAssetHistory
-} from "../Services/HistoryServices";
+import { fetchAssetHistory } from "../Services/HistoryServices";
 import AssetHistoryPopup from "./AssetHistoryPop";
 import EditAssetModal from "./EditAssetModal";
 import EditEmployeeModal from "./EditEmployeeModal";
-import { blueGrey } from "@material-ui/core/colors";
 
 const ToggleButton = ({ showDeleted, setShowDeleted }) => (
   <motion.div
@@ -38,7 +35,7 @@ const ToggleButton = ({ showDeleted, setShowDeleted }) => (
         fontWeight: "lighter",
         cursor: "pointer",
         fontFamily: "Racing Sans One",
-        letterSpacing: "0.5px"
+        letterSpacing: "0.5px",
       }}
     >
       {showDeleted ? "Show Deleted Assets" : "Show Assigned Assets"}
@@ -59,7 +56,7 @@ const RecentAssignedAssetPage = () => {
   const [historyData, setHistoryData] = useState([]);
   const [openHistoryModal, setOpenHistoryModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
-  const [viewing, setViewing] = useState(""); // 'asset' or 'employee'
+  const [viewing, setViewing] = useState("");
 
   const handleClose = () => {
     setOpenHistoryModal(false);
@@ -71,7 +68,9 @@ const RecentAssignedAssetPage = () => {
 
   const handleOpenHistoryModal = async (asset) => {
     try {
-      const data = await fetchAssetHistory(asset.serialNo || asset.serialNumber);
+      const data = await fetchAssetHistory(
+        asset.serialNo || asset.serialNumber
+      );
       if (data && data.length > 0) {
         setSelectedAsset(asset);
         setHistoryData(data);
@@ -108,7 +107,9 @@ const RecentAssignedAssetPage = () => {
           (assigned || []).map((item, index) => ({
             id: index + 1,
             empId: item?.empId || "-",
-            employeeName: `${item?.firstName || ""} ${item?.lastName || ""}`.trim(),
+            employeeName: `${item?.firstName || ""} ${
+              item?.lastName || ""
+            }`.trim(),
             serialNumber: item?.serialNumber || "-",
             assignedDate: item?.assignedDate || "-",
             raw: item,
@@ -139,10 +140,34 @@ const RecentAssignedAssetPage = () => {
   }, []);
 
   const assignedColumns = [
-    { field: "empId", headerName: "Employee ID", headerAlign: "center", align: "center", flex: 1 },
-    { field: "employeeName", headerName: "Employee Name", headerAlign: "center", align: "center", flex: 1 },
-    { field: "serialNumber", headerName: "Serial Number", headerAlign: "center", align: "center", flex: 1 },
-    { field: "assignedDate", headerName: "Assigned Date", headerAlign: "center", align: "center", flex: 1 },
+    {
+      field: "empId",
+      headerName: "Employee ID",
+      headerAlign: "center",
+      align: "center",
+      flex: 1,
+    },
+    {
+      field: "employeeName",
+      headerName: "Employee Name",
+      headerAlign: "center",
+      align: "center",
+      flex: 1,
+    },
+    {
+      field: "serialNumber",
+      headerName: "Serial Number",
+      headerAlign: "center",
+      align: "center",
+      flex: 1,
+    },
+    {
+      field: "assignedDate",
+      headerName: "Assigned Date",
+      headerAlign: "center",
+      align: "center",
+      flex: 1,
+    },
     {
       field: "actions",
       headerName: "Actions",
@@ -189,18 +214,67 @@ const RecentAssignedAssetPage = () => {
   ];
 
   const deletedColumns = [
-    { field: "serialNo", headerName: "Serial Number", headerAlign: "center", align: "center", flex: 1, },
-    { field: "assetName", headerName: "Asset Name", headerAlign: "center", align: "center", flex: 1, },
-    { field: "purchaseDate", headerName: "Purchase Date", headerAlign: "center", align: "center", flex: 1, },
-    { field: "deletedDate", headerName: "Deleted Date", headerAlign: "center", align: "center", flex: 1, },
-    { field: "type", headerName: "Type", headerAlign: "center", align: "center", flex: 1, },
-    { field: "location", headerName: "Location", headerAlign: "center", align: "center", flex: 1, },
-    { field: "assetSourcedBy", headerName: "Sourced By", headerAlign: "center", align: "center", flex: 1, },
-    { field: "deletedBy", headerName: "Deleted By", headerAlign: "center", align: "center", flex: 1, },
+    {
+      field: "serialNo",
+      headerName: "Serial Number",
+      headerAlign: "center",
+      align: "center",
+      flex: 1,
+    },
+    {
+      field: "assetName",
+      headerName: "Asset Name",
+      headerAlign: "center",
+      align: "center",
+      flex: 1,
+    },
+    {
+      field: "purchaseDate",
+      headerName: "Purchase Date",
+      headerAlign: "center",
+      align: "center",
+      flex: 1,
+    },
+    {
+      field: "deletedDate",
+      headerName: "Deleted Date",
+      headerAlign: "center",
+      align: "center",
+      flex: 1,
+    },
+    {
+      field: "type",
+      headerName: "Type",
+      headerAlign: "center",
+      align: "center",
+      flex: 1,
+    },
+    {
+      field: "location",
+      headerName: "Location",
+      headerAlign: "center",
+      align: "center",
+      flex: 1,
+    },
+    {
+      field: "assetSourcedBy",
+      headerName: "Sourced By",
+      headerAlign: "center",
+      align: "center",
+      flex: 1,
+    },
+    {
+      field: "deletedBy",
+      headerName: "Deleted By",
+      headerAlign: "center",
+      align: "center",
+      flex: 1,
+    },
     {
       field: "history",
       headerName: "History",
-      headerAlign: "center", align: "center",
+      headerAlign: "center",
+      align: "center",
       flex: 1,
       sortable: false,
       renderCell: (params) => (
@@ -226,14 +300,25 @@ const RecentAssignedAssetPage = () => {
   ];
 
   if (loading)
-    return <h3 style={messageStyle}>Loading Recent Assigned & Deleted Assets...</h3>;
+    return (
+      <h3 style={messageStyle}>Loading Recent Assigned & Deleted Assets...</h3>
+    );
   if (error) return <h3 style={messageStyle}>Error: {error}</h3>;
 
   return (
     <div style={containerStyle}>
       <div style={{ width: "80%" }}>
-        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 12 }}>
-          <ToggleButton showDeleted={showDeleted} setShowDeleted={setShowDeleted} />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            marginBottom: 12,
+          }}
+        >
+          <ToggleButton
+            showDeleted={showDeleted}
+            setShowDeleted={setShowDeleted}
+          />
         </div>
 
         <h2
@@ -244,13 +329,11 @@ const RecentAssignedAssetPage = () => {
             borderRadius: "8px",
             display: "inline-block",
             fontWeight: "lighter",
-            letterSpacing: "0.5px"
+            letterSpacing: "0.5px",
           }}
         >
-          {showDeleted ? "Permanently Deleted Assets" : "Today Assigned Assets"}
+          {!showDeleted ? "Permanently Deleted Assets" : "Today Assigned Assets"}
         </h2>
-
-
 
         <div style={scrollWrapperStyle}>
           <style>{`div::-webkit-scrollbar { display: none; }`}</style>
@@ -269,7 +352,6 @@ const RecentAssignedAssetPage = () => {
               fontFamily: "'Racing Sans One', sans-serif",
               color: "#083A40",
 
-              // Hide scrollbar
               "& .MuiDataGrid-main": {
                 scrollbarWidth: "none",
                 msOverflowStyle: "none",
@@ -284,27 +366,23 @@ const RecentAssignedAssetPage = () => {
                 display: "none",
               },
 
-              // Styling headers
               "& .MuiDataGrid-columnHeaders": {
                 background: "linear-gradient(45deg, #6DE0FF, #2BC4F3)",
                 color: "#083A40",
                 fontSize: "16px",
                 fontWeight: 700,
               },
-              // Cell styling
               "& .MuiDataGrid-cell": {
                 background: "#F0FBFF",
                 color: "#083A40",
                 fontSize: "15px",
                 borderBottom: "1px solid #D0F0FF",
               },
-              // Footer styling
               "& .MuiDataGrid-footerContainer": {
                 background: "linear-gradient(45deg, #6DE0FF, #2BC4F3)",
                 color: "#083A40",
                 fontWeight: 600,
               },
-              // Hover row effect
               "& .MuiDataGrid-row:hover": {
                 backgroundColor: "#E0F9FF",
               },
@@ -322,7 +400,7 @@ const RecentAssignedAssetPage = () => {
               open={openEditModal}
               handleClose={handleClose}
               employee={selectedEmployee}
-              refreshEmployeeList={() => { }}
+              refreshEmployeeList={() => {}}
               viewOnly={true}
             />
           )}
@@ -332,7 +410,7 @@ const RecentAssignedAssetPage = () => {
               open={openEditModal}
               handleClose={handleClose}
               asset={selectedAsset}
-              refreshAssetList={() => { }}
+              refreshAssetList={() => {}}
               viewOnly={true}
             />
           )}
@@ -351,12 +429,6 @@ const containerStyle = {
   alignItems: "center",
 };
 
-const titleStyle = {
-  marginBottom: 12,
-  fontFamily: "Arial, sans-serif",
-  color: "#0d9ee6ff",
-};
-
 const messageStyle = {
   fontFamily: "Arial, sans-serif",
   color: "#0a7cc3",
@@ -368,49 +440,6 @@ const scrollWrapperStyle = {
   overflowY: "scroll",
   scrollbarWidth: "none",
   msOverflowStyle: "none",
-};
-
-const toggleButtonStyle = {
-  background: "#0a7cc3",
-  color: "#fff",
-  padding: "10px 16px",
-  borderRadius: 8,
-  fontSize: 13,
-  fontFamily: "Arial, sans-serif",
-  cursor: "pointer",
-  textAlign: "center",
-  boxShadow: "0px 4px 8px rgba(0,0,0,0.2)",
-  userSelect: "none",
-  whiteSpace: "nowrap",
-  maxWidth: 180,
-};
-
-const dataGridStyles = {
-  border: 2,
-  borderRadius: 3,
-  "& .MuiDataGrid-columnHeaders": {
-    backgroundColor: "#E6F7FF",
-    color: "#083A40",
-    fontSize: 12,
-    fontFamily: "Arial, sans-serif",
-    minHeight: 40,
-  },
-  "& .MuiDataGrid-columnHeaderTitle": {
-    color: "#083A40",
-  },
-  "& .MuiDataGrid-cell": {
-    backgroundColor: "#E6F7FF",
-    fontSize: 12,
-    textAlign: "center",
-    fontFamily: "Arial, sans-serif",
-    minHeight: 35,
-    lineHeight: "35px",
-    color: "#083A40",
-  },
-  "& .MuiDataGrid-footerContainer": {
-    backgroundColor: "#f5f5f5",
-    minHeight: 40,
-  },
 };
 
 export default RecentAssignedAssetPage;

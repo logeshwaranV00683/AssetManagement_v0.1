@@ -100,7 +100,8 @@ function Assets() {
     } catch (error) {
       if (error.status === 406) {
         toast.error(
-          error.message || "Cannot Permanently delete asset due to invalid status."
+          error.message ||
+            "Cannot Permanently delete asset due to invalid status."
         );
       } else {
         toast.error(
@@ -185,131 +186,163 @@ function Assets() {
       headerName: "Serial Number",
       minWidth: 120,
       flex: 1,
+      headerAlign: "center",
     },
-    { field: "assetName", headerName: "Name", minWidth: 100, flex: 0.8 },
-    { field: "type", headerName: "Type", minWidth: 100, flex: 0.85 },
-    { field: "status", headerName: "Status", minWidth: 40, flex: 0.8 },
-    { field: "empId", headerName: "Assigned To", minWidth: 120, flex: 0.7 },
-    { field: "location", headerName: "Location", minWidth: 120, flex: 0.6 },
+    {
+      field: "assetName",
+      headerName: "Name",
+      minWidth: 100,
+      flex: 0.8,
+      headerAlign: "center",
+    },
+    {
+      field: "type",
+      headerName: "Type",
+      minWidth: 100,
+      flex: 0.85,
+      headerAlign: "center",
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      minWidth: 40,
+      flex: 0.8,
+      headerAlign: "center",
+    },
+    {
+      field: "empId",
+      headerName: "Assigned To",
+      minWidth: 120,
+      flex: 0.7,
+      headerAlign: "center",
+    },
+    {
+      field: "location",
+      headerName: "Location",
+      minWidth: 120,
+      flex: 0.6,
+      headerAlign: "center",
+    },
     {
       field: "assetSourcedBy",
       headerName: "Sourced By",
       minWidth: 120,
       flex: 0.7,
+      headerAlign: "center",
     },
     {
-  field: "actions",
-  headerName: "Actions",
-  minWidth: 180,        
-  flex: 2,
-  sortable: false,
-  headerAlign: "center", 
-  align: "center",       
-  renderCell: (params) => (
-    <Box
-      display="flex"
-      flexDirection="row"
-      alignItems="center"
-      justifyContent="center"
-      gap={0.5}
-      sx={{
-        overflow: "visible",
-        minWidth: "180px",  
-      }}
-    >
-      <Tooltip title="View">
-        <IconButton
+      field: "actions",
+      headerName: "Actions",
+      minWidth: 180,
+      flex: 2,
+      sortable: false,
+      headerAlign: "center",
+      align: "center",
+      renderCell: (params) => (
+        <Box
+          display="flex"
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="center"
+          gap={0.5}
           sx={{
-            transition: "transform 0.2s",
-            color: "inherit",
-            "&:hover": {
-              transform: "scale(1.3)",
-              color: "info.main",
-              filter: "drop-shadow(0 0 4px #2196f3)",
-            },
+            overflow: "visible",
+            minWidth: "180px",
           }}
-          onClick={() => handleOpenEditModal(params.row, true)}
         >
-          <VisibilityIcon fontSize="medium" />
-        </IconButton>
-      </Tooltip>
+          <Tooltip title="View">
+            <IconButton
+              sx={{
+                transition: "transform 0.2s",
+                color: "inherit",
+                "&:hover": {
+                  transform: "scale(1.3)",
+                  color: "info.main",
+                  filter: "drop-shadow(0 0 4px #2196f3)",
+                },
+              }}
+              onClick={() => handleOpenEditModal(params.row, true)}
+            >
+              <VisibilityIcon fontSize="medium" />
+            </IconButton>
+          </Tooltip>
 
-      <Tooltip title={params.row.empId ? "Unassign" : "Assign"}>
-        <IconButton
-          sx={{
-            transition: "transform 0.2s",
-            color: "inherit",
-            "&:hover": {
-              transform: "scale(1.3)",
-              color: params.row.empId ? "error.main" : "success.main",
-              filter: params.row.empId
-                ? "drop-shadow(0 0 4px rgb(246, 102, 59))"
-                : "drop-shadow(0 0 4px rgb(30, 237, 68))",
-            },
-          }}
-          onClick={() => handleAssign(params.row)}
-        >
-          {params.row.empId ? (
-            <PersonRemoveIcon fontSize="medium" />
-          ) : (
-            <PersonAddIcon fontSize="medium" />
-          )}
-        </IconButton>
-      </Tooltip>
+          <Tooltip title={params.row.empId ? "Unassign" : "Assign"}>
+            <IconButton
+              sx={{
+                transition: "transform 0.2s",
+                color: "inherit",
+                "&:hover": {
+                  transform: "scale(1.3)",
+                  color: params.row.empId ? "error.main" : "success.main",
+                  filter: params.row.empId
+                    ? "drop-shadow(0 0 4px rgb(246, 102, 59))"
+                    : "drop-shadow(0 0 4px rgb(30, 237, 68))",
+                },
+              }}
+              onClick={() => handleAssign(params.row)}
+            >
+              {params.row.empId ? (
+                <PersonRemoveIcon fontSize="medium" />
+              ) : (
+                <PersonAddIcon fontSize="medium" />
+              )}
+            </IconButton>
+          </Tooltip>
 
-      <Tooltip title="History">
-        <IconButton
-          sx={{
-            transition: "transform 0.2s",
-            color: "inherit",
-            "&:hover": {
-              transform: "scale(1.3)",
-              color: "warning.main",
-              filter: "drop-shadow(0 0 4px orange)",
-            },
-          }}
-          onClick={() => handleOpenHistoryModal(params.row)}
-        >
-          <HistoryIcon fontSize="medium" />
-        </IconButton>
-      </Tooltip>
+          <Tooltip title="History">
+            <IconButton
+              sx={{
+                transition: "transform 0.2s",
+                color: "inherit",
+                "&:hover": {
+                  transform: "scale(1.3)",
+                  color: "warning.main",
+                  filter: "drop-shadow(0 0 4px orange)",
+                },
+              }}
+              onClick={() => handleOpenHistoryModal(params.row)}
+            >
+              <HistoryIcon fontSize="medium" />
+            </IconButton>
+          </Tooltip>
 
-      <Tooltip title="Edit">
-        <IconButton
-          sx={{
-            transition: "transform 0.2s",
-            color: "inherit",
-            "&:hover": {
-              transform: "scale(1.3)",
-              color: "primary.main",
-              filter: "drop-shadow(0 0 4px #1976d2)",
-            },
-          }}
-          onClick={() => handleOpenEditModal(params.row)}
-        >
-          <EditIcon fontSize="medium" />
-        </IconButton>
-      </Tooltip>
+          <Tooltip title="Edit">
+            <IconButton
+              sx={{
+                transition: "transform 0.2s",
+                color: "inherit",
+                "&:hover": {
+                  transform: "scale(1.3)",
+                  color: "primary.main",
+                  filter: "drop-shadow(0 0 4px #1976d2)",
+                },
+              }}
+              onClick={() => handleOpenEditModal(params.row)}
+            >
+              <EditIcon fontSize="medium" />
+            </IconButton>
+          </Tooltip>
 
-      <Tooltip title="Scrap">
-        <IconButton
-          sx={{
-            transition: "transform 0.2s",
-            color: "inherit",
-            "&:hover": {
-              transform: "scale(1.3)",
-              color: "error.main",
-              filter: "drop-shadow(0 0 4px red)",
-            },
-          }}
-          onClick={() => handleDelete(params.row)}
-        >
-          <DeleteIcon fontSize="medium" />
-        </IconButton>
-      </Tooltip>
-    </Box>
-  ),
-},
+          <Tooltip title="Scrap">
+            <IconButton
+              sx={{
+                transition: "transform 0.2s",
+                color: "inherit",
+                "&:hover": {
+                  transform: "scale(1.3)",
+                  color: "error.main",
+                  filter: "drop-shadow(0 0 4px red)",
+                },
+              }}
+              onClick={() => handleDelete(params.row)}
+            >
+              <DeleteIcon fontSize="medium" />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      ),
+    },
   ];
 
   return (
@@ -402,7 +435,7 @@ function Assets() {
                           fontFamily: "'Racing Sans One', sans-serif",
                           fontSize: "0.9rem",
                           color: "#083A40",
-                          paddingTop: "20px", 
+                          paddingTop: "20px",
                         },
                       },
                       "& .MuiInputLabel-root": {
@@ -488,25 +521,25 @@ function Assets() {
                 columns={columns}
                 autoHeight
                 sx={{
-                  maxHeight: "70vh",  
+                  maxHeight: "70vh",
                   overflow: "hidden",
                   borderRadius: "16px",
                   border: "2px solid #0a1113ff",
                   fontFamily: "'Racing Sans One', sans-serif",
                   color: "#083A40",
                   "& .MuiDataGrid-main": {
-                   scrollbarWidth: "none",
-                   msOverflowStyle: "none",
-                },
+                    scrollbarWidth: "none",
+                    msOverflowStyle: "none",
+                  },
                   "& .MuiDataGrid-main::-webkit-scrollbar": {
-                   display: "none",
-                },
+                    display: "none",
+                  },
                   "& .MuiDataGrid-virtualScroller": {
-                   scrollbarWidth: "none",
-                },
+                    scrollbarWidth: "none",
+                  },
                   "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": {
-                   display: "none",
-                },
+                    display: "none",
+                  },
                   "& .MuiDataGrid-columnHeaders": {
                     background: "linear-gradient(45deg, #6DE0FF, #2BC4F3)",
                     color: "#083A40",

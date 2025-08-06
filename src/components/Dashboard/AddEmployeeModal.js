@@ -356,8 +356,9 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
                 This field is required *
               </span>
               <FormControl fullWidth>
-                <InputLabel>Status</InputLabel>
+                <InputLabel id="status-label">Status</InputLabel>
                 <Select
+                labelId="status-label" 
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
                   onBlur={() =>

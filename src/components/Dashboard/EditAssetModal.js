@@ -121,6 +121,7 @@ function EditAssetModal({
     }
   };
   const [shakeForm, setShakeForm] = useState(false);
+
   const handleUpdateAsset = async () => {
     const requiredFields = {
       assetName,
@@ -134,11 +135,17 @@ function EditAssetModal({
 
     const newTouched = { ...touched };
     let hasError = false;
+    let firstInvalidElement = null;
 
     Object.entries(requiredFields).forEach(([key, value]) => {
       if (!value) {
         newTouched[key] = true;
         hasError = true;
+
+        if (!firstInvalidElement) {
+          // Scroll to first invalid field
+          firstInvalidElement = document.querySelector(`[name="${key}"]`);
+        }
       }
     });
     setTouched(newTouched);
@@ -146,8 +153,15 @@ function EditAssetModal({
     if (hasError) {
       setShakeForm(true);
       setTimeout(() => setShakeForm(false), 500);
+
+      // 🔹 Scroll smoothly to first invalid input
+      if (firstInvalidElement) {
+        firstInvalidElement.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+
       return;
     }
+
     if (!asset) return;
 
     const finalType = type === "__custom__" ? customType : type;
@@ -256,6 +270,7 @@ function EditAssetModal({
               This field is required *
             </span>
             <TextField
+              name="assetName"    // 🔹 Added for scroll
               label="Asset Name"
               value={assetName}
               onChange={(e) => setAssetName(e.target.value)}
@@ -272,6 +287,7 @@ function EditAssetModal({
           <Box sx={{ display: "flex", flexDirection: "column" }}>
             <span style={errorStyle(false)}> </span>
             <TextField
+              name="serialNumber" // 🔹 Added for scroll
               label="Serial Number"
               value={serialNumber}
               fullWidth
@@ -299,6 +315,7 @@ function EditAssetModal({
               renderInput={(params) => (
                 <TextField
                   {...params}
+                  name="location"  // 🔹 Added for scroll
                   label="Location"
                   fullWidth
                   disabled={viewOnly}
@@ -386,6 +403,7 @@ function EditAssetModal({
               renderInput={(params) => (
                 <TextField
                   {...params}
+                  name="type"  // 🔹 Added for scroll
                   label="Asset Type"
                   fullWidth
                   disabled={viewOnly}
@@ -434,6 +452,7 @@ function EditAssetModal({
               This field is required *
             </span>
             <TextField
+              name="purchaseDate" // 🔹 Added for scroll
               label="Purchase Date"
               type="date"
               value={purchaseDate}
@@ -454,6 +473,7 @@ function EditAssetModal({
               This field is required *
             </span>
             <TextField
+              name="warrantyDate" // 🔹 Added for scroll
               label="Warranty Date"
               type="date"
               value={warrantyDate}
@@ -494,6 +514,7 @@ function EditAssetModal({
               renderInput={(params) => (
                 <TextField
                   {...params}
+                  name="assetSourcedBy" // 🔹 Added for scroll
                   label="Asset Sourced By"
                   fullWidth
                   disabled={viewOnly}
