@@ -39,6 +39,8 @@ function EditAssetModal({
   const [warrantyDate, setWarrantyDate] = useState("");
   const [status, setStatus] = useState("UnAssigned");
   const [addedBy] = useState(user.empId);
+  const [assignedBy, setAssignedBy] = useState("");
+  const [empId, setEmpId] = useState("");
 
   const [type, setType] = useState("");
   const [customType, setCustomType] = useState("");
@@ -58,6 +60,13 @@ function EditAssetModal({
     purchaseDate: false,
     warrantyDate: false,
     assetSourcedBy: false,
+  });
+
+  const errorStyle = (show) => ({
+    color: show ? "red" : "transparent",
+    fontSize: "0.8rem",
+    minHeight: "16px",
+    marginBottom: "2px",
   });
 
   useEffect(() => {
@@ -91,6 +100,8 @@ function EditAssetModal({
       setType(asset.type || "");
       setLocation(asset.location || "");
       setAssetSourcedBy(asset.assetSourcedBy || "");
+      setAssignedBy(asset.assignedBy || "");
+      setEmpId(asset.empId || "");
     }
 
     setTouched({
@@ -127,6 +138,8 @@ function EditAssetModal({
       location,
       assetSourcedBy,
       addedBy,
+      assignedBy,
+      empId,
     };
 
     const changedFields = {};
@@ -164,6 +177,9 @@ function EditAssetModal({
     }
   };
 
+  const isAssigned = status === "Assigned";
+  const isScrap = status === "Scrap";
+
   return (
     <Modal open={open} onClose={handleClose}>
       <Box
@@ -171,9 +187,9 @@ function EditAssetModal({
           backgroundColor: "background.paper",
           boxShadow: 24,
           p: 4,
-          width: "60%",
-          maxWidth: 700,
-          maxHeight: "75%",
+          width: "70%",
+          maxWidth: 800,
+          maxHeight: "80%",
           overflowY: "auto",
           borderRadius: 4,
           position: "absolute",
@@ -184,7 +200,6 @@ function EditAssetModal({
           "&::-webkit-scrollbar": { display: "none" },
         }}
       >
-        {/* Close Button */}
         <IconButton
           aria-label="close"
           onClick={handleClose}
@@ -210,11 +225,9 @@ function EditAssetModal({
         >
           {/* Asset Name */}
           <Box sx={{ display: "flex", flexDirection: "column" }}>
-            {touched.assetName && !assetName && (
-              <span style={{ color: "red", fontSize: "0.8rem" }}>
-                This field is required *
-              </span>
-            )}
+            <span style={errorStyle(touched.assetName && !assetName)}>
+              This field is required *
+            </span>
             <TextField
               label="Asset Name"
               value={assetName}
@@ -227,21 +240,22 @@ function EditAssetModal({
             />
           </Box>
 
-          {/* Serial Number (Read-only) */}
-          <TextField
-            label="Serial Number"
-            value={serialNumber}
-            fullWidth
-            disabled
-          />
+          {/* Serial Number */}
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <span style={errorStyle(false)}> </span>
+            <TextField
+              label="Serial Number"
+              value={serialNumber}
+              fullWidth
+              disabled
+            />
+          </Box>
 
           {/* Location */}
           <Box sx={{ display: "flex", flexDirection: "column" }}>
-            {touched.location && !location && (
-              <span style={{ color: "red", fontSize: "0.8rem" }}>
-                This field is required *
-              </span>
-            )}
+            <span style={errorStyle(touched.location && !location)}>
+              This field is required *
+            </span>
             <Autocomplete
               freeSolo
               options={locationOptions}
@@ -284,11 +298,9 @@ function EditAssetModal({
 
           {/* Asset Type */}
           <Box sx={{ display: "flex", flexDirection: "column" }}>
-            {touched.type && !type && !customType && (
-              <span style={{ color: "red", fontSize: "0.8rem" }}>
-                This field is required *
-              </span>
-            )}
+            <span style={errorStyle(touched.type && !type && !customType)}>
+              This field is required *
+            </span>
             <Autocomplete
               freeSolo
               options={typeOptions}
@@ -325,34 +337,43 @@ function EditAssetModal({
           </Box>
 
           {/* Operating System */}
-          <TextField
-            label="Operating System"
-            value={operatingSystem}
-            onChange={(e) => setOperatingSystem(e.target.value)}
-            fullWidth
-            disabled={viewOnly}
-          />
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <span style={errorStyle(false)}> </span>
+            <TextField
+              label="Operating System"
+              value={operatingSystem}
+              onChange={(e) => setOperatingSystem(e.target.value)}
+              fullWidth
+              disabled={viewOnly}
+            />
+          </Box>
 
           {/* Model Name */}
-          <TextField
-            label="Model Name"
-            value={modelName}
-            onChange={(e) => setModelName(e.target.value)}
-            onBlur={() => setTouched((prev) => ({ ...prev, modelName: true }))}
-            fullWidth
-            disabled={viewOnly}
-          />
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <span style={errorStyle(false)}> </span>
+            <TextField
+              label="Model Name"
+              value={modelName}
+              onChange={(e) => setModelName(e.target.value)}
+              onBlur={() =>
+                setTouched((prev) => ({ ...prev, modelName: true }))
+              }
+              fullWidth
+              disabled={viewOnly}
+            />
+          </Box>
 
           {/* Added By */}
-          <TextField label="Added By" value={addedBy} fullWidth disabled />
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <span style={errorStyle(false)}> </span>
+            <TextField label="Added By" value={addedBy} fullWidth disabled />
+          </Box>
 
           {/* Purchase Date */}
           <Box sx={{ display: "flex", flexDirection: "column" }}>
-            {touched.purchaseDate && !purchaseDate && (
-              <span style={{ color: "red", fontSize: "0.8rem" }}>
-                This field is required *
-              </span>
-            )}
+            <span style={errorStyle(touched.purchaseDate && !purchaseDate)}>
+              This field is required *
+            </span>
             <TextField
               label="Purchase Date"
               type="date"
@@ -369,11 +390,9 @@ function EditAssetModal({
 
           {/* Warranty Date */}
           <Box sx={{ display: "flex", flexDirection: "column" }}>
-            {touched.warrantyDate && !warrantyDate && (
-              <span style={{ color: "red", fontSize: "0.8rem" }}>
-                This field is required *
-              </span>
-            )}
+            <span style={errorStyle(touched.warrantyDate && !warrantyDate)}>
+              This field is required *
+            </span>
             <TextField
               label="Warranty Date"
               type="date"
@@ -390,11 +409,9 @@ function EditAssetModal({
 
           {/* Asset Sourced By */}
           <Box sx={{ display: "flex", flexDirection: "column" }}>
-            {touched.assetSourcedBy && !assetSourcedBy && (
-              <span style={{ color: "red", fontSize: "0.8rem" }}>
-                This field is required *
-              </span>
-            )}
+            <span style={errorStyle(touched.assetSourcedBy && !assetSourcedBy)}>
+              This field is required *
+            </span>
             <Autocomplete
               freeSolo
               options={assetSourceOptions}

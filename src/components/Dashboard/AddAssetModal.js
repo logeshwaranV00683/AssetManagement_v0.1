@@ -20,8 +20,8 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
 
   const [assetName, setAssetName] = useState("");
   const [serialNumber, setSerialNumber] = useState("");
-  const [operatingSystem, setOperatingSystem] = useState("Nill");
-  const [modelName, setModelName] = useState("Nill");
+  const [operatingSystem, setOperatingSystem] = useState("");
+  const [modelName, setModelName] = useState("");
   const [purchaseDate, setPurchaseDate] = useState("");
   const [warrantyDate, setWarrantyDate] = useState("");
   const [addedBy] = useState(user.empId);
@@ -96,51 +96,52 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
     }
   };
 
-  const handleAddAsset = async () => {
-    const finalType = type === "__custom__" ? customType : type;
+const handleAddAsset = async () => {
+  const finalType = type === "__custom__" ? customType : type;
 
-    const newAsset = {
-      assetName,
-      serialNumber,
-      location,
-      status,
-      type: finalType,
-      operatingSystem,
-      modelName,
-      purchaseDate,
-      warrantyDate,
-      addedBy,
-      assetSourcedBy,
-    };
-
-    console.log("Asset added:", newAsset);
-    setIsAdding(true);
-
-    try {
-      await saveAsset(newAsset);
-      refreshAssetList();
-      toast.success(`${newAsset.serialNumber} Asset Added Successfully`);
-      handleCloseModal();
-    } catch (error) {
-      console.error("Error adding Asset:", error);
-
-      if (error.status === 400 && typeof error.data === "object") {
-        Object.entries(error.data).forEach(([field, message]) => {
-          toast.error(`${field}: ${message}`);
-        });
-      } else if (error.status === 409) {
-        toast.error(
-          error.data || `Asset ${newAsset.serialNumber} already exists`
-        );
-      } else {
-        toast.error(
-          `Adding ${newAsset.serialNumber} failed: Warranty Date must not be before Purchase Date or Serial Number already exists`
-        );
-      }
-    } finally {
-      setIsAdding(false);
-    }
+  const newAsset = {
+    assetName,
+    serialNumber,
+    location,
+    status,
+    type: finalType,
+    operatingSystem: operatingSystem.trim() || "Nill",
+    modelName: modelName.trim() || "Nill",
+    purchaseDate,
+    warrantyDate,
+    addedBy,
+    assetSourcedBy,
   };
+
+  console.log("Asset added:", newAsset);
+  setIsAdding(true);
+
+  try {
+    await saveAsset(newAsset);
+    refreshAssetList();
+    toast.success(`${newAsset.serialNumber} Asset Added Successfully`);
+    handleCloseModal();
+  } catch (error) {
+    console.error("Error adding Asset:", error);
+
+    if (error.status === 400 && typeof error.data === "object") {
+      Object.entries(error.data).forEach(([field, message]) => {
+        toast.error(`${field}: ${message}`);
+      });
+    } else if (error.status === 409) {
+      toast.error(
+        error.data || `Asset ${newAsset.serialNumber} already exists`
+      );
+    } else {
+      toast.error(
+        `Adding ${newAsset.serialNumber} failed: Warranty Date must not be before Purchase Date or Serial Number already exists`
+      );
+    }
+  } finally {
+    setIsAdding(false);
+  }
+};
+
 
   const resetForm = () => {
     setAssetName("");
