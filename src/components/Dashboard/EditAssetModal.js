@@ -277,18 +277,8 @@ function EditAssetModal({
               {status === "Assigned" && (
                 <MenuItem value="Assigned">Assigned</MenuItem>
               )}
-              {status === "UnAssigned" && (
-                <>
                   <MenuItem value="UnAssigned">UnAssigned</MenuItem>
                   <MenuItem value="Scrap">Scrap</MenuItem>
-                </>
-              )}
-              {status === "Scrap" && (
-                <>
-                  <MenuItem value="Scrap">Scrap</MenuItem>
-                  <MenuItem value="UnAssigned">UnAssigned</MenuItem>
-                </>
-              )}
             </Select>
           </FormControl>
 

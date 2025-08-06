@@ -291,7 +291,7 @@ function EditEmployeeModal({
         <form>
           <div className={classes.formGrid}>
             {/* Employee ID (readonly) */}
-            <TextField label="Employee ID" value={empId} fullWidth disabled />
+            <TextField label="Employee ID" value={empId} fullWidth disabled style={{ marginTop: '19px' }}/>
 
             {renderFieldWithError(
               "First Name",
