@@ -49,7 +49,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/getEmployee/{empId}")
-    public ResponseEntity<?> getById(@RequestParam String empId) {
+    public ResponseEntity<?> getById(@PathVariable String empId) {
         return employeeService.getById(empId);
     }
 

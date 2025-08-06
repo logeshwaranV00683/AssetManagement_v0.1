@@ -54,7 +54,6 @@ public class AssetsController implements ApplicationRunner {
 
     @GetMapping("asset/id/{serialNumber}")
     public Object getById(@PathVariable String serialNumber) {
-        // LOGGER.debug("Hited getById endpoint");
         return assetService.getAssetBySerialNumber(serialNumber);
     }
 
