@@ -16,7 +16,7 @@ public class SaveAssetResponse {
     private String serialNumber;
     @Pattern(regexp = "^(V\\d{5})?$", message = "Must be V followed by 5 digits or empty")
     private String empId;
-    @Pattern(regexp = "^(?i)(Assigned|Unassigned|Scarp)?$", message = "status can be Assigned or unassigned or scrap")
+    @Pattern(regexp = "^(?i)(Assigned|Unassigned|Scrap)?$", message = "status can be Assigned or unassigned or scrap")
     private String status;
     @Pattern(regexp = "^(\\w+)?$", message = "Must be a Alphanumeric & _")
     private String type;

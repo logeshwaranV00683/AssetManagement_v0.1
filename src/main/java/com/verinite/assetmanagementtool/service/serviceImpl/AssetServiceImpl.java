@@ -136,7 +136,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
         if (asset.getAssetName() != null)
             existingAsset.setAssetName(asset.getAssetName());
         if (asset.getPurchaseDate() != null)
-        if (existingAsset.getWarrantyDate() == null || existingAsset.getWarrantyDate().isAfter(asset.getPurchaseDate())) {
+           if (existingAsset.getWarrantyDate() == null || existingAsset.getWarrantyDate().isAfter(asset.getPurchaseDate())) {
                 existingAsset.setPurchaseDate(asset.getPurchaseDate());
             }
             else{
