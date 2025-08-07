@@ -60,7 +60,7 @@ export const saveAsset = async (assetData) => {
 };
 
 export const updateAsset = async (asset, serialNumber) => {
-  console.log("json", JSON.stringify(asset), serialNumber);
+  console.log("updating json: ", JSON.stringify(asset), serialNumber);
   try {
     const response = await fetch(
       `${apiUrl}/assetManager/v1/asset/updateAsset/${serialNumber}`,

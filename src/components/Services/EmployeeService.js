@@ -77,8 +77,20 @@ export const updateEmployee = async (empId, employee) => {
       }
     );
 
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
+ if (!response.ok) {
+      let errorData;
+      const contentType = response.headers.get("content-type");
+
+      if (contentType && contentType.includes("application/json")) {
+        errorData = await response.json();
+      } else {
+        errorData = await response.text();
+      }
+
+      const error = new Error("Request failed");
+      error.status = response.status;
+      error.data = errorData;
+      throw error;
     }
 
     const text = await response.text();
