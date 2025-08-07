@@ -198,7 +198,7 @@ function EditAssetModal({
 
     setIsUpdating(true);
     try {
-      await updateAsset(asset.serialNumber, changedFields);
+      await updateAsset(changedFields, asset.serialNumber);
       refreshAssetList();
       toast.success(`${serialNumber} Asset Updated Successfully`);
       handleClose();
@@ -209,12 +209,10 @@ function EditAssetModal({
         Object.entries(error.data).forEach(([field, message]) =>
           toast.error(`${field}: ${message}`)
         );
-      } else if (error.status === 409) {
+      } else if (error.status === 406) {
         toast.error(error.data || `Asset ${serialNumber} already exists`);
       } else {
-        toast.error(
-          `Updating ${serialNumber} failed: Warranty Date must not be before Purchase Date or Serial Number already exists`
-        );
+        toast.error(" Unexpected error occurred while updating.");
       }
     } finally {
       setIsUpdating(false);

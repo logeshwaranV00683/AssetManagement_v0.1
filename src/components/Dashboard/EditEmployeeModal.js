@@ -261,7 +261,7 @@ function EditEmployeeModal({
         Object.entries(error.data).forEach(([field, message]) => {
           toast.error(`${field}: ${message}`);
         });
-      } else if (error.status === 409) {
+      } else if (error.status === 406) {
         toast.error(error.data || "Employee mail or Mobile already exists");
       } else {
         toast.error("Unexpected error occurred while updating.");

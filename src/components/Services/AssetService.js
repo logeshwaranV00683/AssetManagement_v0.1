@@ -75,8 +75,19 @@ export const updateAsset = async (asset, serialNumber) => {
     );
 
     if (!response.ok) {
-      const text = await response.text();
-      throw new Error(`Server error: ${text}`);
+      let errorData;
+      const contentType = response.headers.get("content-type");
+
+      if (contentType && contentType.includes("application/json")) {
+        errorData = await response.json();
+      } else {
+        errorData = await response.text();
+      }
+
+      const error = new Error("Request failed");
+      error.status = response.status;
+      error.data = errorData;
+      throw error;
     }
 
     const text = await response.text();
@@ -86,7 +97,7 @@ export const updateAsset = async (asset, serialNumber) => {
       return { message: text };
     }
   } catch (error) {
-    console.error("Error updating asset:", error);
+    console.error("Error updating employee:", error);
     throw error;
   }
 };
@@ -291,7 +302,7 @@ export const getDeletedAssets = async () => {
     let data = await response.json();
 
     let filteredData = data.map((asset, index) => ({
-      id: index + 1, // Assigning a row id (optional, required by DataGrid)
+      id: index + 1,
       ...asset,
     }));
 
