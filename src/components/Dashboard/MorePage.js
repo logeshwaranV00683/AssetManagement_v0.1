@@ -84,29 +84,27 @@ const RecentAssignedAssetPage = () => {
     }
   };
 
- const handleViewAsset = async (asset) => {
-  try {
-    const fullAsset = await getAssetBySerialNumber(asset.serialNumber);
-    setSelectedAsset(fullAsset);
-    setViewing("asset");
-    setOpenEditModal(true);
-  } catch (error) {
-    console.error("Error fetching asset:", error);
-  }
-};
-
+  const handleViewAsset = async (asset) => {
+    try {
+      const fullAsset = await getAssetBySerialNumber(asset.serialNumber);
+      setSelectedAsset(fullAsset);
+      setViewing("asset");
+      setOpenEditModal(true);
+    } catch (error) {
+      console.error("Error fetching asset:", error);
+    }
+  };
 
   const handleViewEmployee = async (employee) => {
-  try {
-    const fullEmployee = await getEmployeeById(employee.empId);
-    setSelectedEmployee(fullEmployee);
-    setViewing("employee");
-    setOpenEditModal(true);
-  } catch (error) {
-    console.error("Error fetching employee:", error);
-  }
-};
-
+    try {
+      const fullEmployee = await getEmployeeById(employee.empId);
+      setSelectedEmployee(fullEmployee);
+      setViewing("employee");
+      setOpenEditModal(true);
+    } catch (error) {
+      console.error("Error fetching employee:", error);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -345,14 +343,16 @@ const RecentAssignedAssetPage = () => {
             letterSpacing: "0.5px",
           }}
         >
-          {!showDeleted ? "Permanently Deleted Assets" : "Today Assigned Assets"}
+          {!showDeleted
+            ? "Permanently Deleted Assets"
+            : "Today Assigned Assets"}
         </h2>
 
         <div style={scrollWrapperStyle}>
           <style>{`div::-webkit-scrollbar { display: none; }`}</style>
           <DataGrid
-            rows={showDeleted ? deletedRows : assignedRows}
-            columns={showDeleted ? deletedColumns : assignedColumns}
+            rows={!showDeleted ? deletedRows : assignedRows}
+            columns={!showDeleted ? deletedColumns : assignedColumns}
             pageSize={5}
             rowsPerPageOptions={[5]}
             autoHeight
@@ -433,7 +433,6 @@ const RecentAssignedAssetPage = () => {
   );
 };
 
-// Styles
 const containerStyle = {
   flex: 1,
   padding: 20,
