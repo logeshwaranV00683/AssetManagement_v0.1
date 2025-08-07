@@ -442,7 +442,7 @@ function Assets() {
                         fontFamily: "'Racing Sans One', sans-serif",
                         fontSize: "1rem",
                         color: "#083A40",
-                        transform: "translate(14px, 16px) scale(1)",
+                        transform: "translate(14px, -7px) scale(1)",
                         transition: "all 0.2s ease",
                       },
                       "& .MuiInputLabel-root.Mui-focused": {
@@ -451,6 +451,7 @@ function Assets() {
                         padding: "0 4px",
                         color: "#fff",
                       },
+
                     }}
                   />
                 </div>
@@ -514,6 +515,7 @@ function Assets() {
                 width: "100%",
                 maxWidth: "100%",
                 height: "100%",
+                marginBottom:"1%"
               }}
             >
               <DataGrid

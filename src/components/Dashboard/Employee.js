@@ -448,6 +448,7 @@ function Employee() {
                 width: "100%",
                 maxWidth: "100%",
                 height: "100%",
+                marginBottom:"1%"
               }}
             >
               <DataGrid
