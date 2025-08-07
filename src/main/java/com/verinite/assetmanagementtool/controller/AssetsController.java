@@ -65,7 +65,7 @@ public class AssetsController implements ApplicationRunner {
 
         SaveAssetResponse updateAsset = assetService.updateAsset(saveAssetResponse);
 
-        return new ResponseEntity<>(updateAsset == null ? "Cannot Update the given details" : updateAsset, HttpStatus.OK);
+        return new ResponseEntity<>(updateAsset == null ? "Cannot Update the given details" : updateAsset, updateAsset == null ?HttpStatus.BAD_REQUEST :HttpStatus.OK);
     }
 
     @Override

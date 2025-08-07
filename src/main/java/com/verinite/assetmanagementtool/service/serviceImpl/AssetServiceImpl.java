@@ -6,12 +6,10 @@ import com.verinite.assetmanagementtool.dto.AssignableAssetDto;
 import com.verinite.assetmanagementtool.entity.AssetsEntity;
 import com.verinite.assetmanagementtool.entity.AssignedAssetsEntity;
 import com.verinite.assetmanagementtool.entity.CountOfAssetsEntity;
-import com.verinite.assetmanagementtool.entity.DeletedAssetEntity;
 import com.verinite.assetmanagementtool.repository.*;
 import com.verinite.assetmanagementtool.response.SaveAssetResponse;
 import com.verinite.assetmanagementtool.service.AssetService;
 import com.verinite.assetmanagementtool.service.AssetsHistoryServices;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -21,7 +19,6 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
@@ -138,9 +135,13 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
 
         if (asset.getAssetName() != null)
             existingAsset.setAssetName(asset.getAssetName());
-        if (asset.getPurchaseDate() != null &&
-                (existingAsset.getWarrantyDate() == null || existingAsset.getWarrantyDate().isAfter(asset.getPurchaseDate())))
-            existingAsset.setPurchaseDate(asset.getPurchaseDate());
+        if (asset.getPurchaseDate() != null)
+        if (existingAsset.getWarrantyDate() == null || existingAsset.getWarrantyDate().isAfter(asset.getPurchaseDate())) {
+                existingAsset.setPurchaseDate(asset.getPurchaseDate());
+            }
+            else{
+                throw new IllegalArgumentException("Error: Given Warranty date is Before then the Purchase Date");
+            }
         if (asset.getWarrantyDate() != null &&
                 (existingAsset.getPurchaseDate() == null || existingAsset.getPurchaseDate().isBefore(asset.getWarrantyDate())))
             existingAsset.setWarrantyDate(asset.getWarrantyDate());
@@ -684,10 +685,9 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             AssetsEntity assetsEntity = assetRepo.findBySerialNumber(asset.getSerialNumber());
             if (assetsEntity != null) {
                 if (assetsEntity.getAssetName().equalsIgnoreCase(asset.getAssetName()) && assetsEntity.getPurchaseDate().isEqual(asset.getPurchaseDate())) {
-                    try{
+                    try {
                         scrapAsset(assetsEntity.getAssetId());
-                    }catch (IllegalArgumentException e)
-                    {
+                    } catch (IllegalArgumentException e) {
                         skippedData.put(asset.getSerialNumber(), e.getMessage());
                         continue;
                     }
@@ -757,7 +757,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
         }
     }
 
-    public List<String> getUniqueAssetSourcedBy(){
+    public List<String> getUniqueAssetSourcedBy() {
         return assetRepo.getUniqueAssetSourcedBy();
     }
 }
