@@ -65,6 +65,7 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
             dto.setStatus(asset.getStatus() != null ? asset.getStatus() : "");
             dto.setAssignedDate(asset.getAssignedDate());
             dto.setAssignedBy(asset.getAssignedBy() != null ? asset.getAssignedBy() : "");
+            dto.setType(asset.getType() !=null?asset.getType():"");
 
             if (employee != null) {
                 dto.setEmpFirstName(employee.getFirstName() != null ? employee.getFirstName() : "Unknown");
@@ -186,6 +187,7 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
         assignedAssetsEntity.setAssignedDate(assignableAssetDto.getAssignedDate());
         assignedAssetsEntity.setStatus("Assigned");
         assignedAssetsEntity.setSerialNumber(asset.getSerialNumber());
+        assignedAssetsEntity.setType(asset.getType());
         return assignedAssetsEntity;
     }
 

@@ -22,6 +22,7 @@ public class AssignedAssetsEntity {
     //private Date returnDate;
     private LocalDate assignedDate;
     private String assignedBy;
+    private String type;
 
 }
 

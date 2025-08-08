@@ -22,4 +22,6 @@ public class AssignableAssetDto {
     @NotBlank
     @Pattern(regexp = "^(V\\d{5})?$", message = "Must be V followed by 5 digits or empty")
     private String assignedBy;
+    @NotBlank
+    private String type;
 }

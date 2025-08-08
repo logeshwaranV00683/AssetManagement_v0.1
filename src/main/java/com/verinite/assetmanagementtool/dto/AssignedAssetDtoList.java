@@ -22,5 +22,6 @@ public class AssignedAssetDtoList {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate assignedDate; // LocalDateTime could be used here too
     private String assignedBy;
+    private String type;
 
 }
