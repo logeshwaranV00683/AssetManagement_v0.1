@@ -37,12 +37,11 @@ function EditAssetModal({
   const [modelName, setModelName] = useState("");
   const [purchaseDate, setPurchaseDate] = useState("");
   const [warrantyDate, setWarrantyDate] = useState("");
-  const [status, setStatus] = useState("UnAssigned");
+  const [status, setStatus] = useState("");
   const [assignedDate, setAssignedDate] = useState("");
   const [addedBy] = useState(user.empId);
   const [assignedBy, setAssignedBy] = useState("");
   const [empId, setEmpId] = useState("");
-
   const [type, setType] = useState("");
   const [customType, setCustomType] = useState("");
   const [typeOptions, setTypeOptions] = useState([]);
@@ -335,7 +334,16 @@ function EditAssetModal({
               <Select
                 labelId="status-label"
                 value={status}
-                onChange={(e) => setStatus(e.target.value)}
+                onChange={(e) =>  {
+                    const newStatus = e.target.value;
+                    setStatus(newStatus);
+                    if (newStatus === "Scrap") {                      
+                      if (!assignedDate && !assignedBy) {
+                      setAssignedDate(new Date().toISOString().split("T")[0]);
+                      setAssignedBy(user.empId);
+                      }
+                    } 
+                  }}
                 label="Status"
               >
                 {status === "Assigned" && (

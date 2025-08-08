@@ -324,7 +324,7 @@ function Assets() {
             </IconButton>
           </Tooltip>
 
-          <Tooltip title="Scrap">
+          <Tooltip title="Delete">
             <IconButton
               sx={{
                 transition: "transform 0.2s",
