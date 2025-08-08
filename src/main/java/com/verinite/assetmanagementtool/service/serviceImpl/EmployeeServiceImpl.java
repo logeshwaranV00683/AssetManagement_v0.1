@@ -237,7 +237,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             if (employee.getRole() != null) {
                 if (employee.getRole().equalsIgnoreCase("Admin")) {
                     if (!adminRegistrationRepository.existsByEmpId(employee.getEmpId())) {
-                        if (employee.getStatus().equalsIgnoreCase("active")) {
+                        if (existingEmployee.getStatus().equalsIgnoreCase("active")&&(employee.getStatus()==null||employee.getStatus().equalsIgnoreCase("active"))) {
                             adminServiceImpl.registerNewAdminWithoutPassword(existingEmployee);
                             existingEmployee.setRole(employee.getRole());
                         }
@@ -253,7 +253,6 @@ public class EmployeeServiceImpl implements EmployeeService {
             }
             return employeeRepo.save(existingEmployee);
         } catch (Exception e) {
-            // Log the exception and return error message
             return "Error updating record with ID: " + empId + ". Error: " + e.getMessage();
         }
     }
