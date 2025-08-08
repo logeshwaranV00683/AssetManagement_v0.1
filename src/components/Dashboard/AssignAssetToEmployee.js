@@ -165,7 +165,7 @@ function AssignAssetToEmployee({ open, onClose, employee, refresh }) {
                           );
                         }}
                       />
-                      {asset.assetName} ({asset.serialNumber})
+                      {asset.assetName} ({asset.serialNumber}) - {asset.type}
                     </li>
                   ))}
                 </ul>
@@ -216,7 +216,7 @@ function AssignAssetToEmployee({ open, onClose, employee, refresh }) {
                     }}
                   />
                   <ListItemText
-                    primary={`${asset.serialNumber} - ${asset.assetName}`}
+                    primary={`${asset.serialNumber} - ${asset.assetName} - ${asset.type}`}
                   />
                 </MenuItem>
               ))}
