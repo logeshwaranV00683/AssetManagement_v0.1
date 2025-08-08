@@ -179,7 +179,7 @@ public class AdminServiceImpl implements AdminService {
         String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String lower = "abcdefghijklmnopqrstuvwxyz";
         String digits = "0123456789";
-        String special = "!@#%^&*()-_=+[]{}|;:,.<>?";
+        String special = "!@%^&*()-_=+[]";
         String all = upper + lower + digits + special;
 
         SecureRandom rand = new SecureRandom();
