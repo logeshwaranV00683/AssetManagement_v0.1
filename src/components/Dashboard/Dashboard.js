@@ -220,33 +220,33 @@ function Dashboard() {
               placeholder="Search"
               fullWidth
               sx={{
-                      "& .MuiOutlinedInput-root": {
-                        background: "#ffffff",
-                        borderRadius: "0.6rem",
-                        fontWeight: 500,
-                        boxShadow: "0 0 0.3rem rgba(109, 224, 255, 0.4)",
-                        "& fieldset": { border: "1px solid #ccc" },
-                        "&:hover fieldset": { borderColor: "#1FCBEA" },
-                        "&.Mui-focused fieldset": { borderColor: "#1FCBEA" },
-                        "& input": {
-                          fontFamily: "'Racing Sans One', sans-serif",
-                          fontSize: "0.9rem",
-                          color: "#083A40",
-                          paddingTop: "20px",
-                        },
-                      },
-                      "& .MuiInputLabel-root": {
-                        fontFamily: "'Racing Sans One', sans-serif",
-                        fontSize: "1rem",
-                        transition: "all 0.2s ease",
-                      },
-                      "& .MuiInputLabel-root.Mui-focused": {
-                        transform: "translate(14px, -25px) scale(0.85)",
-                        fontSize: "1.3rem",
-                        padding: "0 4px",
-                        color: "#fff",
-                      },
-                    }}
+                "& .MuiOutlinedInput-root": {
+                  background: "#ffffff",
+                  borderRadius: "0.6rem",
+                  fontWeight: 500,
+                  boxShadow: "0 0 0.3rem rgba(109, 224, 255, 0.4)",
+                  "& fieldset": { border: "1px solid #ccc" },
+                  "&:hover fieldset": { borderColor: "#1FCBEA" },
+                  "&.Mui-focused fieldset": { borderColor: "#1FCBEA" },
+                  "& input": {
+                    fontFamily: "'Racing Sans One', sans-serif",
+                    fontSize: "0.9rem",
+                    color: "#083A40",
+                    paddingTop: "20px",
+                  },
+                },
+                "& .MuiInputLabel-root": {
+                  fontFamily: "'Racing Sans One', sans-serif",
+                  fontSize: "1rem",
+                  transition: "all 0.2s ease",
+                },
+                "& .MuiInputLabel-root.Mui-focused": {
+                  transform: "translate(14px, -25px) scale(0.85)",
+                  fontSize: "1.3rem",
+                  padding: "0 4px",
+                  color: "#fff",
+                },
+              }}
             />
           </div>
         </div>

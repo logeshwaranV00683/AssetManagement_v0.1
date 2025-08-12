@@ -118,9 +118,8 @@ const RecentAssignedAssetPage = () => {
           (assigned || []).map((item, index) => ({
             id: index + 1,
             empId: item?.empId || "-",
-            employeeName: `${item?.firstName || ""} ${
-              item?.lastName || ""
-            }`.trim(),
+            employeeName: `${item?.firstName || ""} ${item?.lastName || ""
+              }`.trim(),
             serialNumber: item?.serialNumber || "-",
             assignedDate: item?.assignedDate || "-",
             raw: item,
@@ -413,7 +412,7 @@ const RecentAssignedAssetPage = () => {
               open={openEditModal}
               handleClose={handleClose}
               employee={selectedEmployee}
-              refreshEmployeeList={() => {}}
+              refreshEmployeeList={() => { }}
               viewOnly={true}
             />
           )}
@@ -423,7 +422,7 @@ const RecentAssignedAssetPage = () => {
               open={openEditModal}
               handleClose={handleClose}
               asset={selectedAsset}
-              refreshAssetList={() => {}}
+              refreshAssetList={() => { }}
               viewOnly={true}
             />
           )}

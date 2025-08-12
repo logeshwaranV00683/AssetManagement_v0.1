@@ -83,27 +83,27 @@ export const showDataPreviewAlert = async (filteredRows, importType, customTitle
         <thead>
           <tr style="background: #87CEEB; color: white;">
             ${columnKeys
-              .map(key => `<th style="padding: 6px; border: 1px solid #ddd;">${toCapital(key)}</th>`)
-              .join('')}
+      .map(key => `<th style="padding: 6px; border: 1px solid #ddd;">${toCapital(key)}</th>`)
+      .join('')}
           </tr>
         </thead>
         <tbody>
           ${filteredRows
-            .map(
-              row => `
+      .map(
+        row => `
             <tr>
               ${columnKeys
-                .map(val => {
-                  const cell = row[val];
-                  const displayValue = cell === null || cell === undefined || cell === '' ? '-' : cell;
-                  const width = Math.min(200, Math.max(60, String(displayValue).length * 10));
-                  return `<td style="padding: 6px; border: 1px solid #ddd; text-align: center; min-width: ${width}px;">${displayValue}</td>`;
-                })
-                .join('')}
+            .map(val => {
+              const cell = row[val];
+              const displayValue = cell === null || cell === undefined || cell === '' ? '-' : cell;
+              const width = Math.min(200, Math.max(60, String(displayValue).length * 10));
+              return `<td style="padding: 6px; border: 1px solid #ddd; text-align: center; min-width: ${width}px;">${displayValue}</td>`;
+            })
+            .join('')}
             </tr>
           `
-            )
-            .join('')}
+      )
+      .join('')}
         </tbody>
       </table>
     </div>

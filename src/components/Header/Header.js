@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 import "../Style/font.css";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
-import AdminProfile from "../Dashboard/AdminProfile"; 
+import AdminProfile from "../Dashboard/AdminProfile";
 
 
 const Header = ({ onLogout }) => {
@@ -47,7 +47,7 @@ const Header = ({ onLogout }) => {
   const [openAdminProfile, setOpenAdminProfile] = useState(false);
 
   const handleAdminProfile = () => {
-    setOpenAdminProfile(true); 
+    setOpenAdminProfile(true);
     // handleMenuClose(); 
   };
 
@@ -147,22 +147,6 @@ const Header = ({ onLogout }) => {
                 Profile
               </MenuItem>
 
-              <Dialog
-              key={openAdminProfile ? "open" : "closed"}
-                open={openAdminProfile}
-                onClose={handleProfileClose}
-                fullWidth
-                maxWidth="md" 
-              >
-                <DialogContent sx={{ p: 0 }}>
-                  <AdminProfile
-                    onClose={handleProfileClose} // if you want to close from inside
-                  />
-                </DialogContent>
-              </Dialog>
-
-
-
               <MenuItem
                 onClick={handleLogout}
                 style={{
@@ -175,6 +159,20 @@ const Header = ({ onLogout }) => {
                 Logout
               </MenuItem>
             </Menu>
+
+            <Dialog
+              key={openAdminProfile ? "open" : "closed"}
+              open={openAdminProfile}
+              onClose={handleProfileClose}
+              fullWidth
+              maxWidth="md"
+            >
+              <DialogContent sx={{ p: 0 }}>
+                <AdminProfile
+                  onClose={handleProfileClose}
+                />
+              </DialogContent>
+            </Dialog>
           </div>
         </Toolbar>
       </AppBar>

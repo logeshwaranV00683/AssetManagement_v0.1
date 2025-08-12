@@ -9,35 +9,35 @@ const ExportButton = ({
   filteredRows = [],
   state = '',
   buttonLabel = 'Export'
-  
+
 }) => {
   const [loading, setLoading] = useState(false);
   const exportFilteredData = async () => {
     if (!Array.isArray(filteredRows) || filteredRows.length === 0) {
-      showErrorAlert("Export Failed",'No data available to export.');
+      showErrorAlert("Export Failed", 'No data available to export.');
       return;
     }
-   const cleanData = filteredRows.map(row => {
-     if (type === 'asset') {
-       const newRow = {};
-       Object.entries(row).forEach(([key, value]) => {
-         if (key === 'id' || key === 'assetId') return;
-         if (key === 'empId') {
-           newRow['assignedTo'] = value;
-         } else {
-           newRow[key] = value;
-         }
-       });
-       return newRow;
-     } else {
-       const newRow = { ...row };
-       delete newRow.name;
-       delete newRow.id;
-       return newRow;
-     }
-   });
+    const cleanData = filteredRows.map(row => {
+      if (type === 'asset') {
+        const newRow = {};
+        Object.entries(row).forEach(([key, value]) => {
+          if (key === 'id' || key === 'assetId') return;
+          if (key === 'empId') {
+            newRow['assignedTo'] = value;
+          } else {
+            newRow[key] = value;
+          }
+        });
+        return newRow;
+      } else {
+        const newRow = { ...row };
+        delete newRow.name;
+        delete newRow.id;
+        return newRow;
+      }
+    });
 
-  filteredRows=cleanData;
+    filteredRows = cleanData;
     const confirmed = await showDataPreviewAlert(filteredRows, type);
     if (!confirmed) return;
 
@@ -79,7 +79,7 @@ const ExportButton = ({
     <Button
       onClick={exportFilteredData}
       disabled={loading}
-      className="export-button"   
+      className="export-button"
 
     >
       {loading ? 'Exporting...' : buttonLabel}

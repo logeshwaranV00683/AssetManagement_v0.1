@@ -61,11 +61,11 @@ export const handleResetPassword = async (
   }
 
   try {
-     const oldPassword = "#";
+    const oldPassword = "#";
     const response = await fetch(`${apiUrl}/reset-password/verify-otp`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ mail, otp, newPassword, oldPassword}),
+      body: JSON.stringify({ mail, otp, newPassword, oldPassword }),
     });
 
     if (response.ok) {

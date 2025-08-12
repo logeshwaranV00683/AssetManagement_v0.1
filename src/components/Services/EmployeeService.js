@@ -77,7 +77,7 @@ export const updateEmployee = async (empId, employee) => {
       }
     );
 
- if (!response.ok) {
+    if (!response.ok) {
       let errorData;
       const contentType = response.headers.get("content-type");
 

@@ -168,9 +168,8 @@ function AssetHistoryPopup({ open, onClose, history = [], asset }) {
                 return (
                   <Tooltip
                     key={index}
-                    title={`From ${history[index - 1].empId || "N/A"} → ${
-                      entry.empId || "N/A"
-                    }`}
+                    title={`From ${history[index - 1].empId || "N/A"} → ${entry.empId || "N/A"
+                      }`}
                     arrow
                     placement="top"
                   >

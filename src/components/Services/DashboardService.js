@@ -59,7 +59,7 @@ export const getLocations = async () => {
 
 export const getAssetTypes = async (location) => {
   const url = `${apiUrl}/dashboard/unique/assetTypes`;
- try {
+  try {
     const response = await fetch(url, {
       method: "GET",
       headers: {

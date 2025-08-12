@@ -334,16 +334,16 @@ function EditAssetModal({
               <Select
                 labelId="status-label"
                 value={status}
-                onChange={(e) =>  {
-                    const newStatus = e.target.value;
-                    setStatus(newStatus);
-                    if (newStatus === "Scrap") {                      
-                      if (!assignedDate && !assignedBy) {
+                onChange={(e) => {
+                  const newStatus = e.target.value;
+                  setStatus(newStatus);
+                  if (newStatus === "Scrap") {
+                    if (!assignedDate && !assignedBy) {
                       setAssignedDate(new Date().toISOString().split("T")[0]);
                       setAssignedBy(user.empId);
-                      }
-                    } 
-                  }}
+                    }
+                  }
+                }}
                 label="Status"
               >
                 {status === "Assigned" && (

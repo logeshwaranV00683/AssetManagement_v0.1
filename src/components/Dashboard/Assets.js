@@ -101,7 +101,7 @@ function Assets() {
       if (error.status === 406) {
         toast.error(
           error.message ||
-            "Cannot Permanently delete asset due to invalid status."
+          "Cannot Permanently delete asset due to invalid status."
         );
       } else {
         toast.error(
@@ -513,7 +513,7 @@ function Assets() {
                 width: "100%",
                 maxWidth: "100%",
                 height: "100%",
-                marginBottom:"1%"
+                marginBottom: "1%"
               }}
             >
               <DataGrid
