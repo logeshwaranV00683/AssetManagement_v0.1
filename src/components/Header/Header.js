@@ -47,9 +47,10 @@ const Header = ({ onLogout }) => {
   const [openAdminProfile, setOpenAdminProfile] = useState(false);
 
   const handleAdminProfile = () => {
+    // handleMenuClose();
     setOpenAdminProfile(true);
-    // handleMenuClose(); 
   };
+
 
   const handleProfileClose = () => {
     setOpenAdminProfile(false);
@@ -136,7 +137,10 @@ const Header = ({ onLogout }) => {
               onClose={handleMenuClose}
             >
               <MenuItem
-                onClick={handleAdminProfile}
+                onClick={() => {
+                  handleMenuClose(); // close menu first
+                  handleAdminProfile(); // then open dialog
+                }}
                 style={{
                   color: "green",
                   fontWeight: "bold",
@@ -159,20 +163,17 @@ const Header = ({ onLogout }) => {
                 Logout
               </MenuItem>
             </Menu>
-
             <Dialog
-              key={openAdminProfile ? "open" : "closed"}
               open={openAdminProfile}
               onClose={handleProfileClose}
               fullWidth
               maxWidth="md"
             >
               <DialogContent sx={{ p: 0 }}>
-                <AdminProfile
-                  onClose={handleProfileClose}
-                />
+                <AdminProfile onClose={handleProfileClose} />
               </DialogContent>
             </Dialog>
+
           </div>
         </Toolbar>
       </AppBar>

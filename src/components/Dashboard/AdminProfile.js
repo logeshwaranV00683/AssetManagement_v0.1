@@ -5,11 +5,11 @@ import { IconButton, InputAdornment } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { motion, AnimatePresence } from "framer-motion";
 import CloseIcon from '@mui/icons-material/Close';
-import { Box, Paper, Typography, TextField, Button, Grid, } from "@mui/material";
+import {  Box,  Paper,  Typography,  TextField,  Button,  Grid,} from "@mui/material";
 
 const AdminProfile = ({ onClose }) => {
   // const navigate = useNavigate();
-  const [adminData, setAdminData] = useState({ name: "", email: "", role: "", contact: "", location: "", });
+  const [adminData, setAdminData] = useState({    name: "",    email: "",    role: "",    contact: "",    location: "",  });
   const fadeVariant = {
     hidden: { opacity: 0, y: 20, rotateY: -10 },
     visible: { opacity: 1, y: 0, rotateY: 0, transition: { duration: 0.5 } },
@@ -18,7 +18,7 @@ const AdminProfile = ({ onClose }) => {
 
   const [otherAdmins, setOtherAdmins] = useState([]);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
-  const [showPasswords, setShowPasswords] = useState({ current: false, new: false, confirm: false, });
+  const [showPasswords, setShowPasswords] = useState({    current: false,    new: false,    confirm: false,  });
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem("user"));
@@ -78,7 +78,7 @@ const AdminProfile = ({ onClose }) => {
         position: "fixed",
         top: "50%",
         left: "50%",
-        transform: "translate(-50%, -50%)",
+        transform: "translate(-50%, -50%)", 
         width: {
           xs: "90%",   // mobile
           sm: "80%",   // tablet
@@ -95,7 +95,7 @@ const AdminProfile = ({ onClose }) => {
         borderRadius: 4,
         boxShadow: 24,
         zIndex: 1500,
-        overflowY: "auto",
+        overflowY: "auto", 
         p: {
           xs: 2,
           sm: 3,
