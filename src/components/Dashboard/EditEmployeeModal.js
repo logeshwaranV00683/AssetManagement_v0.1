@@ -195,81 +195,75 @@ function EditEmployeeModal({
     }
   };
 
-  const handleUpdateEmployee = async () => {
-    if (viewOnly || !employee) return;
+ const handleUpdateEmployee = async () => {
+  if (viewOnly || !employee) return;
 
-    const requiredFields = [
-      "firstName",
-      "lastName",
-      "role",
-      "mail",
-      "mobile",
-      "location",
-      "status",
-      "department",
-      "designation",
-    ];
+  const requiredFields = [
+    "firstName",
+    "lastName",
+    "role",
+    "mail",
+    "mobile",
+    "location",
+    "status",
+    "department",
+    "designation",
+  ];
 
-    const invalidField = requiredFields.find((f) => !eval(f));
-
-    if (invalidField) {
-      setTouched(
-        requiredFields.reduce((acc, key) => ({ ...acc, [key]: true }), {})
-      );
-      toast.error("Please fill all required fields!");
-
-      const firstInvalidRef = fieldRefs[invalidField]?.current;
-      if (firstInvalidRef) {
-        firstInvalidRef.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
-      return;
-    }
-
-    const updatedFields = {};
-    const currentValues = {
-      firstName,
-      lastName,
-      role,
-      mail,
-      mobile,
-      location,
-      status,
-      department,
-      designation,
-    };
-
-    Object.entries(currentValues).forEach(([key, value]) => {
-      if (value !== (employee[key] || "")) {
-        updatedFields[key] = value;
-      }
-    });
-
-    if (Object.keys(updatedFields).length === 0) {
-      toast.error("No changes detected.");
-      return;
-    }
-
-    setIsUpdating(true);
-    try {
-      await updateEmployee(empId, updatedFields);
-      toast.success(`Employee ${empId} updated successfully`);
-      refreshEmployeeList();
-      handleClose();
-    } catch (error) {
-      console.error("Error updating employee:", error);
-      if (error.status === 400 && typeof error.data === "object") {
-        Object.entries(error.data).forEach(([field, message]) => {
-          toast.error(`${field}: ${message}`);
-        });
-      } else if (error.status === 406) {
-        toast.error(error.data || "Employee mail or Mobile already exists");
-      } else {
-        toast.error("Unexpected error occurred while updating.");
-      }
-    } finally {
-      setIsUpdating(false);
-    }
+  const currentValues = {
+    firstName,
+    lastName,
+    role,
+    mail,
+    mobile,
+    location,
+    status,
+    department,
+    designation,
   };
+
+  const invalidField = requiredFields.find((f) => !currentValues[f]);
+
+  if (invalidField) {
+    setTouched(requiredFields.reduce((acc, key) => ({ ...acc, [key]: true }), {}));
+
+    toast.error("Please fill all required fields!");
+
+    fieldRefs[invalidField]?.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    return;
+  }
+
+  const updatedFields = Object.fromEntries(
+    Object.entries(currentValues).filter(([key, value]) => value !== (employee[key] || ""))
+  );
+
+  if (!Object.keys(updatedFields).length) {
+    toast.error("No changes detected.");
+    return;
+  }
+
+  setIsUpdating(true);
+  try {
+    await updateEmployee(empId, updatedFields);
+    toast.success(`Employee ${empId} updated successfully`);
+    refreshEmployeeList();
+    handleClose();
+  } catch (error) {
+    console.error("Error updating employee:", error);
+    if (error.status === 400 && typeof error.data === "object") {
+      Object.entries(error.data).forEach(([field, message]) => {
+        toast.error(`${field}: ${message}`);
+      });
+    } else if (error.status === 406) {
+      toast.error(error.data || "Employee mail or Mobile already exists");
+    } else {
+      toast.error("Unexpected error occurred while updating.");
+    }
+  } finally {
+    setIsUpdating(false);
+  }
+};
+
 
   const renderFieldWithError = (label, value, setValue, key, type = "text") => (
     <Box

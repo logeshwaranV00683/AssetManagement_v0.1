@@ -56,7 +56,7 @@ export const handleResetPassword = async (
   setShowResetPassword
 ) => {
   if (newPassword !== confirmPassword) {
-    toast.error("Passwords do not match");
+    toast.error("Passwords did not match");
     return;
   }
 
@@ -91,7 +91,6 @@ export const changePassword = async (mail, oldPassword, newPassword) => {
       body: JSON.stringify({ mail, oldPassword, newPassword }),
     });
 
-    // Force read the response safely
     const text = await response.text();
 
     let message = '';
@@ -132,7 +131,7 @@ export const getOtherAdmins = async () => {
     }
 
     const data = await response.json();
-    return data; // array of admin objects expected
+    return data;
   } catch (error) {
     console.error("Error fetching other admins:", error);
     throw error;
