@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { makeStyles } from "@material-ui/core/styles";
 import {
   Modal,
   Box,
@@ -22,63 +21,6 @@ import {
 } from "../Services/EmployeeService";
 import toast from "react-hot-toast";
 
-const useStyles = makeStyles((theme) => ({
-  modal: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  paper: {
-    backgroundColor: theme.palette.background.paper,
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(3, 4, 3),
-    position: "relative",
-    borderRadius: 12,
-    width: "60%",
-    maxWidth: 700,
-    maxHeight: "75%",
-    overflowY: "auto",
-    scrollbarWidth: "none",
-    "&::-webkit-scrollbar": { display: "none" },
-  },
-  textCenter: {
-    textAlign: "center",
-  },
-  formGrid: {
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gap: theme.spacing(2),
-    alignItems: "flex-start",
-    [theme.breakpoints.down("sm")]: {
-      gridTemplateColumns: "1fr",
-    },
-  },
-  errorText: {
-    color: "red",
-    fontSize: "0.8rem",
-    marginBottom: 2,
-    minHeight: 18,
-  },
-  actionsContainer: {
-    display: "flex",
-    justifyContent: "space-between",
-    marginTop: theme.spacing(2),
-  },
-  shake: {
-    animation: `$shake 0.3s ease-in-out, $blink 0.6s step-end 0s 2`,
-  },
-  "@keyframes shake": {
-    "0%": { transform: "translateX(0)" },
-    "25%": { transform: "translateX(-4px)" },
-    "50%": { transform: "translateX(4px)" },
-    "75%": { transform: "translateX(-4px)" },
-    "100%": { transform: "translateX(0)" },
-  },
-  "@keyframes blink": {
-    "50%": { borderColor: "red" },
-  },
-}));
-
 function EditEmployeeModal({
   open,
   handleClose,
@@ -86,8 +28,6 @@ function EditEmployeeModal({
   refreshEmployeeList,
   viewOnly,
 }) {
-  const classes = useStyles();
-
   const [empId, setEmpId] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -267,13 +207,32 @@ function EditEmployeeModal({
 
   const renderFieldWithError = (label, value, setValue, key, type = "text") => (
     <Box
-      sx={{ display: "flex", flexDirection: "column" }}
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        animation:
+          touched[key] && !value
+            ? "shake 0.3s ease-in-out, blink 0.6s step-end 0s 2"
+            : "none",
+        "@keyframes shake": {
+          "0%": { transform: "translateX(0)" },
+          "25%": { transform: "translateX(-4px)" },
+          "50%": { transform: "translateX(4px)" },
+          "75%": { transform: "translateX(-4px)" },
+          "100%": { transform: "translateX(0)" },
+        },
+        "@keyframes blink": {
+          "50%": { borderColor: "red" },
+        },
+      }}
       ref={fieldRefs[key]}
-      className={touched[key] && !value ? classes.shake : ""}
     >
       <span
-        className={classes.errorText}
         style={{
+          color: "red",
+          fontSize: "0.8rem",
+          marginBottom: 2,
+          minHeight: 18,
           visibility: touched[key] && !value ? "visible" : "hidden",
         }}
       >
@@ -295,10 +254,28 @@ function EditEmployeeModal({
     <Modal
       open={open}
       onClose={handleClose}
-      className={classes.modal}
       aria-labelledby="edit-employee-modal-title"
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
     >
-      <Box className={classes.paper}>
+      <Box
+        sx={{
+          backgroundColor: "background.paper",
+          boxShadow: 5,
+          p: { xs: 2, sm: 3 },
+          position: "relative",
+          borderRadius: 2,
+          width: "60%",
+          maxWidth: 700,
+          maxHeight: "75%",
+          overflowY: "auto",
+          scrollbarWidth: "none",
+          "&::-webkit-scrollbar": { display: "none" },
+        }}
+      >
         <IconButton
           edge="end"
           aria-label="close"
@@ -308,19 +285,25 @@ function EditEmployeeModal({
           <CloseIcon />
         </IconButton>
 
-        <h2 className={classes.textCenter} style={{ color: "#083A40" }}>
+        <h2 style={{ textAlign: "center", color: "#083A40" }}>
           {viewOnly ? "View Employee" : "Edit Employee"}
         </h2>
 
         <form>
-          <div className={classes.formGrid}>
-            {/* Employee ID (readonly) */}
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+              gap: 2,
+              alignItems: "flex-start",
+            }}
+          >
             <TextField
               label="Employee ID"
               value={empId}
               fullWidth
               disabled
-              style={{ marginTop: "19px" }}
+              sx={{ mt: 2 }}
             />
 
             {renderFieldWithError(
@@ -338,200 +321,159 @@ function EditEmployeeModal({
 
             {/* Role */}
             <Box
-              sx={{ display: "flex", flexDirection: "column" }}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+              }}
               ref={fieldRefs.role}
-              className={touched.role && !role ? classes.shake : ""}
             >
               <span
-                className={classes.errorText}
                 style={{
+                  color: "red",
+                  fontSize: "0.8rem",
+                  marginBottom: 2,
+                  minHeight: 18,
                   visibility: touched.role && !role ? "visible" : "hidden",
                 }}
               >
                 This field is required *
               </span>
-              <FormControl
-                fullWidth
-                size="medium"
-                error={touched.role && !role}
+              <TextField
+                select
+                label="Role"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
                 onBlur={() => setTouched((prev) => ({ ...prev, role: true }))}
+                fullWidth
                 disabled={viewOnly}
+                error={touched.role && !role}
               >
-                <InputLabel>Role</InputLabel>
-                <Select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  label="Role"
-                >
-                  <MenuItem value="Employee">Employee</MenuItem>
-                  <MenuItem value="Admin">Admin</MenuItem>
-                </Select>
-                <FormHelperText>
-                  {touched.role && !role ? "This field is required *" : " "}
-                </FormHelperText>
-              </FormControl>
+                <MenuItem value="Employee">Employee</MenuItem>
+                <MenuItem value="Admin">Admin</MenuItem>
+              </TextField>
             </Box>
+
 
             {renderFieldWithError("Email", mail, setMail, "mail")}
             {renderFieldWithError("Mobile", mobile, setMobile, "mobile")}
 
             {/* Location */}
-            <Box
-              sx={{ display: "flex", flexDirection: "column" }}
-              ref={fieldRefs.location}
-              className={touched.location && !location ? classes.shake : ""}
-            >
-              <span
-                className={classes.errorText}
-                style={{
-                  visibility:
-                    touched.location && !location ? "visible" : "hidden",
-                }}
-              >
-                This field is required *
-              </span>
-              <Autocomplete
-                freeSolo
-                disabled={viewOnly}
-                options={locationOptions}
-                value={location}
-                onChange={(event, newValue) => {
-                  setLocation(newValue || "");
-                  commitOption(newValue, locationOptions, setLocationOptions);
-                }}
-                onInputChange={(event, newInputValue) =>
-                  setLocation(newInputValue || "")
-                }
-                onBlur={() =>
-                  setTouched((prev) => ({ ...prev, location: true }))
-                }
-                renderInput={(params) => (
-                  <TextField {...params} label="Location" fullWidth />
-                )}
-              />
-            </Box>
+            <Autocomplete
+              freeSolo
+              disabled={viewOnly}
+              options={locationOptions}
+              value={location}
+              onChange={(event, newValue) => {
+                setLocation(newValue || "");
+                commitOption(newValue, locationOptions, setLocationOptions);
+              }}
+              onInputChange={(event, newInputValue) =>
+                setLocation(newInputValue || "")
+              }
+              onBlur={() =>
+                setTouched((prev) => ({ ...prev, location: true }))
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Location"
+                  fullWidth
+                  error={touched.location && !location}
+                />
+              )}
+            />
 
             {/* Status */}
-            <Box
-              sx={{ display: "flex", flexDirection: "column" }}
-              ref={fieldRefs.status}
-              className={touched.status && !status ? classes.shake : ""}
+            <FormControl
+              fullWidth
+              size="medium"
+              error={touched.status && !status}
+              onBlur={() => setTouched((prev) => ({ ...prev, status: true }))}
+              disabled={viewOnly}
             >
-              <span
-                className={classes.errorText}
-                style={{
-                  visibility: touched.status && !status ? "visible" : "hidden",
-                }}
+              <InputLabel>Status</InputLabel>
+              <Select
+                label="Status"
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
               >
-                This field is required *
-              </span>
-              <FormControl
-                fullWidth
-                size="medium"
-                error={touched.status && !status}
-                onBlur={() => setTouched((prev) => ({ ...prev, status: true }))}
-                disabled={viewOnly}
-              >
-                <InputLabel>Status</InputLabel>
-                <Select
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                  label="Status"
-                >
-                  <MenuItem value="Active">Active</MenuItem>
-                  <MenuItem value="Inactive">Inactive</MenuItem>
-                </Select>
-                <FormHelperText>
-                  {touched.status && !status ? "This field is required *" : " "}
-                </FormHelperText>
-              </FormControl>
-            </Box>
+                <MenuItem value="Active">Active</MenuItem>
+                <MenuItem value="Inactive">Inactive</MenuItem>
+              </Select>
+              <FormHelperText>
+                {touched.status && !status ? "This field is required *" : " "}
+              </FormHelperText>
+            </FormControl>
 
             {/* Department */}
-            <Box
-              sx={{ display: "flex", flexDirection: "column" }}
-              ref={fieldRefs.department}
-              className={touched.department && !department ? classes.shake : ""}
-            >
-              <span
-                className={classes.errorText}
-                style={{
-                  visibility:
-                    touched.department && !department ? "visible" : "hidden",
-                }}
-              >
-                This field is required *
-              </span>
-              <Autocomplete
-                freeSolo
-                disabled={viewOnly}
-                options={departmentOptions}
-                value={department}
-                onChange={(event, newValue) => {
-                  setDepartment(newValue || "");
-                  commitOption(
-                    newValue,
-                    departmentOptions,
-                    setDepartmentOptions
-                  );
-                }}
-                onInputChange={(event, newInputValue) =>
-                  setDepartment(newInputValue || "")
-                }
-                onBlur={() =>
-                  setTouched((prev) => ({ ...prev, department: true }))
-                }
-                renderInput={(params) => (
-                  <TextField {...params} label="Department" fullWidth />
-                )}
-              />
-            </Box>
+            <Autocomplete
+              freeSolo
+              disabled={viewOnly}
+              options={departmentOptions}
+              value={department}
+              onChange={(event, newValue) => {
+                setDepartment(newValue || "");
+                commitOption(
+                  newValue,
+                  departmentOptions,
+                  setDepartmentOptions
+                );
+              }}
+              onInputChange={(event, newInputValue) =>
+                setDepartment(newInputValue || "")
+              }
+              onBlur={() =>
+                setTouched((prev) => ({ ...prev, department: true }))
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Department"
+                  fullWidth
+                  error={touched.department && !department}
+                />
+              )}
+            />
 
             {/* Designation */}
-            <Box
-              sx={{ display: "flex", flexDirection: "column" }}
-              ref={fieldRefs.designation}
-              className={
-                touched.designation && !designation ? classes.shake : ""
+            <Autocomplete
+              freeSolo
+              disabled={viewOnly}
+              options={designationOptions}
+              value={designation}
+              onChange={(event, newValue) => {
+                setDesignation(newValue || "");
+                commitOption(
+                  newValue,
+                  designationOptions,
+                  setDesignationOptions
+                );
+              }}
+              onInputChange={(event, newInputValue) =>
+                setDesignation(newInputValue || "")
               }
-            >
-              <span
-                className={classes.errorText}
-                style={{
-                  visibility:
-                    touched.designation && !designation ? "visible" : "hidden",
-                }}
-              >
-                This field is required *
-              </span>
-              <Autocomplete
-                freeSolo
-                disabled={viewOnly}
-                options={designationOptions}
-                value={designation}
-                onChange={(event, newValue) => {
-                  setDesignation(newValue || "");
-                  commitOption(
-                    newValue,
-                    designationOptions,
-                    setDesignationOptions
-                  );
-                }}
-                onInputChange={(event, newInputValue) =>
-                  setDesignation(newInputValue || "")
-                }
-                onBlur={() =>
-                  setTouched((prev) => ({ ...prev, designation: true }))
-                }
-                renderInput={(params) => (
-                  <TextField {...params} label="Designation" fullWidth />
-                )}
-              />
-            </Box>
-          </div>
+              onBlur={() =>
+                setTouched((prev) => ({ ...prev, designation: true }))
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Designation"
+                  fullWidth
+                  error={touched.designation && !designation}
+                />
+              )}
+            />
+          </Box>
 
           {!viewOnly && (
-            <div className={classes.actionsContainer}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                mt: 2,
+              }}
+            >
               <Button
                 variant="contained"
                 onClick={handleClose}
@@ -547,7 +489,7 @@ function EditEmployeeModal({
               >
                 {isUpdating ? "Updating..." : "Update"}
               </Button>
-            </div>
+            </Box>
           )}
         </form>
       </Box>

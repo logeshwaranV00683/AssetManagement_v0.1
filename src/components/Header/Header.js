@@ -6,9 +6,9 @@ import {
   IconButton,
   Menu,
   MenuItem,
-} from "@material-ui/core";
+} from "@mui/material";
 import LockResetIcon from "@mui/icons-material/LockReset";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 import "../Style/font.css";

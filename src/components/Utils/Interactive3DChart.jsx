@@ -44,7 +44,7 @@ const PieSlice = ({ startAngle, endAngle, radius, height, color, label }) => {
   return (
     <group rotation={[-Math.PI / 2, 0, 0]}>
       <mesh geometry={geometry}>
-        <meshStandardMaterial color={color} emissiveIntensity={0.4} roughness={0.4} metalness={0.1} />
+        <meshBasicMaterial color={color} toneMapped={false} />
       </mesh>
 
       <Html position={[labelX, labelY, labelZ]} center style={{ pointerEvents: 'none' }} zIndexRange={[0, 0]}>

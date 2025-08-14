@@ -1,49 +1,38 @@
+// Assets.js — MUI v5 version (makeStyles removed)
+
 import React, { useEffect, useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import { Container, Box } from "@mui/material";
+import { Container, Box, IconButton, Tooltip, TextField } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import TextField from "@mui/material/TextField";
 import "../Style/Assets.css";
+
 import AddAssetModal from "./AddAssetModal";
-import ExportButton from "../Utils/ExportButton";
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import EditAssetModal from "./EditAssetModal";
 import SidebarAssets from "./SideBarAssets";
+import ExportButton from "../Utils/ExportButton";
+import ImportExcel from "../Utils/ImportExcel";
+import AssetHistoryPopup from "./AssetHistoryPop";
+import AssignAsset from "./AssignAsset";
+
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
-import { IconButton, Tooltip } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import HistoryIcon from "@mui/icons-material/History";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
+
+import { toast } from "react-hot-toast";
+import { showConfirmAlert } from "../Utils/alerts";
+
 import {
   getAssetList,
   deleteAsset,
   unassignAsset,
 } from "../Services/AssetService";
-import EditAssetModal from "./EditAssetModal";
-import { toast } from "react-hot-toast";
-import { showConfirmAlert } from "../Utils/alerts";
-import ImportExcel from "../Utils/ImportExcel";
-import AssetHistoryPopup from "./AssetHistoryPop";
 import { fetchAssetHistory } from "../Services/HistoryServices";
-import AssignAsset from "./AssignAsset";
-import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
-
-const useStyles = makeStyles((theme) => ({
-  content: {
-    flexGrow: 1,
-  },
-  filterContainer: {
-    display: "flex",
-    justifyContent: "space-evenly",
-    alignItems: "center",
-    marginTop: "30px",
-    marginBottom: theme.spacing(2),
-  },
-}));
 
 function Assets() {
-  const classes = useStyles();
   const [openAddModal, setOpenAddModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [viewOnly, setViewOnly] = useState(false);
@@ -101,7 +90,7 @@ function Assets() {
       if (error.status === 406) {
         toast.error(
           error.message ||
-          "Cannot Permanently delete asset due to invalid status."
+            "Cannot Permanently delete asset due to invalid status."
         );
       } else {
         toast.error(
@@ -121,9 +110,7 @@ function Assets() {
     const value = event.target.value.toLowerCase();
     setFilterValue(value);
     const filtered = assets.filter((asset) =>
-      Object.values(asset).some((val) =>
-        String(val).toLowerCase().includes(value)
-      )
+      Object.values(asset).some((val) => String(val).toLowerCase().includes(value))
     );
     setFilteredRows(filtered);
   };
@@ -165,9 +152,7 @@ function Assets() {
         if (confirmed) {
           try {
             await unassignAsset([asset.serialNumber]);
-            toast.success(
-              `Asset ${asset.serialNumber} unassigned successfully.`
-            );
+            toast.success(`Asset ${asset.serialNumber} unassigned successfully.`);
             fetchAssets();
           } catch (err) {
             toast.error("Unassign failed.");
@@ -245,10 +230,7 @@ function Assets() {
           alignItems="center"
           justifyContent="center"
           gap={0.5}
-          sx={{
-            overflow: "visible",
-            minWidth: "180px",
-          }}
+          sx={{ overflow: "visible", minWidth: "180px" }}
         >
           <Tooltip title="View">
             <IconButton
@@ -346,25 +328,28 @@ function Assets() {
   ];
 
   return (
-    <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
-      <main className={classes.content}>
-        <Container maxWidth={false} style={{ width: "100%", padding: 0 }}>
+    <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
+      <Box component="main" sx={{ flexGrow: 1 }}>
+        <Container maxWidth={false} sx={{ width: "100%", p: 0 }}>
           <SidebarAssets
             onAddAsset={handleOpenModal}
             onFilter={filterByAssetStatus}
             onResetFilters={resetFilters}
           />
 
-          <div className={classes.filterContainer}>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                width: "100%",
-              }}
-            >
-              <div
-                style={{
+          {/* Filter container (MUI v5 - sx) */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-evenly",
+              alignItems: "center",
+              mt: "30px",
+              mb: 2,
+            }}
+          >
+            <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
+              <Box
+                sx={{
                   display: "flex",
                   flexWrap: "wrap",
                   justifyContent: "space-between",
@@ -374,21 +359,16 @@ function Assets() {
                 }}
               >
                 {/* Import Button */}
-                <div
-                  style={{
-                    width: "20%",
-                    minWidth: "150px",
-                    textAlign: "center",
-                  }}
-                >
-                  <div
+                <Box sx={{ width: "20%", minWidth: 150, textAlign: "center" }}>
+                  <Box
                     className="import-button"
-                    style={{
-                      padding: "0.4rem 0.8rem",
+                    sx={{
+                      p: "0.4rem 0.8rem",
                       textAlign: "center",
                       borderRadius: "0.6rem",
                       fontWeight: 600,
                       fontSize: "0.8rem",
+                      cursor: "pointer",
                     }}
                     onClick={() => setShowImportModal(true)}
                   >
@@ -402,8 +382,8 @@ function Assets() {
                     >
                       <UploadFileIcon fontSize="small" /> IMPORT
                     </span>
-                  </div>
-                </div>
+                  </Box>
+                </Box>
 
                 {/* Import Modal */}
                 {showImportModal && (
@@ -415,7 +395,7 @@ function Assets() {
                 )}
 
                 {/* Search */}
-                <div style={{ width: "55%", minWidth: "200px" }}>
+                <Box sx={{ width: "55%", minWidth: 200 }}>
                   <TextField
                     label="Search"
                     variant="outlined"
@@ -452,20 +432,14 @@ function Assets() {
                       },
                     }}
                   />
-                </div>
+                </Box>
 
                 {/* Export Button */}
-                <div
-                  style={{
-                    width: "20%",
-                    minWidth: "150px",
-                    textAlign: "center",
-                  }}
-                >
-                  <div
+                <Box sx={{ width: "20%", minWidth: 150, textAlign: "center" }}>
+                  <Box
                     className="export-button"
-                    style={{
-                      padding: "0.4rem 0.8rem",
+                    sx={{
+                      p: "0.4rem 0.8rem",
                       textAlign: "center",
                       borderRadius: "0.6rem",
                       fontWeight: 600,
@@ -491,35 +465,31 @@ function Assets() {
                       }
                       filteredRows={filteredRows}
                     />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+                  </Box>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
 
-          <div
-            style={{
+          {/* Table */}
+          <Box
+            sx={{
               width: "80%",
               height: "65vh",
-              margin: "0 auto",
+              m: "0 auto",
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
               alignItems: "center",
             }}
           >
-            <div
-              style={{
-                width: "100%",
-                maxWidth: "100%",
-                height: "100%",
-                marginBottom: "1%"
-              }}
-            >
+            <Box sx={{ width: "100%", maxWidth: "100%", height: "100%", mb: "1%" }}>
               <DataGrid
                 rows={filteredRows}
                 columns={columns}
+                getRowId={(row) => row.serialNumber} // important for MUI v5
                 autoHeight
+                disableRowSelectionOnClick
                 sx={{
                   maxHeight: "70vh",
                   overflow: "hidden",
@@ -531,12 +501,8 @@ function Assets() {
                     scrollbarWidth: "none",
                     msOverflowStyle: "none",
                   },
-                  "& .MuiDataGrid-main::-webkit-scrollbar": {
-                    display: "none",
-                  },
-                  "& .MuiDataGrid-virtualScroller": {
-                    scrollbarWidth: "none",
-                  },
+                  "& .MuiDataGrid-main::-webkit-scrollbar": { display: "none" },
+                  "& .MuiDataGrid-virtualScroller": { scrollbarWidth: "none" },
                   "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": {
                     display: "none",
                   },
@@ -557,14 +523,13 @@ function Assets() {
                     color: "#083A40",
                     fontWeight: 600,
                   },
-                  "& .MuiDataGrid-row:hover": {
-                    backgroundColor: "#E0F9FF",
-                  },
+                  "& .MuiDataGrid-row:hover": { backgroundColor: "#E0F9FF" },
                 }}
               />
-            </div>
-          </div>
+            </Box>
+          </Box>
 
+          {/* Modals */}
           <AddAssetModal
             open={openAddModal}
             handleClose={handleClose}
@@ -593,8 +558,8 @@ function Assets() {
             fetchAssets={fetchAssets}
           />
         </Container>
-      </main>
-    </div>
+      </Box>
+    </Box>
   );
 }
 
