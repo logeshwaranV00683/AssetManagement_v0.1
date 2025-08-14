@@ -1,12 +1,10 @@
 package com.verinite.assetmanagementtool.controller;
 
 import com.verinite.assetmanagementtool.dto.CountOfAssetsDTO;
-import com.verinite.assetmanagementtool.entity.AssetsEntity;
 import com.verinite.assetmanagementtool.entity.CountOfAssetsEntity;
 import com.verinite.assetmanagementtool.service.AssetService;
 import com.verinite.assetmanagementtool.service.CountOFAssetsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

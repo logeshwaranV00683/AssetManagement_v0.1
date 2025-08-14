@@ -19,9 +19,8 @@ public class DeleteAssetController {
     DeletedAssetService deletedAssetService;
 
     @GetMapping("deletedAsset/getAll")
-    public ResponseEntity<List<DeletedAssetDto>> getAll()
-    {
-       return ResponseEntity.ok(deletedAssetService.getAllDeleted());
+    public ResponseEntity<List<DeletedAssetDto>> getAll() {
+        return ResponseEntity.ok(deletedAssetService.getAllDeleted());
     }
 
     @DeleteMapping("deletedAsset/permananteDelete/{adminId}/{serialNo}")

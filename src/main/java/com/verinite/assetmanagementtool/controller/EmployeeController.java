@@ -132,20 +132,20 @@ public class EmployeeController {
     }
 
     @GetMapping("/employee/getAllUniqueLocation")
-    public ResponseEntity<List<String>> getUniqueEmployeeLocation(){
-        List<String> EmployeeLocation=employeeService.getUniqueEmployeeLocation();
+    public ResponseEntity<List<String>> getUniqueEmployeeLocation() {
+        List<String> EmployeeLocation = employeeService.getUniqueEmployeeLocation();
         return ResponseEntity.ok(EmployeeLocation);
     }
 
     @GetMapping("employee/getAllUniqueDesignation")
-    public ResponseEntity<List<String>> getUniqueEmployeeDesignation(){
-        List<String> employeeDesignation=employeeService.getUniqueEmployeeDesignation();
+    public ResponseEntity<List<String>> getUniqueEmployeeDesignation() {
+        List<String> employeeDesignation = employeeService.getUniqueEmployeeDesignation();
         return ResponseEntity.ok(employeeDesignation);
     }
 
     @GetMapping("employee/getAllUniqueDepartment")
-    public ResponseEntity<List<String>> getUniqueEmployeeDepartment(){
-        List<String> employeeDepartment=employeeService.getUniqueEmployeeDepartment();
+    public ResponseEntity<List<String>> getUniqueEmployeeDepartment() {
+        List<String> employeeDepartment = employeeService.getUniqueEmployeeDepartment();
         return ResponseEntity.ok(employeeDepartment);
     }
 }

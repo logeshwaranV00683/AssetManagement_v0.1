@@ -48,7 +48,7 @@ public interface AssetsRepository extends JpaRepository<AssetsEntity, Number> {
 
     boolean existsBySerialNumber(String serialNumber);
 
-    @Query(value = "SELECT DISTINCT asset_sourced_by FROM tbl_assets",nativeQuery = true)
+    @Query(value = "SELECT DISTINCT asset_sourced_by FROM tbl_assets", nativeQuery = true)
     List<String> getUniqueAssetSourcedBy();
 
     void deleteBySerialNumber(String serialNumber);

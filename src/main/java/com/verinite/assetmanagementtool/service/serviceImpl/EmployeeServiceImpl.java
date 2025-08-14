@@ -119,9 +119,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Transactional
     public ResponseEntity<?> deleteEmployeeById(String empId) {
         if (employeeRepo.existsById(empId)) {
-            if(assignedAssetsService.getAllAssetsAssignedToParticularEmployee(empId).getStatusCode()==HttpStatus.OK)
-            {
-                return new ResponseEntity<>( "Still Assets are not returned",HttpStatus.BAD_REQUEST );
+            if (assignedAssetsService.getAllAssetsAssignedToParticularEmployee(empId).getStatusCode() == HttpStatus.OK) {
+                return new ResponseEntity<>("Still Assets are not returned", HttpStatus.BAD_REQUEST);
             }
             adminRegistrationRepository.deleteByEmpId(empId);
             employeeRepo.deleteById(empId);
@@ -237,7 +236,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             if (employee.getRole() != null) {
                 if (employee.getRole().equalsIgnoreCase("Admin")) {
                     if (!adminRegistrationRepository.existsByEmpId(employee.getEmpId())) {
-                        if (existingEmployee.getStatus().equalsIgnoreCase("active")&&(employee.getStatus()==null||employee.getStatus().equalsIgnoreCase("active"))) {
+                        if (existingEmployee.getStatus().equalsIgnoreCase("active") && (employee.getStatus() == null || employee.getStatus().equalsIgnoreCase("active"))) {
                             adminServiceImpl.registerNewAdminWithoutPassword(existingEmployee);
                             existingEmployee.setRole(employee.getRole());
                         }
@@ -272,6 +271,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
         return ResponseEntity.ok(employees);
     }
+
     public ResponseEntity<?> getByIdForAdmin(String empId) {
 
         EmployeeEntity emp = employeeRepo.findByEmpId(empId);
@@ -379,15 +379,15 @@ public class EmployeeServiceImpl implements EmployeeService {
         return style;
     }
 
-    public List<String> getUniqueEmployeeLocation(){
+    public List<String> getUniqueEmployeeLocation() {
         return employeeRepo.getUniqueEmployeeLocation();
     }
 
-    public List<String> getUniqueEmployeeDesignation(){
+    public List<String> getUniqueEmployeeDesignation() {
         return employeeRepo.getUniqueEmployeeDesignation();
     }
 
-    public List<String> getUniqueEmployeeDepartment(){
+    public List<String> getUniqueEmployeeDepartment() {
         return employeeRepo.getUniqueEmployeeDepartment();
     }
 

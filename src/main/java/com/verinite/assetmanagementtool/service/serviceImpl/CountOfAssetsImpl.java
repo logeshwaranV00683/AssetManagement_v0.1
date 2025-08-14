@@ -84,7 +84,6 @@ public class CountOfAssetsImpl implements CountOFAssetsService {
     }
 
 
-
     public Map<String, Integer> getUnassignedAssets(String location) {
         List<CountOfAssetsEntity> entities = assetCountRepository.findByLocationIgnoreCase(location);
 

@@ -10,12 +10,12 @@ import com.verinite.assetmanagementtool.repository.*;
 import com.verinite.assetmanagementtool.service.AssetsHistoryServices;
 import com.verinite.assetmanagementtool.service.AssignedAssetsService;
 import com.verinite.assetmanagementtool.service.mailservice.AckMailer;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
@@ -65,7 +65,7 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
             dto.setStatus(asset.getStatus() != null ? asset.getStatus() : "");
             dto.setAssignedDate(asset.getAssignedDate());
             dto.setAssignedBy(asset.getAssignedBy() != null ? asset.getAssignedBy() : "");
-            dto.setType(asset.getType() !=null?asset.getType():"");
+            dto.setType(asset.getType() != null ? asset.getType() : "");
 
             if (employee != null) {
                 dto.setEmpFirstName(employee.getFirstName() != null ? employee.getFirstName() : "Unknown");

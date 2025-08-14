@@ -65,7 +65,7 @@ public class AssetsController implements ApplicationRunner {
 
         SaveAssetResponse updateAsset = assetService.updateAsset(saveAssetResponse);
 
-        return new ResponseEntity<>(updateAsset == null ? "Cannot Update the given details" : updateAsset, updateAsset == null ?HttpStatus.BAD_REQUEST :HttpStatus.OK);
+        return new ResponseEntity<>(updateAsset == null ? "Cannot Update the given details" : updateAsset, updateAsset == null ? HttpStatus.BAD_REQUEST : HttpStatus.OK);
     }
 
     @Override
@@ -110,8 +110,8 @@ public class AssetsController implements ApplicationRunner {
     }
 
     @GetMapping("asset/getUniqueAssetSourcedBy")
-    public ResponseEntity<List<String>> getUniqueAssetSourcedBy(){
-        List<String> assetSourcedBy= assetService.getUniqueAssetSourcedBy();
+    public ResponseEntity<List<String>> getUniqueAssetSourcedBy() {
+        List<String> assetSourcedBy = assetService.getUniqueAssetSourcedBy();
         return ResponseEntity.ok(assetSourcedBy);
     }
 

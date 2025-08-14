@@ -136,10 +136,9 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
         if (asset.getAssetName() != null)
             existingAsset.setAssetName(asset.getAssetName());
         if (asset.getPurchaseDate() != null)
-           if (existingAsset.getWarrantyDate() == null || existingAsset.getWarrantyDate().isAfter(asset.getPurchaseDate())) {
+            if (existingAsset.getWarrantyDate() == null || existingAsset.getWarrantyDate().isAfter(asset.getPurchaseDate())) {
                 existingAsset.setPurchaseDate(asset.getPurchaseDate());
-            }
-            else{
+            } else {
                 throw new IllegalArgumentException("Error: Given Warranty date is Before then the Purchase Date");
             }
         if (asset.getWarrantyDate() != null &&
@@ -147,19 +146,17 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             existingAsset.setWarrantyDate(asset.getWarrantyDate());
         if (asset.getSerialNumber() != null)
             existingAsset.setSerialNumber(asset.getSerialNumber());
-        if (asset.getStatus() != null && !oldStatus.equalsIgnoreCase("Assigned"))
-            {
-                 if(asset.getStatus().equalsIgnoreCase("Scrap")&&asset.getAssignedBy() != null && existingAsset.getAssignedBy() == null&&asset.getAssignedDate() != null && existingAsset.getAssignedDate() == null)
-                 {
-                     existingAsset.setAssignedDate(asset.getAssignedDate());
-                     existingAsset.setAssignedBy(asset.getAssignedBy());
-                     existingAsset.setStatus("Scrap");
-                 }else {
-                     existingAsset.setAssignedDate(null);
-                     existingAsset.setAssignedBy(null);
-                     existingAsset.setStatus("Unassigned");
-                 }
+        if (asset.getStatus() != null && !oldStatus.equalsIgnoreCase("Assigned")) {
+            if (asset.getStatus().equalsIgnoreCase("Scrap") && asset.getAssignedBy() != null && existingAsset.getAssignedBy() == null && asset.getAssignedDate() != null && existingAsset.getAssignedDate() == null) {
+                existingAsset.setAssignedDate(asset.getAssignedDate());
+                existingAsset.setAssignedBy(asset.getAssignedBy());
+                existingAsset.setStatus("Scrap");
+            } else {
+                existingAsset.setAssignedDate(null);
+                existingAsset.setAssignedBy(null);
+                existingAsset.setStatus("Unassigned");
             }
+        }
         if (asset.getType() != null)
             existingAsset.setType(asset.getType());
         if (asset.getAddedBy() != null)

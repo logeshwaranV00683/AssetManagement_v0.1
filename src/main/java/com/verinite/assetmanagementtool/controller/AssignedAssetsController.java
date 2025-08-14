@@ -58,7 +58,7 @@ public class AssignedAssetsController {
     }
 
     @GetMapping("get-recent-assigned")
-    public List<Map<String, Object>>  getRecentAssigned() {
+    public List<Map<String, Object>> getRecentAssigned() {
         return assignedAssetsService.getRecentAssignedAssets();
     }
 
