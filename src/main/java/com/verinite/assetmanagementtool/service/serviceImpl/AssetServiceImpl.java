@@ -95,7 +95,9 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
         } else {
             countEntity = new CountOfAssetsEntity();
             countEntity.setLocation(location);
-            countEntity.setType(type);
+            String formattedType = type.substring(0, 1).toUpperCase(Locale.ROOT) +
+                    type.substring(1).toLowerCase(Locale.ROOT);
+            countEntity.setType(formattedType);
             countEntity.setTotal(1);
             countEntity.setAssigned(0);
             countEntity.setUnassigned(1);

@@ -20,9 +20,8 @@ public interface AssetCountRepository extends JpaRepository<CountOfAssetsEntity,
     @Query(value = "SELECT SUM(unassigned) FROM tbl_count", nativeQuery = true)
     Integer getTotalUnassigned();
 
-    @Query(value = "SELECT DISTINCT LOWER(a.type) FROM tbl_count a", nativeQuery = true)
+    @Query(value = "SELECT DISTINCT type FROM tbl_count ", nativeQuery = true)
     List<String> findDistinctAssetTypes();
-
-    @Query(value = "SELECT DISTINCT LOWER(a.location) FROM tbl_count a", nativeQuery = true)
+    @Query(value = "SELECT DISTINCT location FROM tbl_count", nativeQuery = true)
     List<String> findDistinctLocation();
 }
