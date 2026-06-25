@@ -1,236 +1,495 @@
-import React, { useState, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Modal from '@mui/material/Modal';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import { IconButton } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import { updateEmployee } from '../../services/config';
+import React, { useState, useEffect, useRef } from "react";
+import {
+  Modal,
+  Box,
+  TextField,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  IconButton,
+  FormHelperText,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import Autocomplete from "@mui/material/Autocomplete";
+import {
+  updateEmployee,
+  getLocations,
+  getDeparatment,
+  getDesignation,
+} from "../Services/EmployeeService";
+import toast from "react-hot-toast";
 
-const useStyles = makeStyles((theme) => ({
-  modal: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  paper: {
-    backgroundColor: theme.palette.background.paper,
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3),
-    position: 'relative',
-  },
-  formControl: {
-    marginTop: theme.spacing(2),
-  },
-  textCenter: {
-    textAlign: 'center',
-  },
-  formGrid: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: theme.spacing(2),
-  },
-  cancelButton: {
-    marginRight: theme.spacing(2),
-    backgroundColor: theme.palette.error.main,
-    color: theme.palette.error.contrastText,
-  },
-  saveButton: {
-    backgroundColor: theme.palette.success.main,
-    color: theme.palette.success.contrastText,
-  },
-  actionsContainer: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginTop: theme.spacing(2),
-  },
-}));
+function EditEmployeeModal({
+  open,
+  handleClose,
+  employee,
+  refreshEmployeeList,
+  viewOnly,
+}) {
+  const [empId, setEmpId] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [role, setRole] = useState("");
+  const [mail, setMail] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [location, setLocation] = useState("");
+  const [status, setStatus] = useState("Active");
+  const [department, setDepartment] = useState("");
+  const [designation, setDesignation] = useState("");
 
-function EditEmployeeModal({ open, handleClose, employee, refreshEmployeeList, viewOnly }) {
-  const classes = useStyles();
-  const [empId, setEmpId] = useState(employee.empId);
-  const [firstName, setFirstName] = useState(employee.firstName);
-  const [lastName, setLastName] = useState(employee.lastName);
-  const [role, setRole] = useState(employee.role);
-  const [mail, setMail] = useState(employee.mail);
-  const [mobile, setMobile] = useState(employee.mobile);
-  const [location, setLocation] = useState(employee.location);
-  const [status, setStatus] = useState(employee.status);
-  const [department, setDepartment] = useState(employee.department);
-  const [designation, setDesignation] = useState(employee.designation);
+  const [locationOptions, setLocationOptions] = useState([]);
+  const [departmentOptions, setDepartmentOptions] = useState([]);
+  const [designationOptions, setDesignationOptions] = useState([]);
 
-  const handleSaveEmployee = async () => {
-    const updatedFields = {};
-    if (firstName !== employee.firstName) updatedFields.firstName = firstName;
-    if (lastName !== employee.lastName) updatedFields.lastName = lastName;
-    if (role !== employee.role) updatedFields.role = role;
-    if (mail !== employee.mail) updatedFields.mail = mail;
-    if (mobile !== employee.mobile) updatedFields.mobile = mobile;
-    if (location !== employee.location) updatedFields.location = location;
-    if (status !== employee.status) updatedFields.status = status;
-    if (department !== employee.department) updatedFields.department = department;
-    if (designation !== employee.designation) updatedFields.designation = designation;
+  const [isUpdating, setIsUpdating] = useState(false);
 
-    try {
-      await updateEmployee(empId, updatedFields);
-      console.log('Employee updated:', updatedFields);
-      refreshEmployeeList();
-      handleClose();
-    } catch (error) {
-      console.error('Error updating employee:', error);
-    }
+  const [touched, setTouched] = useState({
+    firstName: false,
+    lastName: false,
+    role: false,
+    mail: false,
+    mobile: false,
+    location: false,
+    status: false,
+    department: false,
+    designation: false,
+  });
+
+  const fieldRefs = {
+    firstName: useRef(null),
+    lastName: useRef(null),
+    role: useRef(null),
+    mail: useRef(null),
+    mobile: useRef(null),
+    location: useRef(null),
+    status: useRef(null),
+    department: useRef(null),
+    designation: useRef(null),
   };
 
   useEffect(() => {
-    if (employee) {
-      setEmpId(employee.empId);
-      setFirstName(employee.firstName);
-      setLastName(employee.lastName);
-      setRole(employee.role);
-      setMail(employee.mail);
-      setMobile(employee.mobile);
-      setLocation(employee.location);
-      setStatus(employee.status);
-      setDepartment(employee.department);
-      setDesignation(employee.designation);
+    if (open) {
+      fetchLocations();
+      fetchDepartments();
+      fetchDesignations();
+
+      if (employee) {
+        setEmpId(employee.empId || "");
+        setFirstName(employee.firstName || "");
+        setLastName(employee.lastName || "");
+        setRole(employee.role || "");
+        setMail(employee.mail || "");
+        setMobile(employee.mobile || "");
+        setLocation(employee.location || "");
+        setStatus(employee.status?.trim() || "Active");
+        setDepartment(employee.department || "");
+        setDesignation(employee.designation || "");
+      }
+
+      setTouched({
+        firstName: false,
+        lastName: false,
+        role: false,
+        mail: false,
+        mobile: false,
+        location: false,
+        status: false,
+        department: false,
+        designation: false,
+      });
     }
-  }, [employee]);
+  }, [open, employee]);
+
+  const fetchLocations = async () => {
+    try {
+      const locations = await getLocations();
+      setLocationOptions(locations || []);
+    } catch (err) {
+      console.error("Error fetching locations:", err);
+    }
+  };
+
+  const fetchDepartments = async () => {
+    try {
+      const departments = await getDeparatment();
+      setDepartmentOptions(departments || []);
+    } catch (err) {
+      console.error("Error fetching departments:", err);
+    }
+  };
+
+  const fetchDesignations = async () => {
+    try {
+      const designations = await getDesignation();
+      setDesignationOptions(designations || []);
+    } catch (err) {
+      console.error("Error fetching designations:", err);
+    }
+  };
+
+  const commitOption = (value, options, setOptions) => {
+    if (value && !options.includes(value)) {
+      setOptions((prev) => [...prev, value]);
+    }
+  };
+
+ const handleUpdateEmployee = async () => {
+  if (viewOnly || !employee) return;
+
+  const requiredFields = [
+    "firstName",
+    "lastName",
+    "role",
+    "mail",
+    "mobile",
+    "location",
+    "status",
+    "department",
+    "designation",
+  ];
+
+  const currentValues = {
+    firstName,
+    lastName,
+    role,
+    mail,
+    mobile,
+    location,
+    status,
+    department,
+    designation,
+  };
+
+  const invalidField = requiredFields.find((f) => !currentValues[f]);
+
+  if (invalidField) {
+    setTouched(requiredFields.reduce((acc, key) => ({ ...acc, [key]: true }), {}));
+
+    toast.error("Please fill all required fields!");
+
+    fieldRefs[invalidField]?.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    return;
+  }
+
+  const updatedFields = Object.fromEntries(
+    Object.entries(currentValues).filter(([key, value]) => value !== (employee[key] || ""))
+  );
+
+  if (!Object.keys(updatedFields).length) {
+    toast.error("No changes detected.");
+    return;
+  }
+
+  setIsUpdating(true);
+  try {
+    await updateEmployee(empId, updatedFields);
+    toast.success(`Employee ${empId} updated successfully`);
+    refreshEmployeeList();
+    handleClose();
+  } catch (error) {
+    console.error("Error updating employee:", error);
+    if (error.status === 400 && typeof error.data === "object") {
+      Object.entries(error.data).forEach(([field, message]) => {
+        toast.error(`${field}: ${message}`);
+      });
+    } else if (error.status === 406) {
+      toast.error(error.data || "Employee mail or Mobile already exists");
+    } else {
+      toast.error("Unexpected error occurred while updating.");
+    }
+  } finally {
+    setIsUpdating(false);
+  }
+};
+
+
+  const renderFieldWithError = (label, value, setValue, key, type = "text") => (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        animation:
+          touched[key] && !value
+            ? "shake 0.3s ease-in-out, blink 0.6s step-end 0s 2"
+            : "none",
+        "@keyframes shake": {
+          "0%": { transform: "translateX(0)" },
+          "25%": { transform: "translateX(-4px)" },
+          "50%": { transform: "translateX(4px)" },
+          "75%": { transform: "translateX(-4px)" },
+          "100%": { transform: "translateX(0)" },
+        },
+        "@keyframes blink": {
+          "50%": { borderColor: "red" },
+        },
+      }}
+      ref={fieldRefs[key]}
+    >
+      <span
+        style={{
+          color: "red",
+          fontSize: "0.8rem",
+          marginBottom: 2,
+          minHeight: 18,
+          visibility: touched[key] && !value ? "visible" : "hidden",
+        }}
+      >
+        This field is required *
+      </span>
+      <TextField
+        label={label}
+        value={value}
+        type={type}
+        onChange={(e) => setValue(e.target.value)}
+        onBlur={() => setTouched((prev) => ({ ...prev, [key]: true }))}
+        fullWidth
+        disabled={viewOnly}
+      />
+    </Box>
+  );
 
   return (
     <Modal
       open={open}
       onClose={handleClose}
-      className={classes.modal}
       aria-labelledby="edit-employee-modal-title"
-      aria-describedby="edit-employee-modal-description"
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
     >
-      <Box className={classes.paper}>
+      <Box
+        sx={{
+          backgroundColor: "background.paper",
+          boxShadow: 5,
+          p: { xs: 2, sm: 3 },
+          position: "relative",
+          borderRadius: 2,
+          width: "60%",
+          maxWidth: 700,
+          maxHeight: "75%",
+          overflowY: "auto",
+          scrollbarWidth: "none",
+          "&::-webkit-scrollbar": { display: "none" },
+        }}
+      >
         <IconButton
           edge="end"
           aria-label="close"
           onClick={handleClose}
-          sx={{
-            position: 'absolute',
-            top: '8px',
-            right: '8px',
-          }}
+          sx={{ position: "absolute", top: 8, right: 8 }}
         >
           <CloseIcon />
         </IconButton>
-        <h2 id="edit-employee-modal-title" className={classes.textCenter}>
-          {viewOnly ? 'View Employee' : 'Edit Employee'}
+
+        <h2 style={{ textAlign: "center", color: "#083A40" }}>
+          {viewOnly ? "View Employee" : "Edit Employee"}
         </h2>
+
         <form>
-          <div className={classes.formGrid}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+              gap: 2,
+              alignItems: "flex-start",
+            }}
+          >
             <TextField
               label="Employee ID"
               value={empId}
               fullWidth
-              margin="normal"
               disabled
+              sx={{ mt: 2 }}
             />
-            <TextField
-              label="First Name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              fullWidth
-              margin="normal"
+
+            {renderFieldWithError(
+              "First Name",
+              firstName,
+              setFirstName,
+              "firstName"
+            )}
+            {renderFieldWithError(
+              "Last Name",
+              lastName,
+              setLastName,
+              "lastName"
+            )}
+
+            {/* Role */}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+              }}
+              ref={fieldRefs.role}
+            >
+              <span
+                style={{
+                  color: "red",
+                  fontSize: "0.8rem",
+                  marginBottom: 2,
+                  minHeight: 18,
+                  visibility: touched.role && !role ? "visible" : "hidden",
+                }}
+              >
+                This field is required *
+              </span>
+              <TextField
+                select
+                label="Role"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                onBlur={() => setTouched((prev) => ({ ...prev, role: true }))}
+                fullWidth
+                disabled={viewOnly}
+                error={touched.role && !role}
+              >
+                <MenuItem value="Employee">Employee</MenuItem>
+                <MenuItem value="Admin">Admin</MenuItem>
+              </TextField>
+            </Box>
+
+
+            {renderFieldWithError("Email", mail, setMail, "mail")}
+            {renderFieldWithError("Mobile", mobile, setMobile, "mobile")}
+
+            {/* Location */}
+            <Autocomplete
+              freeSolo
               disabled={viewOnly}
-            />
-            <TextField
-              label="Last Name"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              fullWidth
-              margin="normal"
-              disabled={viewOnly}
-            />
-            <TextField
-              label="Role"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              fullWidth
-              margin="normal"
-              disabled={viewOnly}
-            />
-            <TextField
-              label="Email"
-              value={mail}
-              onChange={(e) => setMail(e.target.value)}
-              fullWidth
-              margin="normal"
-              disabled={viewOnly}
-            />
-            <TextField
-              label="Mobile"
-              value={mobile}
-              onChange={(e) => setMobile(e.target.value)}
-              fullWidth
-              margin="normal"
-              disabled={viewOnly}
-            />
-            <TextField
-              label="Location"
+              options={locationOptions}
               value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              fullWidth
-              margin="normal"
-              disabled={viewOnly}
+              onChange={(event, newValue) => {
+                setLocation(newValue || "");
+                commitOption(newValue, locationOptions, setLocationOptions);
+              }}
+              onInputChange={(event, newInputValue) =>
+                setLocation(newInputValue || "")
+              }
+              onBlur={() =>
+                setTouched((prev) => ({ ...prev, location: true }))
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Location"
+                  fullWidth
+                  error={touched.location && !location}
+                />
+              )}
             />
-            <FormControl fullWidth className={classes.formControl}>
-              <InputLabel htmlFor="status">Status</InputLabel>
+
+            {/* Status */}
+            <FormControl
+              fullWidth
+              size="medium"
+              error={touched.status && !status}
+              onBlur={() => setTouched((prev) => ({ ...prev, status: true }))}
+              disabled={viewOnly}
+            >
+              <InputLabel>Status</InputLabel>
               <Select
+                label="Status"
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                inputProps={{
-                  name: 'status',
-                  id: 'status',
-                }}
-                disabled={viewOnly}
               >
                 <MenuItem value="Active">Active</MenuItem>
                 <MenuItem value="Inactive">Inactive</MenuItem>
               </Select>
+              <FormHelperText>
+                {touched.status && !status ? "This field is required *" : " "}
+              </FormHelperText>
             </FormControl>
-            <TextField
-              label="Department"
+
+            {/* Department */}
+            <Autocomplete
+              freeSolo
+              disabled={viewOnly}
+              options={departmentOptions}
               value={department}
-              onChange={(e) => setDepartment(e.target.value)}
-              fullWidth
-              margin="normal"
-              disabled={viewOnly}
+              onChange={(event, newValue) => {
+                setDepartment(newValue || "");
+                commitOption(
+                  newValue,
+                  departmentOptions,
+                  setDepartmentOptions
+                );
+              }}
+              onInputChange={(event, newInputValue) =>
+                setDepartment(newInputValue || "")
+              }
+              onBlur={() =>
+                setTouched((prev) => ({ ...prev, department: true }))
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Department"
+                  fullWidth
+                  error={touched.department && !department}
+                />
+              )}
             />
-            <TextField
-              label="Designation"
+
+            {/* Designation */}
+            <Autocomplete
+              freeSolo
+              disabled={viewOnly}
+              options={designationOptions}
               value={designation}
-              onChange={(e) => setDesignation(e.target.value)}
-              fullWidth
-              margin="normal"
-              disabled={viewOnly}
+              onChange={(event, newValue) => {
+                setDesignation(newValue || "");
+                commitOption(
+                  newValue,
+                  designationOptions,
+                  setDesignationOptions
+                );
+              }}
+              onInputChange={(event, newInputValue) =>
+                setDesignation(newInputValue || "")
+              }
+              onBlur={() =>
+                setTouched((prev) => ({ ...prev, designation: true }))
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Designation"
+                  fullWidth
+                  error={touched.designation && !designation}
+                />
+              )}
             />
-          </div>
+          </Box>
+
           {!viewOnly && (
-            <div className={classes.actionsContainer}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                mt: 2,
+              }}
+            >
               <Button
                 variant="contained"
-                className={classes.cancelButton}
                 onClick={handleClose}
+                sx={{ backgroundColor: "error.main", color: "white" }}
               >
                 Cancel
               </Button>
               <Button
                 variant="contained"
-                className={classes.saveButton}
-                onClick={handleSaveEmployee}
+                onClick={handleUpdateEmployee}
+                disabled={isUpdating}
+                sx={{ backgroundColor: "success.main", color: "white" }}
               >
-                Save
+                {isUpdating ? "Updating..." : "Update"}
               </Button>
-            </div>
+            </Box>
           )}
         </form>
       </Box>

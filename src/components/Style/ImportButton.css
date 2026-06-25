@@ -1,0 +1,85 @@
+
+.import-button {
+  width: fit-content;
+  min-width: 180px;
+  max-width: 240px;
+  padding: 12px 16px;
+  margin-top: 24px;
+  background: rgba(241, 43, 43, 0.9);  
+  color: white;
+  border: none;
+  border-radius: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(12px, 1.2vw, 16px);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  z-index: 1;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.import-button span {
+  display: inline-flex;
+  align-items: center;
+  font-family: 'Racing Sans One', sans-serif;
+    font-size: clamp(12px, 1.2vw, 16px);
+
+  gap: 8px;
+  animation: bounceText 1.2s ease-in-out infinite;
+  color: white;
+}
+
+.import-button:hover {
+  transform: translateY(-2px) scale(1.05);
+  background: rgba(241, 43, 43, 0.9);
+}
+.import-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+  transform: skewX(-25deg);
+  pointer-events: none;
+}
+
+.import-button:hover::before {
+  animation: shine 0.8s forwards;
+}
+
+.import-button .MuiButton-root,
+.import-button .MuiButtonBase-root {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  min-width: 0 !important;
+  color: white !important;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+@keyframes shine {
+  from {
+    left: -75%;
+  }
+  to {
+    left: 125%;
+  }
+}
+
+@keyframes bounceText {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}

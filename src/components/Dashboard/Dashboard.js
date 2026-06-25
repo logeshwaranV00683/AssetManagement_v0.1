@@ -1,175 +1,296 @@
-import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
-import { Container, Card, CardContent, Typography, Box } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
-import TextField from '@mui/material/TextField';
+import React, { useState, useEffect } from "react";
+import {
+  Container,
+  Typography,
+  Box,
+  TextField,
+  Button,
+} from "@mui/material";
+import Interactive3DChart from '../Utils/Interactive3DChart';
+import { DataGrid } from "@mui/x-data-grid";
+import { getAssetTypes, getLocations, getcountsByLocation } from "../Services/DashboardService";
+import "../Style/font.css";
 
-const useStyles = makeStyles((theme) => ({
-  content: {
-    flexGrow: 1,
-    padding: theme.spacing(3),
-  },
-  pieContainer: {
-    display: 'flex',
-    justifyContent: 'space-around',
-    marginTop: theme.spacing(3),
-    marginLeft:'25px'
-  },
-  pieCard: {
-    width: '45%',
-  },
-  label: {
-    textAlign: 'center',
-    color: 'grey',
-    marginTop: theme.spacing(2),
-  },
-}));
 
 function Dashboard() {
-  const classes = useStyles();
-  const data = [
-    { name: 'Stock', value: 23 },
-    { name: 'Assigned', value: 104 },
-  ];
-
-  const data2 = [
-    { name: 'Stock', value: 26 },
-    { name: 'Assigned', value: 146 },
-  ];
-
-  const COLORS = ['#3366CC', '#DC3912'];
-  const columns = [
-    { field: 'id', headerName: 'ID', width: 90 },
-    { field: 'assetName', headerName: 'Asset name', width: 200 },
-    { field: 'serialNumber', headerName: 'Serial Number', width: 200 },
-    { field: 'location', headerName: 'Location', width: 150 },
-    { field: 'model', headerName: 'MODL', width: 150 }, // Adjusted column name
-    { field: 'assign', headerName: 'ASSIGN', width: 150 }, // Adjusted column name
-  ];
-
-  const rows = [
-    { id: 1, assetName: 'Laptop', serialNumber: 'SN001', location: 'Room A', model: 'Model X', assign: 'Assign X' },
-    { id: 2, assetName: 'Desktop', serialNumber: 'SN002', location: 'Room B', model: 'Model Y', assign: 'Assign Y' },
-    { id: 3, assetName: 'Printer', serialNumber: 'SN003', location: 'Room C', model: 'Model Z', assign: 'Assign Z' },
-    // Add more rows as needed
-  ];
-  const [filterModel, setFilterModel] = useState({ items: [] });
-  const [filterValue, setFilterValue] = useState('');
-
-  const [filteredRows, setFilteredRows] = useState(rows);
+  const [locationOptions, setLocationOptions] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState("chennai");
+  const [selectedDevice, setSelectedDevice] = useState("");
+  const [filterValue, setFilterValue] = useState("");
+  const [assetCountData, setAssetCountData] = useState([]);
+  const [deviceOptions, setDeviceOptions] = useState([]);
+  const [chartData, setChartData] = useState([]);
 
   const handleSearch = (event) => {
-    const { value } = event.target;
-    const lowercaseValue = value.toLowerCase();
-    setFilterValue(lowercaseValue);
-
-    const filteredRows = rows.filter(row =>
-      row.assetName.toLowerCase().includes(lowercaseValue) ||
-      row.serialNumber.toLowerCase().includes(lowercaseValue) ||
-      row.location.toLowerCase().includes(lowercaseValue) ||
-      row.model.toLowerCase().includes(lowercaseValue) ||
-      row.assign.toLowerCase().includes(lowercaseValue)
-    );
-
-    setFilteredRows(filteredRows);
+    event.target.value.toLowerCase();
+    setFilterValue(event.target.value);
   };
 
+  useEffect(() => {
+    const loadDashboardData = async () => {
+      try {
+        const countsData = await getcountsByLocation(selectedLocation);
+        const formattedData = Array.isArray(countsData)
+          ? countsData.map((item, idx) => ({
+            id: item.id ?? idx + 1,
+            type: item.type,
+            total: item.total ?? 0,
+            assigned: item.assigned ?? 0,
+            unassigned: item.unassigned ?? 0,
+            scrapped: item.scrapped ?? 0,
+          }))
+          : [];
+
+        setAssetCountData(formattedData);
+
+        const [locations, types] = await Promise.all([
+          getLocations(),
+          getAssetTypes(),
+        ]);
+
+        setLocationOptions(locations);
+        setDeviceOptions(types);
+
+        if (types.length > 0 && !types.includes(selectedDevice)) {
+          setSelectedDevice(types[0]);
+        }
+
+        const pieData = formattedData.find(
+          (d) => d.type.toLowerCase() === selectedDevice.toLowerCase()
+        );
+
+        if (pieData) {
+          setChartData([
+            { name: "Assigned", value: pieData.assigned },
+            { name: "Unassigned", value: pieData.unassigned },
+            { name: "Scrapped", value: pieData.scrapped },
+          ]);
+        } else {
+          setChartData([]);
+        }
+      } catch (err) {
+        console.error("Error fetching dashboard data:", err);
+      }
+    };
+
+    loadDashboardData();
+  }, [selectedLocation, selectedDevice]);
+
   return (
-    <div>
-      <main className={classes.content}>
-        <Container maxWidth="lg">
-          <div className={classes.pieContainer}>
-            <Card className={classes.pieCard}>
-              <CardContent>
-                <div className={classes.label}>
-                  <Typography variant="h6">Laptop: {data[0].value}/{data[1].value}</Typography>
-                  <Typography variant="h6">CHENNAI</Typography>
+    <div style={{ fontFamily: "'Racing Sans One', sans-serif" }}>
+      <Container maxWidth="lg" sx={{ mt: 4 }}>
+        <Typography variant="h4" align="center" sx={{ color: "#00f0ff", mb: 2, fontFamily: "'Racing Sans One', sans-serif", marginBottom: "2rem" }}>
+          Asset Overview - {selectedDevice.toUpperCase()} at {selectedLocation.toUpperCase()}
+        </Typography>
 
-                </div>
-                <div style={{ height: 250 }}>
-                  <ResponsiveContainer>
-                    <PieChart>
+        {/* 1 Section Grid */}
+        <Box
+          sx={{
+            width: "90%",
+            maxWidth: "100%",
+            mx: "auto",
+            px: 2,
+            mt: 2,
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "space-between",
+            gap: 5,
+          }}
+        >
 
-                      <Pie
-                        dataKey="value"
-                        data={data}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={0}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        label
-                      >
-                        {data.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]}
-                          />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                      <Legend />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
+          {/* Left: Locations */}
+          <Box
+            sx={{
+              width: { xs: "100%", sm: "20%" },
+              flex: 1.5,
+              maxHeight: 400,
+              overflowY: "auto",
+              p: 2,
+              borderRadius: 2,
+              border: "1px solid rgba(0, 240, 255, 0.3)",
+              background: "rgba(255, 255, 255, 0.05)",
+              "&::-webkit-scrollbar": {
+                width: 0,
+              },
+              "&::-webkit-scrollbar-thumb": {
+                backgroundColor: "transparent",
+              },
 
-              </CardContent>
-            </Card>
-            <Card className={classes.pieCard}>
-              <CardContent>
-                <div className={classes.label}>
-                  <Typography variant="h6">Laptop: {data2[0].value}/{data2[1].value}</Typography>
-                  <Typography variant="h6">PUNE</Typography>
-                </div>
-                <div style={{ height: 250 }}>
-                  <ResponsiveContainer>
-                    <PieChart>
-                      <Pie
-                        dataKey="value"
-                        data={data2}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={0}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        label
-                      >
-                        {data.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                      <Legend />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
+            }}
+          >
+            <Typography sx={{
+              mb: 1, color: "#00f0ff", fontWeight: "bold", fontFamily: "'Racing Sans One', sans-serif",
+              letterSpacing: "1px", marginBottom: "1rem"
+            }}>Select Location</Typography>
+            {locationOptions.map((loc) => (
+              <Button
+                key={loc}
+                onClick={() => setSelectedLocation(loc)}
+                variant={selectedLocation === loc ? "contained" : "outlined"}
+                sx={{
+                  display: "block",
+                  mb: 1,
+                  backgroundColor: selectedLocation === loc ? "#00e0ff" : "transparent",
+                  color: selectedLocation === loc ? "#fff" : "#00f0ff",
+                  borderColor: "#00e0ff",
+                  fontFamily: "'Racing Sans One', sans-serif",
+                  letterSpacing: "1.5px",
+                  width: "100%",
+                  fontWeight: 600,
+                  textTransform: "none",
+                }}
+              >
+                {loc.toUpperCase()}
+              </Button>
+            ))}
+          </Box>
 
-              </CardContent>
-            </Card>
+          {/* Center: 3D Chart */}
+          <Box
+            sx={{
+              width: { xs: "100%", sm: "50%" },
+              flex: 3,
+              minHeight: 400,
+              p: 2,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+
+            }}
+          >
+            <Interactive3DChart data={chartData} />
+          </Box>
+
+          {/* Right: Devices */}
+          <Box
+            sx={{
+              width: { xs: "100%", sm: "15%" },
+              flex: 1.5,
+              maxHeight: 400,
+              overflowY: "auto",
+              p: 2,
+              borderRadius: 2,
+              background: "rgba(255, 255, 255, 0.05)",
+              border: "1px solid rgba(0, 240, 255, 0.3)",
+              "&::-webkit-scrollbar": {
+                width: 0,
+              },
+              "&::-webkit-scrollbar-thumb": {
+                backgroundColor: "transparent",
+              },
+
+            }}
+          >
+            <Typography sx={{
+              mb: 1, color: "#00f0ff", fontWeight: "bold", fontFamily: "'Racing Sans One', sans-serif",
+              letterSpacing: "1px", marginBottom: "1rem"
+            }}>Select Device</Typography>
+            {deviceOptions.map((type) => (
+              <Button
+                key={type}
+                onClick={() => setSelectedDevice(type)}
+                variant={selectedDevice === type ? "contained" : "outlined"}
+                sx={{
+                  display: "block",
+                  mb: 1,
+                  backgroundColor: selectedDevice === type ? "#00e0ff" : "transparent",
+                  color: selectedDevice === type ? "#fff" : "#00f0ff",
+                  borderColor: "#00e0ff",
+                  fontFamily: "'Racing Sans One', sans-serif",
+                  letterSpacing: "1.5px",
+                  width: "100%",
+                  fontWeight: 600,
+                  textTransform: "none",
+                }}
+              >
+                {type.toUpperCase()}
+              </Button>
+            ))}
+          </Box>
+        </Box>
+
+        {/* Search Field */}
+        <div style={{ display: "flex", justifyContent: "center", width: "100%", marginTop: "3rem", marginBottom: "2rem" }}>
+          <div style={{ width: "55%", minWidth: "200px" }}>
+            <TextField
+              label="Search"
+              variant="outlined"
+              onChange={handleSearch}
+              value={filterValue}
+              placeholder="Search"
+              fullWidth
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  background: "#ffffff",
+                  borderRadius: "0.6rem",
+                  fontWeight: 500,
+                  boxShadow: "0 0 0.3rem rgba(109, 224, 255, 0.4)",
+                  "& fieldset": { border: "1px solid #ccc" },
+                  "&:hover fieldset": { borderColor: "#1FCBEA" },
+                  "&.Mui-focused fieldset": { borderColor: "#1FCBEA" },
+                  "& input": {
+                    fontFamily: "'Racing Sans One', sans-serif",
+                    fontSize: "0.9rem",
+                    color: "#083A40",
+                    paddingTop: "20px",
+                  },
+                },
+                "& .MuiInputLabel-root": {
+                  fontFamily: "'Racing Sans One', sans-serif",
+                  fontSize: "1rem",
+                  transition: "all 0.2s ease",
+                },
+                "& .MuiInputLabel-root.Mui-focused": {
+                  transform: "translate(14px, -25px) scale(0.85)",
+                  fontSize: "1.3rem",
+                  padding: "0 4px",
+                  color: "#fff",
+                },
+              }}
+            />
           </div>
-          <div style={{ height: 400, width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <Box mb={1}>
-              <TextField
-                label="Search"
-                variant="standard"
-                onChange={handleSearch}
-                style={{ width: 400, marginTop: 10}} // Adjust the width and margin as needed
-              />
-            </Box>
-            <div style={{ height: 350, marginLeft: '2%', width: '95%',flexGrow: 1 }}>
-              <DataGrid
-                rows={filteredRows}
-                columns={columns}
-                pageSize={5}
-                rowsPerPageOptions={[5, 10, 20]}
-                // checkboxSelection
-                filterModel={filterModel}
-                onFilterModelChange={(model) => setFilterModel(model)}
-              />
-            </div>
-          </div>
+        </div>
 
-        </Container>
-      </main>
+        {/* Data Table */}
+        <div style={{ width: "90%", maxWidth: "1200px", margin: "2rem auto" }}>
+          <DataGrid
+            autoHeight
+            rows={assetCountData.filter((row) =>
+              row.type.toLowerCase().includes(filterValue.toLowerCase())
+            )}
+            columns={[
+              { field: "type", headerName: "Asset Type", flex: 1, align: "center", headerAlign: "center" },
+              { field: "total", headerName: "Total", flex: 1, align: "center", headerAlign: "center" },
+              { field: "assigned", headerName: "Assigned", flex: 1, align: "center", headerAlign: "center" },
+              { field: "unassigned", headerName: "Unassigned", flex: 1, align: "center", headerAlign: "center" },
+              { field: "scrapped", headerName: "Scrapped", flex: 1, align: "center", headerAlign: "center" },
+            ]}
+            getRowId={(row) => row.id}
+            sx={{
+
+              borderRadius: 2,
+              boxShadow: "0 0 10px rgba(0,0,0,0.1)",
+              background: "#E0F9FF",
+              color: "#083A40",
+              fontFamily: "'Racing Sans One', sans-serif",
+              "& .MuiDataGrid-columnHeaders": {
+                background: "linear-gradient(45deg, #6DE0FF, #2BC4F3)",
+                color: "#083A40",
+                fontWeight: "bold",
+                fontSize: "16px",
+              },
+              "& .MuiDataGrid-row": {
+                backgroundColor: "#E0F9FF",
+              },
+              "& .MuiDataGrid-footerContainer": {
+                background: "linear-gradient(45deg, #6DE0FF, #2BC4F3)",
+              },
+            }}
+          />
+        </div>
+
+
+      </Container>
     </div>
   );
 }
