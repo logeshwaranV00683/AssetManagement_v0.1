@@ -1,0 +1,62 @@
+.admin {
+    margin-top: 32px;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.emp {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.align {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1px;
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #ddd;
+}
+
+.title {
+    color: #333;
+    font-weight: 500;
+    margin-right: 4px;
+}
+
+.title-val {
+    color: #616161;  
+    font-weight: 600;
+    font-size: 15px;
+
+}
+
+.drawerPaper {
+    background-color: #ffffff;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-hover .MuiListItem-root {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.sidebar-hover .MuiListItem-root:hover {
+  background-color: #e3f2fd;  
+  color: #000;
+}
+
+.sidebar-hover .MuiListItem-root:hover .MuiListItemIcon-root {
+  color: #1976d2;  
+}
+
+.sidebar-hover .Mui-selected {
+  background-color: #1FCBEA !important;
+  color: white;
+}
+
+.sidebar-hover .Mui-selected .MuiListItemIcon-root {
+  color: white !important;
+}
+
+
+

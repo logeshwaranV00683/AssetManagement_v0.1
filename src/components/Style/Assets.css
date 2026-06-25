@@ -1,0 +1,94 @@
+.btn-border {
+    border-radius: 20px !important;
+    margin-right: 2px;
+}
+
+body{
+    background-color:#305767;
+    color: aliceblue;
+    text-decoration: white;
+}
+
+.unassign-button {
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 8px;
+}
+
+.unassign-button:hover {
+  background-color: #d9363e;
+}
+
+
+.assigned-assets-box {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border: 1px solid #ffa726;
+  border-radius: 8px;
+  background-color: #fff3e0;
+  color: #6a1b09;
+  box-shadow: 0 2px 6px rgba(255, 152, 0, 0.2);
+  font-size: 14px;
+}
+
+.assigned-assets-box ul {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 8px;
+}
+
+.assigned-assets-box li {
+  margin: 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 24px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  width: 90%;
+  max-width: 600px;
+  transition: all 0.3s ease;
+}
+.MuiDataGrid-virtualScroller {
+  overflow-y: scroll !important;
+}
+.MuiDataGrid-virtualScroller {
+  overflow-y: auto !important;
+}
+
+@keyframes blink {
+  0% { border-color: red; }
+  50% { border-color: transparent; }
+  100% { border-color: red; }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+.error-blink {
+  animation: blink 0.6s linear 2, shake 0.3s ease-in-out 2;
+  border-radius: 4px;
+}
+
+.form-shake {
+  animation: shake 0.4s ease-in-out 2;
+}
+
