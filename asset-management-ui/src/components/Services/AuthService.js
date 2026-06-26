@@ -1,6 +1,11 @@
 import toast from "react-hot-toast";
-const token = localStorage.getItem("authToken");
+
 const apiUrl = process.env.REACT_APP_API_URL;
+
+const getAuthHeaders = () => ({
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+});
 
 export const logIn = (formData) => {
   return fetch(`${apiUrl}/login`, {
@@ -82,21 +87,21 @@ export const handleResetPassword = async (
 
 export const changePassword = async (mail, oldPassword, newPassword) => {
   try {
-    const response = await fetch(`${apiUrl}/reset-password/change-password-using-oldPassword`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ mail, oldPassword, newPassword }),
-    });
+    const response = await fetch(
+      `${apiUrl}/reset-password/change-password-using-oldPassword`,
+      {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ mail, oldPassword, newPassword }),
+      }
+    );
 
     const text = await response.text();
 
-    let message = '';
+    let message = "";
     try {
       const data = JSON.parse(text);
-      message = data.message || '';
+      message = data.message || "";
     } catch (e) {
       message = text;
     }
@@ -118,16 +123,13 @@ export const changePassword = async (mail, oldPassword, newPassword) => {
 export const getOtherAdmins = async () => {
   try {
     const response = await fetch(`${apiUrl}/assetManager/v1/admin/get/all`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
+      method: "GET",
+      headers: getAuthHeaders(),
     });
 
     if (!response.ok) {
       const errorMsg = await response.text();
-      throw new Error(errorMsg || 'Failed to fetch admin list');
+      throw new Error(errorMsg || "Failed to fetch admin list");
     }
 
     const data = await response.json();
@@ -137,6 +139,3 @@ export const getOtherAdmins = async () => {
     throw error;
   }
 };
-
-
-

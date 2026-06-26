@@ -1,14 +1,15 @@
-const token = localStorage.getItem("authToken");
-const userData = JSON.parse(localStorage.getItem("user"));
 const apiUrl = process.env.REACT_APP_API_URL;
+
+const getAuthHeaders = () => ({
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+});
 
 export const getAssetList = async () => {
   const url = `${apiUrl}/assetManager/v1/asset/listOfAssets`;
   try {
     const response = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: getAuthHeaders(),
     });
     if (!response.ok) {
       throw new Error("Network response was not ok " + response.statusText);
@@ -30,10 +31,7 @@ export const saveAsset = async (assetData) => {
   try {
     const response = await fetch(`${apiUrl}/assetManager/v1/asset/saveAsset`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: getAuthHeaders(),
       body: JSON.stringify(assetData),
     });
 
@@ -66,10 +64,7 @@ export const updateAsset = async (asset, serialNumber) => {
       `${apiUrl}/assetManager/v1/asset/updateAsset/${serialNumber}`,
       {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(asset),
       }
     );
@@ -104,15 +99,12 @@ export const updateAsset = async (asset, serialNumber) => {
 
 export const deleteAsset = async (serialNo) => {
   try {
-    const empId = userData.empId;
+    const empId = JSON.parse(localStorage.getItem("user"))?.empId;
     const response = await fetch(
       `${apiUrl}/assetManager/v1/deletedAsset/permananteDelete/${empId}/${serialNo}`,
       {
         method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers: getAuthHeaders(),
       }
     );
 
@@ -139,10 +131,7 @@ export const assignAsset = async (assetData) => {
       `${apiUrl}/assetManager/v1/admin/Asset/assign`,
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(assetData),
       }
     );
@@ -176,10 +165,7 @@ export const unassignAsset = async (serialNumbers) => {
       `${apiUrl}/assetManager/v1/admin/asset/un-assign`,
       {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(serialNumbers),
       }
     );
@@ -202,10 +188,7 @@ export const getAssignedAssetsByEmployee = async (empId) => {
   const response = await fetch(
     `${apiUrl}/assetManager/v1/admin/get/all/assigned/assets/by/${empId}`,
     {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: getAuthHeaders(),
     }
   );
   if (!response.ok) throw new Error("Failed to fetch assigned assets");
@@ -218,10 +201,7 @@ export const getAssetTypes = async () => {
   try {
     const response = await fetch(url, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: getAuthHeaders(),
     });
 
     const data = await response.json();
@@ -246,10 +226,7 @@ export const RecentAssignedAssetDetails = async () => {
       `${apiUrl}/assetManager/v1/admin/get-recent-assigned`,
       {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers: getAuthHeaders(),
       }
     );
     if (!response.ok) throw new Error("Failed to fetch More page data");
@@ -266,10 +243,7 @@ export const getassetsourcedby = async () => {
   try {
     const response = await fetch(url, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: getAuthHeaders(),
     });
 
     const data = await response.json();
@@ -286,13 +260,12 @@ export const getassetsourcedby = async () => {
     return [];
   }
 };
+
 export const getDeletedAssets = async () => {
   const url = `${apiUrl}/assetManager/v1/deletedAsset/getAll`;
   try {
     const response = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: getAuthHeaders(),
     });
 
     if (!response.ok) {
@@ -313,16 +286,14 @@ export const getDeletedAssets = async () => {
     throw error;
   }
 };
+
 export const getAssetBySerialNumber = async (serialNumber) => {
   const url = `${apiUrl}/assetManager/v1/asset/id/${serialNumber}`;
 
   try {
     const response = await fetch(url, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: getAuthHeaders(),
     });
 
     if (!response.ok) {

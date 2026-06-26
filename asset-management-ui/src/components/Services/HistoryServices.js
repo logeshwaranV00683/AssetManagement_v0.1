@@ -1,5 +1,9 @@
-const token = localStorage.getItem("authToken");
 const apiUrl = process.env.REACT_APP_API_URL;
+
+const getAuthHeaders = () => ({
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+});
 
 export const fetchAssetHistory = async (serialNumber) => {
   try {
@@ -7,10 +11,7 @@ export const fetchAssetHistory = async (serialNumber) => {
       `${apiUrl}/assetManager/v1/Assets/history/specificAssetHistory/${serialNumber}`,
       {
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+        headers: getAuthHeaders(),
       }
     );
 

@@ -1,5 +1,9 @@
-const token = localStorage.getItem("authToken");
 const apiUrl = process.env.REACT_APP_API_URL;
+
+const getAuthHeaders = () => ({
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+});
 
 export const getcountsByLocation = async (location) => {
   const url = `${apiUrl}/assetManager/v1/AssetCount/location?location=${encodeURIComponent(
@@ -9,10 +13,7 @@ export const getcountsByLocation = async (location) => {
   try {
     const response = await fetch(url, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: getAuthHeaders(),
     });
 
     const data = await response.json();
@@ -35,10 +36,7 @@ export const getLocations = async () => {
   try {
     const response = await fetch(url, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: getAuthHeaders(),
     });
 
     const data = await response.json();
@@ -56,16 +54,12 @@ export const getLocations = async () => {
   }
 };
 
-
 export const getAssetTypes = async (location) => {
   const url = `${apiUrl}/dashboard/unique/assetTypes`;
   try {
     const response = await fetch(url, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: getAuthHeaders(),
     });
 
     const data = await response.json();

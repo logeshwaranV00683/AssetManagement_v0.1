@@ -1,13 +1,15 @@
-const token = localStorage.getItem("authToken");
 const apiUrl = process.env.REACT_APP_API_URL;
+
+const getAuthHeaders = () => ({
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+});
 
 export const getEmployeeList = async () => {
   const url = `${apiUrl}/assetManager/v1/employee/employeelist`;
   try {
     const response = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: getAuthHeaders(),
     });
     if (!response.ok) {
       throw new Error("Network response was not ok " + response.statusText);
@@ -32,10 +34,7 @@ export const saveEmployee = async (employeeData) => {
       `${apiUrl}/assetManager/v1/employee/saveemployee`,
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(employeeData),
       }
     );
@@ -69,10 +68,7 @@ export const updateEmployee = async (empId, employee) => {
       `${apiUrl}/assetManager/v1/updateEmp/${empId}`,
       {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(employee),
       }
     );
@@ -111,10 +107,7 @@ export const deleteEmployee = async (empId) => {
       `${apiUrl}/assetManager/v1/deleteEmp/${empId}`,
       {
         method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers: getAuthHeaders(),
       }
     );
 
@@ -138,10 +131,7 @@ export const getLocations = async () => {
   try {
     const response = await fetch(url, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: getAuthHeaders(),
     });
 
     const data = await response.json();
@@ -165,10 +155,7 @@ export const getDeparatment = async () => {
   try {
     const response = await fetch(url, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: getAuthHeaders(),
     });
 
     const data = await response.json();
@@ -192,10 +179,7 @@ export const getDesignation = async () => {
   try {
     const response = await fetch(url, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: getAuthHeaders(),
     });
 
     const data = await response.json();
@@ -217,9 +201,7 @@ export const getEmployeeById = async (empId) => {
   const url = `${apiUrl}/assetManager/v1/getEmployee/${empId}`;
   try {
     const response = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: getAuthHeaders(),
     });
 
     if (!response.ok) {
